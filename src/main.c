@@ -35,8 +35,24 @@ Status all_events() {
 }
 
 int show_window() {
+    SDL_Rect bounds;
+    if (SDL_GetDisplayUsableBounds(0, &bounds) != 0) {
+        WARN("SDL_GetDisplayUsableBounds");
+
+        bounds.w = 640;
+        bounds.h = 480;
+    } else {
+        /* demaximize to a window area that leaves gaps */
+        bounds.w = bounds.w * 3 / 4;
+        bounds.h = bounds.h * 3 / 4;
+    }
+
+    /* On Ubuntu, setting a window close to the usable bounds seems to implicitly make it act
+       like a maximized window. */
+
     SDL_Window* win = SDL_CreateWindow(
-        "Window be here", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480,
+        "Window be here", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        bounds.w, bounds.h,
         SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE
     );
     if (win == NULL) {
