@@ -1,5 +1,7 @@
 # project-specific
 out/
+bin/
+src/res/
 
 
 

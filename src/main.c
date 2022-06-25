@@ -9,6 +9,9 @@
 
 #include "logging.h"
 
+#include "res/floor.h"
+#define FLOOR __res_Floor___Grass_1_64x64_png
+
 typedef enum {
     Proceed,
     Exit,
@@ -63,6 +66,12 @@ int run_window() {
     	return 1;
     }
 
+    SDL_Surface* winsurf = SDL_GetWindowSurface(win);
+    if (winsurf == NULL) {
+        ERROR("SDL_GetWindowSurface");
+        return 1;
+    }
+
     int status = all_pending_events();
 
     SDL_DestroyWindow(win);
@@ -76,8 +85,20 @@ int run_window() {
  */
 
 int main(int argc, char* argv[]) {
-    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-        ERROR("IMG_Init (png)");
+
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+        ERROR("IMG_Init: png");
+        return 1;
+    }
+
+    printf("size=%ld\n", sizeof(FLOOR));
+
+    SDL_RWops* floor_rw = SDL_RWFromConstMem(FLOOR, sizeof(FLOOR));
+
+    SDL_Surface* floor;
+    floor = IMG_LoadTyped_RW(floor_rw, true, "PNG");
+    if (!floor) {
+        ERROR("IMG_Load_RW: floor");
         return 1;
     }
 
