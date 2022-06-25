@@ -72,9 +72,29 @@ int run_window() {
         return 1;
     }
 
+    SDL_RWops* floor_rw = SDL_RWFromConstMem(FLOOR, sizeof(FLOOR));
+    SDL_Surface* floor;
+    floor = IMG_LoadTyped_RW(floor_rw, true, "PNG");
+    if (!floor) {
+        ERROR("IMG_Load_RW: floor");
+        return 1;
+    }
+
     int status = all_pending_events();
 
     SDL_DestroyWindow(win);
+    return status;
+}
+
+int run_img() {
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+        ERROR("IMG_Init: png");
+        return 1;
+    }
+    
+    int status = run_window();
+    
+    IMG_Quit();
     return status;
 }
 
@@ -85,31 +105,13 @@ int run_window() {
  */
 
 int main(int argc, char* argv[]) {
-
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-        ERROR("IMG_Init: png");
-        return 1;
-    }
-
-    printf("size=%ld\n", sizeof(FLOOR));
-
-    SDL_RWops* floor_rw = SDL_RWFromConstMem(FLOOR, sizeof(FLOOR));
-
-    SDL_Surface* floor;
-    floor = IMG_LoadTyped_RW(floor_rw, true, "PNG");
-    if (!floor) {
-        ERROR("IMG_Load_RW: floor");
-        return 1;
-    }
-
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         ERROR("SDL_Init");
         return 1;
     }
 
-    int status = run_window();
+    int status = run_img();
     
     SDL_Quit();
-    IMG_Quit();
     return status;
 }
