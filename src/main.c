@@ -25,16 +25,18 @@ Status next_event() {
     return Proceed;
 }
 
-Status all_events() {
+int all_pending_events() {
     while (true) {
         Status stat = next_event();
-        if (stat != Proceed) {
-            return stat;
+        if (stat == Exit) {
+            return 0;
+        } else if (stat == Error) {
+            return 1;
         }
     }
 }
 
-int show_window() {
+int run_window() {
     SDL_Rect bounds;
     if (SDL_GetDisplayUsableBounds(0, &bounds) != 0) {
         WARN("SDL_GetDisplayUsableBounds");
@@ -56,14 +58,14 @@ int show_window() {
         SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE
     );
     if (win == NULL) {
-        ERROR("Unable to create window.");
+        ERROR("SDL_CreateWindow");
     	return 1;
     }
 
-    all_events();
+    int status = all_pending_events();
 
     SDL_DestroyWindow(win);
-    return 0;
+    return status;
 }
 
 /*
@@ -74,11 +76,11 @@ int show_window() {
 
 int main(int argc, char* argv[]) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        ERROR("Unable to initialize SDL.");
+        ERROR("SDL_Init");
         return 1;
     }
 
-    int status = show_window();
+    int status = run_window();
     
     SDL_Quit();
     return status;
