@@ -35,7 +35,10 @@ Status all_events() {
 }
 
 int show_window() {
-    SDL_Window* win = SDL_CreateWindow("Window be here", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+    SDL_Window* win = SDL_CreateWindow(
+        "Window be here", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480,
+        SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE
+    );
     if (win == NULL) {
         ERROR("Unable to create window.");
     	return 1;
