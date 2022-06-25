@@ -8,6 +8,7 @@
 #include "SDL_image.h"
 
 #include "logging.h"
+#include "state.h"
 
 #include "res/floor.h"
 #define FLOOR __res_Floor___Grass_1_64x64_png
@@ -70,8 +71,8 @@ SDL_Surface* const_png_to_surface(const void *mem, int size) {
     return surf;
 }
 
-int run_draw(SDL_Window* win) {
-    SDL_Surface* screen = SDL_GetWindowSurface(win);
+int run_draw(State* state) {
+    SDL_Surface* screen = SDL_GetWindowSurface(state->window);
     if (screen == NULL) {
         ERROR("SDL_GetWindowSurface");
         return 1;
@@ -98,7 +99,7 @@ int run_draw(SDL_Window* win) {
         WARN("SDL_BlitSurface");
     }
 
-    if (SDL_UpdateWindowSurface(win) != 0) {
+    if (SDL_UpdateWindowSurface(state->window) != 0) {
         WARN("SDL_UpdateWindowSurface");
     }
 
@@ -108,7 +109,7 @@ int run_draw(SDL_Window* win) {
     return status;
 }
 
-int run_window() {
+int run_window(State* state) {
     SDL_Rect bounds;
     if (SDL_GetDisplayUsableBounds(0, &bounds) != 0) {
         WARN("SDL_GetDisplayUsableBounds");
@@ -133,20 +134,27 @@ int run_window() {
         ERROR("SDL_CreateWindow");
     	return 1;
     }
+    state->window = win;
 
-    int status = run_draw(win);
+    int status = run_draw(state);
     
     SDL_DestroyWindow(win);
     return status;
 }
 
 int run_img() {
+    State* state = make_state();
+    if (state == NULL) {
+        ERROR("make_state");
+        return 1;
+    }
+    
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         ERROR("IMG_Init: png");
         return 1;
     }
     
-    int status = run_window();
+    int status = run_window(state);
     
     IMG_Quit();
     return status;
