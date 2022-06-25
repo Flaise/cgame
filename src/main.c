@@ -19,7 +19,41 @@ typedef enum {
     Error,
 } Status;
 
-Status next_event() {
+void redraw(State* state) {
+    state->needs_redraw = true;
+}
+
+int draw_now(State* state) {
+    SDL_Surface* screen = SDL_GetWindowSurface(state->window);
+    if (screen == NULL) {
+        ERROR("SDL_GetWindowSurface");
+        return 1;
+    }
+    
+    if (SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 60, 0, 0)) != 0) {
+        WARN("SDL_FillRect");
+    }
+    
+    SDL_Rect srcrect = {
+        .x = 0,
+        .y = 0,
+        .w = 64,
+        .h = 64,
+    };
+
+    if (SDL_BlitSurface(state->floor, &srcrect, screen, NULL) != 0) {
+        WARN("SDL_BlitSurface");
+    }
+
+    if (SDL_UpdateWindowSurface(state->window) != 0) {
+        WARN("SDL_UpdateWindowSurface");
+    }
+
+    state->needs_redraw = false;
+    return 0;
+}
+
+Status next_event(State* state) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
@@ -33,7 +67,10 @@ Status next_event() {
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
                     int width = event.window.data1;
                     int height = event.window.data2;
-                    
+
+                    /* TODO: do something with w/h? */
+
+                    redraw(state);
                 }
                 continue;
         }
@@ -41,13 +78,21 @@ Status next_event() {
     return Proceed;
 }
 
-int all_pending_events() {
+int all_pending_events(State* state) {
     while (true) {
-        Status stat = next_event();
+        /* process event */
+        Status stat = next_event(state);
         if (stat == Exit) {
             return 0;
         } else if (stat == Error) {
             return 1;
+        }
+
+        /* redraw */
+        if (state->needs_redraw) {
+            if (draw_now(state) != 0) {
+                return 1;
+            }
         }
     }
 }
@@ -69,44 +114,6 @@ SDL_Surface* const_png_to_surface(const void *mem, int size) {
     }
 
     return surf;
-}
-
-int run_draw(State* state) {
-    SDL_Surface* screen = SDL_GetWindowSurface(state->window);
-    if (screen == NULL) {
-        ERROR("SDL_GetWindowSurface");
-        return 1;
-    }
-
-    SDL_Surface* floor = const_png_to_surface(FLOOR, sizeof(FLOOR));
-    if (floor == NULL) {
-        ERROR("load PNG: floor");
-        return 1;
-    }
-
-    if (SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 60, 0, 0)) != 0) {
-        WARN("SDL_FillRect");
-    }
-
-    SDL_Rect srcrect = {
-        .x = 0,
-        .y = 0,
-        .w = 64,
-        .h = 64,
-    };
-
-    if (SDL_BlitSurface(floor, &srcrect, screen, NULL) != 0) {
-        WARN("SDL_BlitSurface");
-    }
-
-    if (SDL_UpdateWindowSurface(state->window) != 0) {
-        WARN("SDL_UpdateWindowSurface");
-    }
-
-    int status = all_pending_events();
-
-    SDL_FreeSurface(floor);
-    return status;
 }
 
 int run_window(State* state) {
@@ -136,10 +143,18 @@ int run_window(State* state) {
     }
     state->window = win;
 
-    int status = run_draw(state);
-    
-    SDL_DestroyWindow(win);
-    return status;
+    SDL_Surface* floor = const_png_to_surface(FLOOR, sizeof(FLOOR));
+    if (floor == NULL) {
+        ERROR("load PNG: floor");
+        return 1;
+    }
+    state->floor = floor;
+
+    if (draw_now(state) != 0) {
+        return 1;
+    }
+
+    return all_pending_events(state);
 }
 
 int run_img() {
@@ -157,6 +172,7 @@ int run_img() {
     int status = run_window(state);
     
     IMG_Quit();
+    destroy_state(state);
     return status;
 }
 

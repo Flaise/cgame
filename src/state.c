@@ -11,7 +11,24 @@ State* make_state() {
     if (state == NULL) {
         return NULL;
     }
+    state->needs_redraw = true;
     state->window = NULL;
-    state->screen = NULL;
+    state->floor = NULL;
     return state;
+}
+
+void destroy_state(State* state) {
+    if (state == NULL) {
+        return;
+    }
+
+    if (state->floor != NULL) {
+        SDL_FreeSurface(state->floor);
+        state->floor = NULL;
+    }
+    
+    if (state->window != NULL) {
+        SDL_DestroyWindow(state->window);
+        state->window = NULL;
+    }
 }
