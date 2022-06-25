@@ -24,6 +24,17 @@ Status next_event() {
         switch (event.type) {
             case SDL_QUIT:
                 return Exit;
+
+            /* on Ubuntu, drag-resize = SizeChanged
+               double click to unmaximize or click unmaximize button = SizeChanged->Restored
+               click on task bar to unminimize = Restored */
+            case SDL_WINDOWEVENT:
+                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                    int width = event.window.data1;
+                    int height = event.window.data2;
+                    
+                }
+                continue;
         }
     }
     return Proceed;
@@ -38,6 +49,63 @@ int all_pending_events() {
             return 1;
         }
     }
+}
+
+/*
+    Returns: A newly allocated SDL_Surface, owned by the caller, or NULL if there was an error.
+    Check the SDL error with the ERROR() macro.
+*/
+SDL_Surface* const_png_to_surface(const void *mem, int size) {
+    SDL_RWops* rw = SDL_RWFromConstMem(mem, size);
+    if (!rw) {
+        return NULL;
+    }
+    
+    SDL_Surface* surf = IMG_LoadTyped_RW(rw, true, "PNG");
+    if (!surf) {
+        /* IMG will close the RW even if there's an error while loading */
+        return NULL;
+    }
+
+    return surf;
+}
+
+int run_draw(SDL_Window* win) {
+    SDL_Surface* screen = SDL_GetWindowSurface(win);
+    if (screen == NULL) {
+        ERROR("SDL_GetWindowSurface");
+        return 1;
+    }
+
+    SDL_Surface* floor = const_png_to_surface(FLOOR, sizeof(FLOOR));
+    if (floor == NULL) {
+        ERROR("load PNG: floor");
+        return 1;
+    }
+
+    if (SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 60, 0, 0)) != 0) {
+        WARN("SDL_FillRect");
+    }
+
+    SDL_Rect srcrect = {
+        .x = 0,
+        .y = 0,
+        .w = 64,
+        .h = 64,
+    };
+
+    if (SDL_BlitSurface(floor, &srcrect, screen, NULL) != 0) {
+        WARN("SDL_BlitSurface");
+    }
+
+    if (SDL_UpdateWindowSurface(win) != 0) {
+        WARN("SDL_UpdateWindowSurface");
+    }
+
+    int status = all_pending_events();
+
+    SDL_FreeSurface(floor);
+    return status;
 }
 
 int run_window() {
@@ -66,42 +134,8 @@ int run_window() {
     	return 1;
     }
 
-    SDL_Surface* screen = SDL_GetWindowSurface(win);
-    if (screen == NULL) {
-        ERROR("SDL_GetWindowSurface");
-        return 1;
-    }
-
-    SDL_RWops* floor_rw = SDL_RWFromConstMem(FLOOR, sizeof(FLOOR));
-    SDL_Surface* floor;
-    floor = IMG_LoadTyped_RW(floor_rw, true, "PNG");
-    if (!floor) {
-        ERROR("IMG_Load_RW: floor");
-        return 1;
-    }
-
-    if (SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 60, 0, 0)) != 0) {
-        WARN("SDL_FillRect");
-    }
-
-    SDL_Rect srcrect = {
-        .x = 0,
-        .y = 0,
-        .w = 64,
-        .h = 64,
-    };
-
-    if (SDL_BlitSurface(floor, &srcrect, screen, NULL) != 0) {
-        WARN("SDL_BlitSurface");
-    }
-
-    if (SDL_UpdateWindowSurface(win) != 0) {
-        WARN("SDL_UpdateWindowSurface");
-    }
-
-    int status = all_pending_events();
-
-    SDL_FreeSurface(floor);
+    int status = run_draw(win);
+    
     SDL_DestroyWindow(win);
     return status;
 }
