@@ -5,6 +5,7 @@
 #else
 #include "SDL2/SDL.h"
 #endif
+#include "SDL_image.h"
 
 #include "logging.h"
 
@@ -75,6 +76,11 @@ int run_window() {
  */
 
 int main(int argc, char* argv[]) {
+    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+        ERROR("IMG_Init (png)");
+        return 1;
+    }
+
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         ERROR("SDL_Init");
         return 1;
@@ -83,5 +89,6 @@ int main(int argc, char* argv[]) {
     int status = run_window();
     
     SDL_Quit();
+    IMG_Quit();
     return status;
 }
