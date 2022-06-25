@@ -57,7 +57,7 @@ int run_window() {
        like a maximized window. */
 
     SDL_Window* win = SDL_CreateWindow(
-        "Window be here", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        "Some day it'll be a game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         bounds.w, bounds.h,
         SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE
     );
@@ -66,8 +66,8 @@ int run_window() {
     	return 1;
     }
 
-    SDL_Surface* winsurf = SDL_GetWindowSurface(win);
-    if (winsurf == NULL) {
+    SDL_Surface* screen = SDL_GetWindowSurface(win);
+    if (screen == NULL) {
         ERROR("SDL_GetWindowSurface");
         return 1;
     }
@@ -80,8 +80,28 @@ int run_window() {
         return 1;
     }
 
+    if (SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 60, 0, 0)) != 0) {
+        WARN("SDL_FillRect");
+    }
+
+    SDL_Rect srcrect = {
+        .x = 0,
+        .y = 0,
+        .w = 64,
+        .h = 64,
+    };
+
+    if (SDL_BlitSurface(floor, &srcrect, screen, NULL) != 0) {
+        WARN("SDL_BlitSurface");
+    }
+
+    if (SDL_UpdateWindowSurface(win) != 0) {
+        WARN("SDL_UpdateWindowSurface");
+    }
+
     int status = all_pending_events();
 
+    SDL_FreeSurface(floor);
     SDL_DestroyWindow(win);
     return status;
 }
