@@ -5,6 +5,7 @@ typedef struct {
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* floor;
+    SDL_Texture* terrain;
 } State;
 
 /*

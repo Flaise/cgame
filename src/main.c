@@ -112,6 +112,26 @@ int run_window(State* state) {
     }
     state->floor = floor;
 
+    Uint32 format = SDL_GetWindowPixelFormat(win);
+    if (format == SDL_PIXELFORMAT_UNKNOWN) {
+        WARN("SDL_GetWindowPixelFormat");
+        
+        format = SDL_PIXELFORMAT_RGBA8888;
+    }
+
+    int tiles_across = 8;
+    int tiles_down = 8;
+    int terrain_w = tiles_across * 64;
+    int terrain_h = tiles_down * 64;
+    SDL_Texture* terrain = SDL_CreateTexture(
+        renderer, format, SDL_TEXTUREACCESS_TARGET, terrain_w, terrain_h
+    );
+    if (terrain == NULL) {
+        ERROR("SDL_CreateTexture (terrain)");
+        return 1;
+    }
+    state->terrain = terrain;
+
     return all_events(state);
 }
 
