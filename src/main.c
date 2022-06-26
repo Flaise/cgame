@@ -96,8 +96,22 @@ int update_terrain(State* state) {
         .w = 64,
         .h = 64,
     };
-    if (SDL_RenderCopy(state->renderer, state->floor, &srcrect, NULL) != 0) {
-        WARN("SDL_RenderCopy");
+    SDL_Rect dstrect = {
+        .x = 0,
+        .y = 0,
+        .w = 64,
+        .h = 64,
+    };
+
+    for (int y = 0; y < 8; y += 1) {
+        for (int x = 0; x < 8; x += 1) {
+            dstrect.x = x * 64;
+            dstrect.y = y * 64;
+            if (SDL_RenderCopy(state->renderer, state->floor, &srcrect, &dstrect) != 0) {
+                WARN("SDL_RenderCopy");
+                break;
+            }
+        }
     }
 }
 
@@ -142,7 +156,7 @@ int run_window(State* state) {
        like a maximized window. */
 
     SDL_Window* win = SDL_CreateWindow(
-        "Some day it'll be a game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        "Let there be graphics", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         bounds.w, bounds.h,
         SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE
     );
