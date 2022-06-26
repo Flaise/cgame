@@ -1,2 +1,2 @@
 
-int all_events(State* state);
+int events_all(State* state);

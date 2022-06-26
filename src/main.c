@@ -62,6 +62,8 @@ int renderer_init(State* state) {
     }
     state->renderer = renderer;
 
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
     if (SDL_RenderSetLogicalSize(renderer, VIEW_WIDTH, VIEW_HEIGHT) != 0) {
         ERROR("SDL_RenderSetLogicalSize");
         return 1;
@@ -121,7 +123,7 @@ int run(State* state) {
         WARN("terrain_update");
     }
 
-    return all_events(state);
+    return events_all(state);
 }
 
 int main(int argc, char* argv[]) {

@@ -6,6 +6,7 @@
 #include "SDL_image.h"
 
 #include "logging.h"
+#include "constants.h"
 #include "state.h"
 #include "draw.h"
 #include "terrain.h"
@@ -20,15 +21,32 @@ int draw_now(State* state) {
         return 1;
     }
 
+    /* clear screen (including the space outside of the logical size/viewport) */
     if (SDL_SetRenderDrawColor(state->renderer, 30, 0, 0, 255) != 0) {
         WARN("SDL_SetRenderDrawColor");
     }
-
     if (SDL_RenderClear(state->renderer) != 0) {
         WARN("SDL_RenderClear");
     }
 
     terrain_draw(state);
+
+    if (state->hover_x >= 0 && state->hover_y >= 0) {
+        if (SDL_SetRenderDrawColor(state->renderer, 30, 120, 110, 150) != 0) {
+            WARN("SDL_SetRenderDrawColor");
+        }
+
+        SDL_Rect hover = {
+            .x = state->hover_x * TILE_SIZE,
+            .y = state->hover_y * TILE_SIZE,
+            .w = TILE_SIZE,
+            .h = TILE_SIZE,
+        };
+
+        if (SDL_RenderFillRect(state->renderer, &hover) != 0) {
+            WARN("SDL_RenderFillRect");
+        }
+    }
 
     SDL_RenderPresent(state->renderer);
 

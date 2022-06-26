@@ -7,6 +7,8 @@ typedef struct {
     SDL_Texture* floor;
     SDL_Texture* wall;
     SDL_Texture* terrain;
+    int hover_x;
+    int hover_y;
 } State;
 
 /*
