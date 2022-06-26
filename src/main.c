@@ -9,6 +9,7 @@
 
 #include "logging.h"
 #include "state.h"
+#include "draw.h"
 
 #include "res/floor.h"
 #define FLOOR __res_Floor___Grass_1_64x64_png
@@ -18,40 +19,6 @@ typedef enum {
     Exit,
     Error,
 } Status;
-
-void redraw(State* state) {
-    state->needs_redraw = true;
-}
-
-int draw_now(State* state) {
-    SDL_Surface* screen = SDL_GetWindowSurface(state->window);
-    if (screen == NULL) {
-        ERROR("SDL_GetWindowSurface");
-        return 1;
-    }
-    
-    if (SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 60, 0, 0)) != 0) {
-        WARN("SDL_FillRect");
-    }
-    
-    SDL_Rect srcrect = {
-        .x = 0,
-        .y = 0,
-        .w = 64,
-        .h = 64,
-    };
-
-    if (SDL_BlitSurface(state->floor, &srcrect, screen, NULL) != 0) {
-        WARN("SDL_BlitSurface");
-    }
-
-    if (SDL_UpdateWindowSurface(state->window) != 0) {
-        WARN("SDL_UpdateWindowSurface");
-    }
-
-    state->needs_redraw = false;
-    return 0;
-}
 
 Status next_event(State* state) {
     SDL_Event event;
@@ -78,7 +45,7 @@ Status next_event(State* state) {
     return Proceed;
 }
 
-int all_pending_events(State* state) {
+int all_events(State* state) {
     while (true) {
         /* process event */
         Status stat = next_event(state);
@@ -95,25 +62,6 @@ int all_pending_events(State* state) {
             }
         }
     }
-}
-
-/*
-    Returns: A newly allocated SDL_Surface, owned by the caller, or NULL if there was an error.
-    Check the SDL error with the ERROR() macro.
-*/
-SDL_Surface* const_png_to_surface(const void *mem, int size) {
-    SDL_RWops* rw = SDL_RWFromConstMem(mem, size);
-    if (!rw) {
-        return NULL;
-    }
-    
-    SDL_Surface* surf = IMG_LoadTyped_RW(rw, true, "PNG");
-    if (!surf) {
-        /* IMG will close the RW even if there's an error while loading */
-        return NULL;
-    }
-
-    return surf;
 }
 
 int run_window(State* state) {
@@ -154,7 +102,7 @@ int run_window(State* state) {
         return 1;
     }
 
-    return all_pending_events(state);
+    return all_events(state);
 }
 
 int run_img() {
