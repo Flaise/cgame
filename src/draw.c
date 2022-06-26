@@ -14,6 +14,11 @@ void redraw(State* state) {
 }
 
 int draw_now(State* state) {
+    if (SDL_SetRenderTarget(state->renderer, NULL) != 0) {
+        ERROR("SDL_SetRenderTarget");
+        return 1;
+    }
+
     if (SDL_SetRenderDrawColor(state->renderer, 60, 0, 0, 255) != 0) {
         WARN("SDL_SetRenderDrawColor");
     }
@@ -22,14 +27,29 @@ int draw_now(State* state) {
         WARN("SDL_RenderClear");
     }
     
-    SDL_Rect srcrect = {
+    // SDL_Rect srcrect = {
+        // .x = 0,
+        // .y = 0,
+        // .w = 64,
+        // .h = 64,
+    // };
+
+    // if (SDL_RenderCopy(state->renderer, state->floor, &srcrect, &srcrect) != 0) {
+        // WARN("SDL_RenderCopy");
+    // }
+
+    int w;
+    int h;
+    SDL_GetWindowSize(state->window, &w, &h);
+
+    SDL_Rect dest = {
         .x = 0,
         .y = 0,
-        .w = 64,
-        .h = 64,
+        .w = w,
+        .h = h,
     };
-
-    if (SDL_RenderCopy(state->renderer, state->floor, &srcrect, &srcrect) != 0) {
+    
+    if (SDL_RenderCopy(state->renderer, state->terrain, NULL, &dest) != 0) {
         WARN("SDL_RenderCopy");
     }
 

@@ -68,6 +68,54 @@ int all_events(State* state) {
     }
 }
 
+int update_terrain(State* state) {
+    if (state->terrain == NULL) {
+        WARN("state->terrain not set");
+        return 1;
+    }
+    
+    if (SDL_SetRenderTarget(state->renderer, state->terrain) != 0) {
+        ERROR("SDL_SetRenderTarget");
+        return 1;
+    }
+
+    /* Turn everything magenta to show undrawn locations. */
+    if (SDL_SetRenderDrawColor(state->renderer, 255, 0, 255, 255) != 0) {
+        WARN("SDL_SetRenderDrawColor");
+    }
+    if (SDL_RenderClear(state->renderer) != 0) {
+        WARN("SDL_RenderClear");
+    }
+    
+    if (SDL_RenderCopy(state->renderer, state->floor, NULL, NULL) != 0) {
+        WARN("SDL_RenderCopy");
+    }
+}
+
+int make_terrain(State* state) {
+    Uint32 format = SDL_GetWindowPixelFormat(state->window);
+    if (format == SDL_PIXELFORMAT_UNKNOWN) {
+        WARN("SDL_GetWindowPixelFormat");
+        
+        format = SDL_PIXELFORMAT_RGBA8888;
+    }
+
+    int tiles_across = 8;
+    int tiles_down = 8;
+    int terrain_w = tiles_across * 64;
+    int terrain_h = tiles_down * 64;
+    SDL_Texture* terrain = SDL_CreateTexture(
+        state->renderer, format, SDL_TEXTUREACCESS_TARGET, terrain_w, terrain_h
+    );
+    if (terrain == NULL) {
+        ERROR("SDL_CreateTexture (terrain)");
+        return 1;
+    }
+    state->terrain = terrain;
+    
+    return 0;
+}
+
 int run_window(State* state) {
     SDL_Rect bounds;
     if (SDL_GetDisplayUsableBounds(0, &bounds) != 0) {
@@ -112,25 +160,13 @@ int run_window(State* state) {
     }
     state->floor = floor;
 
-    Uint32 format = SDL_GetWindowPixelFormat(win);
-    if (format == SDL_PIXELFORMAT_UNKNOWN) {
-        WARN("SDL_GetWindowPixelFormat");
-        
-        format = SDL_PIXELFORMAT_RGBA8888;
-    }
-
-    int tiles_across = 8;
-    int tiles_down = 8;
-    int terrain_w = tiles_across * 64;
-    int terrain_h = tiles_down * 64;
-    SDL_Texture* terrain = SDL_CreateTexture(
-        renderer, format, SDL_TEXTUREACCESS_TARGET, terrain_w, terrain_h
-    );
-    if (terrain == NULL) {
-        ERROR("SDL_CreateTexture (terrain)");
+    if (make_terrain(state) != 0) {
         return 1;
     }
-    state->terrain = terrain;
+
+    if (update_terrain(state) != 0) {
+        WARN("update_terrain failed");
+    }
 
     return all_events(state);
 }
@@ -164,13 +200,15 @@ int main(int argc, char* argv[]) {
 
     int status = run(state);
 
+    /* clear state before SDL_Quit because it involves SDL calls */
+    destroy_state(state);
+    
     if (IMG_Init(0) != 0) {
         IMG_Quit();
     }
     if (SDL_WasInit(0) != 0) {
         SDL_Quit();
     }
-    destroy_state(state);
     
     return status;
 }
