@@ -20,7 +20,7 @@ int draw_now(State* state) {
         return 1;
     }
 
-    if (SDL_SetRenderDrawColor(state->renderer, 60, 0, 0, 255) != 0) {
+    if (SDL_SetRenderDrawColor(state->renderer, 30, 0, 0, 255) != 0) {
         WARN("SDL_SetRenderDrawColor");
     }
 

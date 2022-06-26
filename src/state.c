@@ -27,6 +27,11 @@ void destroy_state(State* state) {
         state->floor = NULL;
     }
     
+    if (state->wall != NULL) {
+        SDL_DestroyTexture(state->wall);
+        state->wall = NULL;
+    }
+    
     if (state->terrain != NULL) {
         SDL_DestroyTexture(state->terrain);
         state->terrain = NULL;

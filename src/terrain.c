@@ -27,9 +27,15 @@ int terrain_update(State* state) {
         WARN("SDL_RenderClear");
     }
 
-    SDL_Rect srcrect = {
-        .x = 0,
-        .y = 0,
+    SDL_Rect srcfloor = {
+        .x = TILE_SIZE * 7,
+        .y = TILE_SIZE * 5,
+        .w = TILE_SIZE,
+        .h = TILE_SIZE,
+    };
+    SDL_Rect srcwall = {
+        .x = TILE_SIZE * 6,
+        .y = TILE_SIZE * 3,
         .w = TILE_SIZE,
         .h = TILE_SIZE,
     };
@@ -39,13 +45,27 @@ int terrain_update(State* state) {
         .w = TILE_SIZE,
         .h = TILE_SIZE,
     };
+    
+    for (int y = 1; y < TILES_DOWN - 1; y += 1) {
+        for (int x = 1; x < TILES_ACROSS - 1; x += 1) {
+            dstrect.x = x * TILE_SIZE;
+            dstrect.y = y * TILE_SIZE;
+            if (SDL_RenderCopy(state->renderer, state->floor, &srcfloor, &dstrect) != 0) {
+                WARN("SDL_RenderCopy (floor)");
+                break;
+            }
+        }
+    }
 
     for (int y = 0; y < TILES_DOWN; y += 1) {
         for (int x = 0; x < TILES_ACROSS; x += 1) {
+            if (!(x == 0 || y == 0 || x == TILES_ACROSS - 1 || y == TILES_DOWN - 1)) {
+                continue;
+            }
             dstrect.x = x * TILE_SIZE;
             dstrect.y = y * TILE_SIZE;
-            if (SDL_RenderCopy(state->renderer, state->floor, &srcrect, &dstrect) != 0) {
-                WARN("SDL_RenderCopy");
+            if (SDL_RenderCopy(state->renderer, state->wall, &srcwall, &dstrect) != 0) {
+                WARN("SDL_RenderCopy (wall)");
                 break;
             }
         }

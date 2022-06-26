@@ -15,7 +15,11 @@
 #include "terrain.h"
 
 #include "res/floor.h"
-#define FLOOR __res_Floor___Grass_1_64x64_png
+/* #define RES_FLOOR __res_Floor___Grass_1_64x64_png */
+#define RES_FLOOR __res_Floor___Dirt_2_64x64_png
+#include "res/wall.h"
+#define RES_WALL __res_Wall___Brick_1_64x64_png
+/* #define RES_WALL __res_Wall___Brick_3_64x64_png */
 
 int run_window(State* state) {
     SDL_Rect bounds;
@@ -59,12 +63,19 @@ int run_window(State* state) {
         return 1;
     }
 
-    SDL_Texture* floor = const_png_to_texture(renderer, FLOOR, sizeof(FLOOR));
+    SDL_Texture* floor = const_png_to_texture(renderer, RES_FLOOR, sizeof(RES_FLOOR));
     if (floor == NULL) {
         ERROR("load PNG: floor");
         return 1;
     }
     state->floor = floor;
+    
+    SDL_Texture* wall = const_png_to_texture(renderer, RES_WALL, sizeof(RES_WALL));
+    if (wall == NULL) {
+        ERROR("load PNG: wall");
+        return 1;
+    }
+    state->wall = wall;
 
     if (terrain_init(state) != 0) {
         return 1;
