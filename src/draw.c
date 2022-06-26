@@ -45,20 +45,16 @@ SDL_Surface* const_png_to_surface(const void* mem, int size) {
         return NULL;
     }
     
-    SDL_Surface* surf = IMG_LoadTyped_RW(rw, true, "PNG");
+    return IMG_LoadTyped_RW(rw, true, "PNG");
     /* IMG will close the RW even if there's an error while loading */
-    return surf;
 }
 
 SDL_Texture* const_png_to_texture(SDL_Renderer* renderer, const void* mem, int size) {
-    SDL_Surface* surf = const_png_to_surface(mem, size);
-    if (surf == NULL) {
+    SDL_RWops* rw = SDL_RWFromConstMem(mem, size);
+    if (rw == NULL) {
         return NULL;
     }
-
-    SDL_Texture* result = SDL_CreateTextureFromSurface(renderer, surf);
-
-    SDL_FreeSurface(surf);
-
-    return result;
+    
+    return IMG_LoadTextureTyped_RW(renderer, rw, true, "PNG");
+    /* IMG will close the RW even if there's an error while loading */
 }
