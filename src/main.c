@@ -64,6 +64,9 @@ int all_events(State* state) {
             if (draw_now(state) != 0) {
                 return 1;
             }
+        } else {
+            /* avoid hogging CPU when there's nothing to draw */
+            SDL_Delay(10);
         }
     }
 }

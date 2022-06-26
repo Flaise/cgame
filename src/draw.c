@@ -26,17 +26,6 @@ int draw_now(State* state) {
     if (SDL_RenderClear(state->renderer) != 0) {
         WARN("SDL_RenderClear");
     }
-
-    int win_w;
-    int win_h;
-    SDL_GetWindowSize(state->window, &win_w, &win_h); /* no return value */
-
-    int tex_w;
-    int tex_h;
-    if (SDL_QueryTexture(state->terrain, NULL, NULL, &tex_w, &tex_h) != 0) {
-        ERROR("SDL_QueryTexture (terrain)");
-        return 1;
-    }
     
     if (SDL_RenderCopy(state->renderer, state->terrain, NULL, NULL) != 0) {
         WARN("SDL_RenderCopy");
