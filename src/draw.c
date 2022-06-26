@@ -8,6 +8,7 @@
 #include "logging.h"
 #include "state.h"
 #include "draw.h"
+#include "terrain.h"
 
 void redraw(State* state) {
     state->needs_redraw = true;
@@ -26,10 +27,8 @@ int draw_now(State* state) {
     if (SDL_RenderClear(state->renderer) != 0) {
         WARN("SDL_RenderClear");
     }
-    
-    if (SDL_RenderCopy(state->renderer, state->terrain, NULL, NULL) != 0) {
-        WARN("SDL_RenderCopy");
-    }
+
+    terrain_draw(state);
 
     SDL_RenderPresent(state->renderer);
 
