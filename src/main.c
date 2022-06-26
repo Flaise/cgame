@@ -8,6 +8,7 @@
 #include "SDL_image.h"
 
 #include "logging.h"
+#include "math.h"
 #include "state.h"
 #include "draw.h"
 

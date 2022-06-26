@@ -6,6 +6,7 @@
 #include "SDL_image.h"
 
 #include "logging.h"
+#include "math.h"
 #include "state.h"
 #include "draw.h"
 
@@ -26,28 +27,19 @@ int draw_now(State* state) {
     if (SDL_RenderClear(state->renderer) != 0) {
         WARN("SDL_RenderClear");
     }
-    
-    // SDL_Rect srcrect = {
-        // .x = 0,
-        // .y = 0,
-        // .w = 64,
-        // .h = 64,
-    // };
 
-    // if (SDL_RenderCopy(state->renderer, state->floor, &srcrect, &srcrect) != 0) {
-        // WARN("SDL_RenderCopy");
-    // }
+    int win_w;
+    int win_h;
+    SDL_GetWindowSize(state->window, &win_w, &win_h); /* no return value */
 
-    int w;
-    int h;
-    SDL_GetWindowSize(state->window, &w, &h);
+    int tex_w;
+    int tex_h;
+    if (SDL_QueryTexture(state->terrain, NULL, NULL, &tex_w, &tex_h) != 0) {
+        ERROR("SDL_QueryTexture (terrain)");
+        return 1;
+    }
 
-    SDL_Rect dest = {
-        .x = 0,
-        .y = 0,
-        .w = w,
-        .h = h,
-    };
+    SDL_Rect dest = letterbox(win_w, win_h, tex_w, tex_h);
     
     if (SDL_RenderCopy(state->renderer, state->terrain, NULL, &dest) != 0) {
         WARN("SDL_RenderCopy");
