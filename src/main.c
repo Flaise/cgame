@@ -8,6 +8,7 @@
 #include "SDL_image.h"
 
 #include "logging.h"
+#include "constants.h"
 #include "state.h"
 #include "event.h"
 #include "draw.h"
@@ -53,7 +54,7 @@ int run_window(State* state) {
     }
     state->renderer = renderer;
 
-    if (SDL_RenderSetLogicalSize(renderer, 64 * 8, 64 * 8) != 0) {
+    if (SDL_RenderSetLogicalSize(renderer, VIEW_WIDTH, VIEW_HEIGHT) != 0) {
         ERROR("SDL_RenderSetLogicalSize");
         return 1;
     }

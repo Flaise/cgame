@@ -5,6 +5,7 @@
 #endif
 
 #include "logging.h"
+#include "constants.h"
 #include "state.h"
 
 int terrain_update(State* state) {
@@ -29,20 +30,20 @@ int terrain_update(State* state) {
     SDL_Rect srcrect = {
         .x = 0,
         .y = 0,
-        .w = 64,
-        .h = 64,
+        .w = TILE_SIZE,
+        .h = TILE_SIZE,
     };
     SDL_Rect dstrect = {
         .x = 0,
         .y = 0,
-        .w = 64,
-        .h = 64,
+        .w = TILE_SIZE,
+        .h = TILE_SIZE,
     };
 
-    for (int y = 0; y < 8; y += 1) {
-        for (int x = 0; x < 8; x += 1) {
-            dstrect.x = x * 64;
-            dstrect.y = y * 64;
+    for (int y = 0; y < TILES_DOWN; y += 1) {
+        for (int x = 0; x < TILES_ACROSS; x += 1) {
+            dstrect.x = x * TILE_SIZE;
+            dstrect.y = y * TILE_SIZE;
             if (SDL_RenderCopy(state->renderer, state->floor, &srcrect, &dstrect) != 0) {
                 WARN("SDL_RenderCopy");
                 break;
@@ -59,12 +60,8 @@ int terrain_init(State* state) {
         format = SDL_PIXELFORMAT_RGBA8888;
     }
 
-    int tiles_across = 8;
-    int tiles_down = 8;
-    int terrain_w = tiles_across * 64;
-    int terrain_h = tiles_down * 64;
     SDL_Texture* terrain = SDL_CreateTexture(
-        state->renderer, format, SDL_TEXTUREACCESS_TARGET, terrain_w, terrain_h
+        state->renderer, format, SDL_TEXTUREACCESS_TARGET, VIEW_WIDTH, VIEW_HEIGHT
     );
     if (terrain == NULL) {
         ERROR("SDL_CreateTexture (terrain)");
