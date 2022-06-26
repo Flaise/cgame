@@ -46,6 +46,10 @@ Status next_event(State* state) {
 }
 
 int all_events(State* state) {
+    if (draw_now(state) != 0) {
+        return 1;
+    }
+    
     while (true) {
         /* process event */
         Status stat = next_event(state);
@@ -108,30 +112,7 @@ int run_window(State* state) {
     }
     state->floor = floor;
 
-    if (draw_now(state) != 0) {
-        return 1;
-    }
-
     return all_events(state);
-}
-
-int run_img() {
-    State* state = make_state();
-    if (state == NULL) {
-        ERROR("make_state");
-        return 1;
-    }
-    
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-        ERROR("IMG_Init: png");
-        return 1;
-    }
-    
-    int status = run_window(state);
-    
-    IMG_Quit();
-    destroy_state(state);
-    return status;
 }
 
 /*
@@ -140,14 +121,36 @@ int run_img() {
  SDL_CreateWindow still works after SDL_Quit
  */
 
-int main(int argc, char* argv[]) {
+int run(State* state) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         ERROR("SDL_Init");
         return 1;
     }
 
-    int status = run_img();
+    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) == 0) {
+        ERROR("IMG_Init: png");
+        return 1;
+    }
     
-    SDL_Quit();
+    return run_window(state);
+}
+
+int main(int argc, char* argv[]) {
+    State* state = make_state();
+    if (state == NULL) {
+        ERROR("make_state");
+        return 1;
+    }
+
+    int status = run(state);
+
+    if (IMG_Init(0) != 0) {
+        IMG_Quit();
+    }
+    if (SDL_WasInit(0) != 0) {
+        SDL_Quit();
+    }
+    destroy_state(state);
+    
     return status;
 }
