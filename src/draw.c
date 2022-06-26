@@ -14,14 +14,12 @@ void redraw(State* state) {
 }
 
 int draw_now(State* state) {
-    SDL_Surface* screen = SDL_GetWindowSurface(state->window);
-    if (screen == NULL) {
-        ERROR("SDL_GetWindowSurface");
-        return 1;
+    if (SDL_SetRenderDrawColor(state->renderer, 60, 0, 0, 255) != 0) {
+        WARN("SDL_SetRenderDrawColor");
     }
-    
-    if (SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 60, 0, 0)) != 0) {
-        WARN("SDL_FillRect");
+
+    if (SDL_RenderClear(state->renderer) != 0) {
+        WARN("SDL_RenderClear");
     }
     
     SDL_Rect srcrect = {
@@ -31,29 +29,36 @@ int draw_now(State* state) {
         .h = 64,
     };
 
-    if (SDL_BlitSurface(state->floor, &srcrect, screen, NULL) != 0) {
-        WARN("SDL_BlitSurface");
+    if (SDL_RenderCopy(state->renderer, state->floor, &srcrect, &srcrect) != 0) {
+        WARN("SDL_RenderCopy");
     }
 
-    if (SDL_UpdateWindowSurface(state->window) != 0) {
-        WARN("SDL_UpdateWindowSurface");
-    }
+    SDL_RenderPresent(state->renderer);
 
     state->needs_redraw = false;
     return 0;
 }
 
-SDL_Surface* const_png_to_surface(const void *mem, int size) {
+SDL_Surface* const_png_to_surface(const void* mem, int size) {
     SDL_RWops* rw = SDL_RWFromConstMem(mem, size);
-    if (!rw) {
+    if (rw == NULL) {
         return NULL;
     }
     
     SDL_Surface* surf = IMG_LoadTyped_RW(rw, true, "PNG");
-    if (!surf) {
-        /* IMG will close the RW even if there's an error while loading */
+    /* IMG will close the RW even if there's an error while loading */
+    return surf;
+}
+
+SDL_Texture* const_png_to_texture(SDL_Renderer* renderer, const void* mem, int size) {
+    SDL_Surface* surf = const_png_to_surface(mem, size);
+    if (surf == NULL) {
         return NULL;
     }
 
-    return surf;
+    SDL_Texture* result = SDL_CreateTextureFromSurface(renderer, surf);
+
+    SDL_FreeSurface(surf);
+
+    return result;
 }

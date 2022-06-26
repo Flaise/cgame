@@ -91,7 +91,17 @@ int run_window(State* state) {
     }
     state->window = win;
 
-    SDL_Surface* floor = const_png_to_surface(FLOOR, sizeof(FLOOR));
+    SDL_Renderer* renderer = SDL_CreateRenderer(
+        win, -1,
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE
+    );
+    if (renderer == NULL) {
+        ERROR("SDL_CreateRenderer");
+        return 1;
+    }
+    state->renderer = renderer;
+
+    SDL_Texture* floor = const_png_to_texture(renderer, FLOOR, sizeof(FLOOR));
     if (floor == NULL) {
         ERROR("load PNG: floor");
         return 1;

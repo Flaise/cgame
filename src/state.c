@@ -23,8 +23,13 @@ void destroy_state(State* state) {
     }
 
     if (state->floor != NULL) {
-        SDL_FreeSurface(state->floor);
+        SDL_DestroyTexture(state->floor);
         state->floor = NULL;
+    }
+
+    if (state->renderer != NULL) {
+        SDL_DestroyRenderer(state->renderer);
+        state->renderer = NULL;
     }
     
     if (state->window != NULL) {

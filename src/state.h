@@ -3,7 +3,8 @@
 typedef struct {
     bool needs_redraw;
     SDL_Window* window;
-    SDL_Surface* floor;
+    SDL_Renderer* renderer;
+    SDL_Texture* floor;
 } State;
 
 /*
