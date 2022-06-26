@@ -6,7 +6,6 @@
 #include "SDL_image.h"
 
 #include "logging.h"
-#include "math.h"
 #include "state.h"
 #include "draw.h"
 
@@ -38,10 +37,8 @@ int draw_now(State* state) {
         ERROR("SDL_QueryTexture (terrain)");
         return 1;
     }
-
-    SDL_Rect dest = letterbox(win_w, win_h, tex_w, tex_h);
     
-    if (SDL_RenderCopy(state->renderer, state->terrain, NULL, &dest) != 0) {
+    if (SDL_RenderCopy(state->renderer, state->terrain, NULL, NULL) != 0) {
         WARN("SDL_RenderCopy");
     }
 

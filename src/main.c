@@ -33,11 +33,10 @@ Status next_event(State* state) {
                click on task bar to unminimize = Restored */
             case SDL_WINDOWEVENT:
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    int width = event.window.data1;
-                    int height = event.window.data2;
+                    /* int width = event.window.data1;
+                       int height = event.window.data2; */
 
-                    /* TODO: do something with w/h? */
-
+                    /* letterboxing is done automatically with SDL_RenderSetLogicalSize */
                     redraw(state);
                 }
                 continue;
@@ -87,8 +86,14 @@ int update_terrain(State* state) {
     if (SDL_RenderClear(state->renderer) != 0) {
         WARN("SDL_RenderClear");
     }
-    
-    if (SDL_RenderCopy(state->renderer, state->floor, NULL, NULL) != 0) {
+
+    SDL_Rect srcrect = {
+        .x = 0,
+        .y = 0,
+        .w = 64,
+        .h = 64,
+    };
+    if (SDL_RenderCopy(state->renderer, state->floor, &srcrect, NULL) != 0) {
         WARN("SDL_RenderCopy");
     }
 }
@@ -153,6 +158,11 @@ int run_window(State* state) {
         return 1;
     }
     state->renderer = renderer;
+
+    if (SDL_RenderSetLogicalSize(renderer, 64 * 8, 64 * 8) != 0) {
+        ERROR("SDL_RenderSetLogicalSize");
+        return 1;
+    }
 
     SDL_Texture* floor = const_png_to_texture(renderer, FLOOR, sizeof(FLOOR));
     if (floor == NULL) {
