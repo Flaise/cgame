@@ -21,7 +21,7 @@
 #define RES_WALL __res_Wall___Brick_1_64x64_png
 /* #define RES_WALL __res_Wall___Brick_3_64x64_png */
 
-int run_window(State* state) {
+int window_init(State* state) {
     SDL_Rect bounds;
     if (SDL_GetDisplayUsableBounds(0, &bounds) != 0) {
         WARN("SDL_GetDisplayUsableBounds");
@@ -48,8 +48,12 @@ int run_window(State* state) {
     }
     state->window = win;
 
+    return 0;
+}
+
+int renderer_init(State* state) {
     SDL_Renderer* renderer = SDL_CreateRenderer(
-        win, -1,
+        state->window, -1,
         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE
     );
     if (renderer == NULL) {
@@ -63,29 +67,25 @@ int run_window(State* state) {
         return 1;
     }
 
-    SDL_Texture* floor = const_png_to_texture(renderer, RES_FLOOR, sizeof(RES_FLOOR));
+    return 0;
+}
+
+int textures_init(State* state) {
+    SDL_Texture* floor = const_png_to_texture(state->renderer, RES_FLOOR, sizeof(RES_FLOOR));
     if (floor == NULL) {
         ERROR("load PNG: floor");
         return 1;
     }
     state->floor = floor;
     
-    SDL_Texture* wall = const_png_to_texture(renderer, RES_WALL, sizeof(RES_WALL));
+    SDL_Texture* wall = const_png_to_texture(state->renderer, RES_WALL, sizeof(RES_WALL));
     if (wall == NULL) {
         ERROR("load PNG: wall");
         return 1;
     }
     state->wall = wall;
 
-    if (terrain_init(state) != 0) {
-        return 1;
-    }
-
-    if (terrain_update(state) != 0) {
-        WARN("terrain_update");
-    }
-
-    return all_events(state);
+    return 0;
 }
 
 /*
@@ -105,7 +105,23 @@ int run(State* state) {
         return 1;
     }
     
-    return run_window(state);
+    if (window_init(state) != 0) {
+        return 1;
+    }
+    if (renderer_init(state) != 0) {
+        return 1;
+    }
+    if (textures_init(state) != 0) {
+        return 1;
+    }
+    if (terrain_init(state) != 0) {
+        return 1;
+    }
+    if (terrain_update(state) != 0) {
+        WARN("terrain_update");
+    }
+
+    return all_events(state);
 }
 
 int main(int argc, char* argv[]) {
