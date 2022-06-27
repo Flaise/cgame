@@ -3,6 +3,8 @@
 #define TILE_SIZE 64
 #define TILES_ACROSS 10
 #define TILES_DOWN 6
+#define TILE_RIGHT (TILES_ACROSS - 1)
+#define TILE_BOTTOM (TILES_DOWN - 1)
 
 #define VIEW_WIDTH (TILE_SIZE * TILES_ACROSS)
 #define VIEW_HEIGHT (TILE_SIZE * TILES_DOWN)
@@ -36,4 +38,5 @@ typedef struct {
     SDL_Texture* textures[TEXTURE_COUNT];
     Icon icon_wall;
     Icon icon_floor;
+    Icon icon_pyramid;
 } State;
