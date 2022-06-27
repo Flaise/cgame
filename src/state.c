@@ -14,8 +14,10 @@ State* make_state() {
     state->needs_redraw = true;
     state->window = NULL;
     state->tiles = NULL;
-    state->hover_x = -1;
-    state->hover_y = -1;
+    state->selection.hover_x = -1;
+    state->selection.hover_y = -1;
+    state->selection.select_x = -1;
+    state->selection.select_y = -1;
     return state;
 }
 

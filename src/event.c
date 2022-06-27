@@ -4,6 +4,7 @@
 #include "SDL2/SDL.h"
 #endif
 
+#include "logging.h"
 #include "constants.h"
 #include "state.h"
 #include "draw.h"
@@ -19,22 +20,48 @@ void size_changed(State* state, int width, int height) {
     redraw(state);
 }
 
-void mouse_motion(State* state, int x, int y) {
-    /* < VIEW_WIDTH because <= will still create the vertical bar */
-    if (x > 0 && y > 0 && x < VIEW_WIDTH && y < VIEW_HEIGHT) {
-        state->hover_x = x / TILE_SIZE;
-        state->hover_y = y / TILE_SIZE;
+bool in_view(Sint32 x, Sint32 y) {
+    /* < VIEW_WIDTH because <= will still create a vertical bar when hovering */
+    return x > 0 && y > 0 && x < VIEW_WIDTH && y < VIEW_HEIGHT;
+}
+
+void mouse_motion(State* state, Sint32 x, Sint32 y) {
+    Selection* sel = &state->selection;
+    
+    if (in_view(x, y)) {
+        sel->hover_x = x / TILE_SIZE;
+        sel->hover_y = y / TILE_SIZE;
     } else {
-        state->hover_x = -1;
-        state->hover_y = -1;
+        sel->hover_x = -1;
+        sel->hover_y = -1;
     }
 
     redraw(state);
 }
 
 void mouse_leave(State* state) {
-    state->hover_x = -1;
-    state->hover_y = -1;
+    Selection* sel = &state->selection;
+    sel->hover_x = -1;
+    sel->hover_y = -1;
+    
+    redraw(state);
+}
+
+void mouse_button(State* state, Uint8 button, Sint32 x, Sint32 y) {
+    if (!(button == SDL_BUTTON_LEFT || button == SDL_BUTTON_RIGHT)) {
+        return;
+    }
+    
+    Selection* sel = &state->selection;
+
+    if (in_view(x, y) && (sel->select_x < 0 || sel->select_y < 0)) {
+        sel->select_x = x / TILE_SIZE;
+        sel->select_y = y / TILE_SIZE;
+    } else {
+        sel->select_x = -1;
+        sel->select_y = -1;
+    }
+    
     redraw(state);
 }
 
@@ -61,6 +88,10 @@ Status events_pending(State* state) {
             case SDL_MOUSEMOTION:
                 /* SDL_GetMouseState doesn't report transformed positions so pass event data */
                 mouse_motion(state, event.motion.x, event.motion.y);
+                continue;
+
+            case SDL_MOUSEBUTTONDOWN:
+                mouse_button(state, event.button.button, event.button.x, event.button.y);
                 continue;
         }
     }
