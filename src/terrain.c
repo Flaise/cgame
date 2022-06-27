@@ -7,14 +7,16 @@
 #include "logging.h"
 #include "constants.h"
 #include "state.h"
+#include "icon.h"
 
 int terrain_update(State* state) {
-    if (state->terrain == NULL) {
-        WARN("state->terrain not set");
+    /* Start drawing to off-screen texture. */
+    SDL_Texture* terrain_buf = state->textures[TEXTURE_TERRAIN];
+    if (terrain_buf == NULL) {
+        WARN("terrain buffer not initialized");
         return 1;
     }
-    
-    if (SDL_SetRenderTarget(state->renderer, state->terrain) != 0) {
+    if (SDL_SetRenderTarget(state->renderer, terrain_buf) != 0) {
         ERROR("SDL_SetRenderTarget");
         return 1;
     }
@@ -27,18 +29,8 @@ int terrain_update(State* state) {
         WARN("SDL_RenderClear");
     }
 
-    SDL_Rect srcfloor = {
-        .x = 32 * 3,
-        .y = 32 * 5,
-        .w = 32,
-        .h = 32,
-    };
-    SDL_Rect srcwall = {
-        .x = 32 * 1,
-        .y = 32 * 2,
-        .w = 32,
-        .h = 32,
-    };
+    /* Draw icons. */
+
     SDL_Rect dstrect = {
         .x = 0,
         .y = 0,
@@ -50,10 +42,7 @@ int terrain_update(State* state) {
         for (int x = 1; x < TILES_ACROSS - 1; x += 1) {
             dstrect.x = x * TILE_SIZE;
             dstrect.y = y * TILE_SIZE;
-            if (SDL_RenderCopy(state->renderer, state->tiles, &srcfloor, &dstrect) != 0) {
-                WARN("SDL_RenderCopy (floor)");
-                break;
-            }
+            icon_draw(state, &state->icon_floor, &dstrect);
         }
     }
 
@@ -64,15 +53,14 @@ int terrain_update(State* state) {
             }
             dstrect.x = x * TILE_SIZE;
             dstrect.y = y * TILE_SIZE;
-            if (SDL_RenderCopy(state->renderer, state->tiles, &srcwall, &dstrect) != 0) {
-                WARN("SDL_RenderCopy (wall)");
-                break;
-            }
+            icon_draw(state, &state->icon_wall, &dstrect);
         }
     }
 }
 
 int terrain_init(State* state) {
+    /* off screen texture to avoid seams between tiles */
+    
     Uint32 format = SDL_GetWindowPixelFormat(state->window);
     if (format == SDL_PIXELFORMAT_UNKNOWN) {
         WARN("SDL_GetWindowPixelFormat");
@@ -87,13 +75,18 @@ int terrain_init(State* state) {
         ERROR("SDL_CreateTexture (terrain)");
         return 1;
     }
-    state->terrain = terrain;
+    state->textures[TEXTURE_TERRAIN] = terrain;
+
+    /* icons */
+
+    state->icon_floor = icon_tile_init(TEXTURE_TILES, 32, 3, 5);
+    state->icon_wall = icon_tile_init(TEXTURE_TILES, 32, 1, 2);
     
     return 0;
 }
 
 void terrain_draw(State* state) {
-    if (SDL_RenderCopy(state->renderer, state->terrain, NULL, NULL) != 0) {
+    if (SDL_RenderCopy(state->renderer, state->textures[TEXTURE_TERRAIN], NULL, NULL) != 0) {
         WARN("SDL_RenderCopy");
     }
 }

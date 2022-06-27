@@ -1,5 +1,3 @@
-#include <stdbool.h>
-
 #ifdef _WIN32a
 #include "SDL.h"
 #else
@@ -10,6 +8,7 @@
 #include "logging.h"
 #include "constants.h"
 #include "state.h"
+#include "icon.h"
 #include "event.h"
 #include "draw.h"
 #include "terrain.h"
@@ -76,13 +75,18 @@ int renderer_init(State* state) {
 }
 
 int textures_init(State* state) {
-    SDL_Texture* tiles = const_png_to_texture(state->renderer, RES_TILES, sizeof(RES_TILES));
-    if (tiles == NULL) {
-        ERROR("load PNG: tiles");
+    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) == 0) {
+        ERROR("IMG_Init: png");
         return 1;
     }
-    state->tiles = tiles;
+    
+    if (texture_load_const_png(state, TEXTURE_TILES, RES_TILES, sizeof(RES_TILES)) != 0) {
+        ERROR("texture_load_const_png (tiles)");
+        return 1;
+    }
 
+    /* Unconditionally unload IMG because no more textures will be loaded. */
+    IMG_Quit();
     return 0;
 }
 
@@ -95,11 +99,6 @@ int textures_init(State* state) {
 int run(State* state) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         ERROR("SDL_Init");
-        return 1;
-    }
-
-    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) == 0) {
-        ERROR("IMG_Init: png");
         return 1;
     }
     

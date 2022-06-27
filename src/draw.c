@@ -8,6 +8,7 @@
 #include "logging.h"
 #include "constants.h"
 #include "state.h"
+#include "icon.h"
 #include "draw.h"
 #include "terrain.h"
 
@@ -92,4 +93,23 @@ SDL_Texture* const_png_to_texture(SDL_Renderer* renderer, const void* mem, int s
     
     return IMG_LoadTextureTyped_RW(renderer, rw, true, "PNG");
     /* IMG will close the RW even if there's an error while loading */
+}
+
+int texture_load_const_png(State* state, TexID texture_id, const void* mem, int size) {
+    if (state->renderer == NULL) {
+        ERROR("renderer not initialized");
+        return 1;
+    }
+    if (state->textures[texture_id] != NULL) {
+        ERROR("texture already loaded");
+        return 1;
+    }
+    
+    SDL_Texture* texture = const_png_to_texture(state->renderer, mem, size);
+    if (texture == NULL) {
+        ERROR("load texture");
+        return 1;
+    }
+    state->textures[texture_id] = texture;
+    return 0;
 }

@@ -4,16 +4,15 @@
 #include "SDL2/SDL.h"
 #endif
 
+#include "constants.h"
 #include "state.h"
 
 State* make_state() {
-    State* state = malloc(sizeof(State));
+    State* state = calloc(1, sizeof(State));
     if (state == NULL) {
         return NULL;
     }
     state->needs_redraw = true;
-    state->window = NULL;
-    state->tiles = NULL;
     state->selection.hover_x = -1;
     state->selection.hover_y = -1;
     state->selection.select_x = -1;
@@ -25,24 +24,20 @@ void destroy_state(State* state) {
     if (state == NULL) {
         return;
     }
-    
-    if (state->tiles != NULL) {
-        SDL_DestroyTexture(state->tiles);
-        state->tiles = NULL;
-    }
-    
-    if (state->terrain != NULL) {
-        SDL_DestroyTexture(state->terrain);
-        state->terrain = NULL;
+
+    for (int i = 0; i < TEXTURE_COUNT; i += 1) {
+        if (state->textures[i] != NULL) {
+            SDL_DestroyTexture(state->textures[i]);
+        }
     }
 
     if (state->renderer != NULL) {
         SDL_DestroyRenderer(state->renderer);
-        state->renderer = NULL;
     }
     
     if (state->window != NULL) {
         SDL_DestroyWindow(state->window);
-        state->window = NULL;
     }
+
+    free(state);
 }

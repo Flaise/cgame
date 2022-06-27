@@ -14,7 +14,7 @@ xxd --include "./res/Tiny Top Down 32x32.png" ./src/res/terrain.h
 mkdir -p ./bin/ || exit 1
 
 cd src || exit 1 # removes extraneous folder name from log messages
-/usr/bin/time -f "compiled in %es" \
+/usr/bin/time -f "compilation: %es" \
     c99 -o ../bin/cgame *.c `pkg-config --cflags --libs sdl2 SDL2_image` || exit 1
 cd .. || exit 1
 
