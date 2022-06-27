@@ -22,6 +22,12 @@
 
 #include "res/terrain.h"
 #define RES_TILES __res_Tiny_Top_Down_32x32_png
+#include "res/dragon.h"
+#define RES_DRAGON __res_dragon_png
+#include "res/knight.h"
+#define RES_KNIGHT __res_knight_png
+#include "res/sheep.h"
+#define RES_SHEEP __res_sheep_png
 
 int window_init(State* state) {
     SDL_Rect bounds;
@@ -82,6 +88,18 @@ int textures_init(State* state) {
     
     if (texture_load_const_png(state, TEXTURE_TILES, RES_TILES, sizeof(RES_TILES)) != 0) {
         ERROR("texture_load_const_png (tiles)");
+        return 1;
+    }
+    if (texture_load_const_png(state, TEXTURE_DRAGON, RES_DRAGON, sizeof(RES_DRAGON)) != 0) {
+        ERROR("texture_load_const_png (dragon)");
+        return 1;
+    }
+    if (texture_load_const_png(state, TEXTURE_KNIGHT, RES_KNIGHT, sizeof(RES_KNIGHT)) != 0) {
+        ERROR("texture_load_const_png (knight)");
+        return 1;
+    }
+    if (texture_load_const_png(state, TEXTURE_SHEEP, RES_SHEEP, sizeof(RES_SHEEP)) != 0) {
+        ERROR("texture_load_const_png (sheep)");
         return 1;
     }
 

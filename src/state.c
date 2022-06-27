@@ -4,12 +4,14 @@
 #include "SDL2/SDL.h"
 #endif
 
+#include "logging.h"
 #include "constants.h"
 #include "state.h"
 
 State* make_state() {
     State* state = calloc(1, sizeof(State));
     if (state == NULL) {
+        ERROR("calloc");
         return NULL;
     }
     state->needs_redraw = true;

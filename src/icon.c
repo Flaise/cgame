@@ -11,6 +11,11 @@
 #include "icon.h"
 
 Icon icon_init(TexID texture_id, SDL_Rect source_rect) {
+    if (texture_id < 0 || texture_id >= TEXTURE_COUNT) {
+        ERROR("invalid texture id");
+        /* this function doesn't have a way to signal an error */
+    }
+    
     Icon result = {
         .source_rect = source_rect,
         .texture_id = texture_id,
@@ -29,6 +34,11 @@ Icon icon_tile_init(TexID texture_id, int tile_size, int x, int y) {
 }
 
 void icon_draw(State* state, Icon* icon, SDL_Rect* dest_rect) {
+    if (icon->texture_id < 0 || icon->texture_id >= TEXTURE_COUNT) {
+        WARN("icon has invalid texture id");
+        return;
+    }
+    
     SDL_Texture* texture = state->textures[icon->texture_id];
     if (texture == NULL) {
         WARN("icon texture not found");

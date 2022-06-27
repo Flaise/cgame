@@ -29,7 +29,7 @@ int terrain_update(State* state) {
         WARN("SDL_RenderClear");
     }
 
-    /* Draw icons. */
+    /* Draw tiles. */
 
     SDL_Rect dstrect = {
         .x = 0,
@@ -72,7 +72,7 @@ int terrain_update(State* state) {
 }
 
 int terrain_init(State* state) {
-    /* off screen texture to avoid seams between tiles */
+    /* Off screen texture to avoid seams between tiles. */
     
     Uint32 format = SDL_GetWindowPixelFormat(state->window);
     if (format == SDL_PIXELFORMAT_UNKNOWN) {
@@ -90,7 +90,7 @@ int terrain_init(State* state) {
     }
     state->textures[TEXTURE_TERRAIN] = terrain;
 
-    /* icons */
+    /* Initialize tiles. */
 
     state->icon_floor = icon_tile_init(TEXTURE_TILES, 32, 3, 5);
     state->icon_wall = icon_tile_init(TEXTURE_TILES, 32, 1, 2);

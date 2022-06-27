@@ -7,6 +7,9 @@ mkdir -p ./src/res || exit 1
 # xxd --include "./res/Wall - Brick 1 64x64.png" ./src/res/wall.h
 # xxd --include "./res/Wall - Brick 3 64x64.png" ./src/res/wall.h
 xxd --include "./res/Tiny Top Down 32x32.png" ./src/res/terrain.h
+xxd --include "./res/dragon.png" ./src/res/dragon.h
+xxd --include "./res/knight.png" ./src/res/knight.h
+xxd --include "./res/sheep.png" ./src/res/sheep.h
 
 
 # COMPILE C

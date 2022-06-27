@@ -11,8 +11,11 @@
 
 #define TEXTURE_UNKNOWN -1
 #define TEXTURE_TILES 0
-#define TEXTURE_TERRAIN 1
-#define TEXTURE_COUNT 2
+#define TEXTURE_DRAGON 1
+#define TEXTURE_KNIGHT 2
+#define TEXTURE_SHEEP 3
+#define TEXTURE_TERRAIN 4
+#define TEXTURE_COUNT 5
 
 /* Putting type definitions here to resolve issues with circular imports. */
 
