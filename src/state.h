@@ -4,8 +4,7 @@ typedef struct {
     bool needs_redraw;
     SDL_Window* window;
     SDL_Renderer* renderer;
-    SDL_Texture* floor;
-    SDL_Texture* wall;
+    SDL_Texture* tiles;
     SDL_Texture* terrain;
     int hover_x;
     int hover_y;

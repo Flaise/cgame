@@ -13,7 +13,7 @@ State* make_state() {
     }
     state->needs_redraw = true;
     state->window = NULL;
-    state->floor = NULL;
+    state->tiles = NULL;
     state->hover_x = -1;
     state->hover_y = -1;
     return state;
@@ -23,15 +23,10 @@ void destroy_state(State* state) {
     if (state == NULL) {
         return;
     }
-
-    if (state->floor != NULL) {
-        SDL_DestroyTexture(state->floor);
-        state->floor = NULL;
-    }
     
-    if (state->wall != NULL) {
-        SDL_DestroyTexture(state->wall);
-        state->wall = NULL;
+    if (state->tiles != NULL) {
+        SDL_DestroyTexture(state->tiles);
+        state->tiles = NULL;
     }
     
     if (state->terrain != NULL) {

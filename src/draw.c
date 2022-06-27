@@ -32,7 +32,7 @@ int draw_now(State* state) {
     terrain_draw(state);
 
     if (state->hover_x >= 0 && state->hover_y >= 0) {
-        if (SDL_SetRenderDrawColor(state->renderer, 30, 120, 110, 150) != 0) {
+        if (SDL_SetRenderDrawColor(state->renderer, 40, 110, 90, 140) != 0) {
             WARN("SDL_SetRenderDrawColor");
         }
 

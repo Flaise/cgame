@@ -14,12 +14,15 @@
 #include "draw.h"
 #include "terrain.h"
 
-#include "res/floor.h"
-/* #define RES_FLOOR __res_Floor___Grass_1_64x64_png */
+/* #include "res/floor.h"
+#define RES_FLOOR __res_Floor___Grass_1_64x64_png
 #define RES_FLOOR __res_Floor___Dirt_2_64x64_png
 #include "res/wall.h"
 #define RES_WALL __res_Wall___Brick_1_64x64_png
-/* #define RES_WALL __res_Wall___Brick_3_64x64_png */
+#define RES_WALL __res_Wall___Brick_3_64x64_png */
+
+#include "res/terrain.h"
+#define RES_TILES __res_Tiny_Top_Down_32x32_png
 
 int window_init(State* state) {
     SDL_Rect bounds;
@@ -38,7 +41,7 @@ int window_init(State* state) {
        like a maximized window. */
 
     SDL_Window* win = SDL_CreateWindow(
-        "Let there be graphics", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        "Interactive at last", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         bounds.w, bounds.h,
         SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE
     );
@@ -73,19 +76,12 @@ int renderer_init(State* state) {
 }
 
 int textures_init(State* state) {
-    SDL_Texture* floor = const_png_to_texture(state->renderer, RES_FLOOR, sizeof(RES_FLOOR));
-    if (floor == NULL) {
-        ERROR("load PNG: floor");
+    SDL_Texture* tiles = const_png_to_texture(state->renderer, RES_TILES, sizeof(RES_TILES));
+    if (tiles == NULL) {
+        ERROR("load PNG: tiles");
         return 1;
     }
-    state->floor = floor;
-    
-    SDL_Texture* wall = const_png_to_texture(state->renderer, RES_WALL, sizeof(RES_WALL));
-    if (wall == NULL) {
-        ERROR("load PNG: wall");
-        return 1;
-    }
-    state->wall = wall;
+    state->tiles = tiles;
 
     return 0;
 }
