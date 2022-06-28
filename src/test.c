@@ -17,21 +17,28 @@
 
 #include "minunit.h"
 
-// typedef union {
-    // Position position;
-    // Avatar avatar;
-// } ComponentState;
-// 
-// typedef struct {
-    // Entity entity;
-    // ComponentState state;
-// } Component;
-
 typedef struct {
     Entity entity;
 } AbstractComp;
 
-// #define sizeof(AbstractComp) no
+typedef struct {
+    void* mem;
+    size_t alive;
+    size_t total;
+    size_t compsize;
+} CompGroup;
+
+CompGroup compgroup_init(size_t total, size_t compsize) {
+    if (total == 0 || compsize == 0) {
+        ERROR("Invalid total or component size.");
+    }
+    CompGroup result;
+    result.mem = calloc(total, compsize);
+    result.alive = 0;
+    result.total = total;
+    result.compsize = compsize;
+    return result;
+}
 
 typedef struct {
     Entity entity;
@@ -79,23 +86,20 @@ int component_init(State* state, Entity entity) {
     // }
 // }
 
-#include <stdint.h>
 
-
-AbstractComp* component_at(void* components, uintptr_t compsize, uintptr_t index) {
-    return (AbstractComp*)(components + (index * compsize));
+AbstractComp* component_at(void* mem, size_t compsize, size_t index) {
+    return (AbstractComp*)(mem + (index * compsize));
 }
 
-
-void component_end(void* components, uintptr_t len, uintptr_t compsize, Entity entity) {
+void component_end(CompGroup* components, Entity entity) {
     bool found = false;
-    for (uintptr_t index = 0; index < len; index += 1) {
-        AbstractComp* comp = component_at(components, compsize, index);
+    for (size_t index = 0; index < components->alive; index += 1) {
+        AbstractComp* comp = component_at(components->mem, components->compsize, index);
         if (found) {
             /* memcpy is safe because found will never == true on first iteration. */
-            void* dest = components + (index - 1) * compsize;
-            void* source = components + (index * compsize);
-            memcpy(dest, source, compsize);
+            void* dest = components->mem + (index - 1) * components->compsize;
+            void* source = components->mem + (index * components->compsize);
+            memcpy(dest, source, components->compsize);
             
             if (comp->entity == 0) {
                 break;
@@ -109,6 +113,9 @@ void component_end(void* components, uintptr_t len, uintptr_t compsize, Entity e
                 found = true;
             }
         }
+    }
+    if (found) {
+        components->alive -= 1;
     }
 }
 
@@ -127,7 +134,10 @@ int tests_run = 0;
 int tests_failed = 0;
 
 static char* test_compbgone() {
-    CompInt comps[3];
+    CompGroup groupint = compgroup_init(3, sizeof(CompInt));
+    groupint.alive = 3;
+    CompInt* comps = (CompInt*)groupint.mem;
+    
     comps[0].entity = 1;
     comps[0].val = 6;
     
@@ -137,12 +147,14 @@ static char* test_compbgone() {
     comps[2].entity = 3;
     comps[2].val = 4;
 
-    component_end(&comps, 3, sizeof(CompInt), 1);
+    component_end(&groupint, 1);
+    
     mu_assert(comps[0].entity == 2, "");
     mu_assert(comps[0].val == 5, "");
     mu_assert(comps[1].entity == 3, "");
     mu_assert(comps[1].val == 4, "");
     mu_assert(comps[2].entity == 0, "");
+    mu_assert(groupint.alive == 2, "");
     return 0;
 }
 
