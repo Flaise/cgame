@@ -133,7 +133,7 @@ void component_end(CompGroup* components, Entity entity) {
 int tests_run = 0;
 int tests_failed = 0;
 
-static char* test_compbgone() {
+static char* test_compbgone32() {
     CompGroup groupint = compgroup_init(3, sizeof(CompInt));
     groupint.alive = 3;
     CompInt* comps = (CompInt*)groupint.mem;
@@ -158,8 +158,34 @@ static char* test_compbgone() {
     return 0;
 }
 
+static char* test_compbgone64() {
+    CompGroup groupdouble = compgroup_init(3, sizeof(CompDouble));
+    groupdouble.alive = 3;
+    CompDouble* comps = (CompDouble*)groupdouble.mem;
+    
+    comps[0].entity = 1;
+    comps[0].val = 6.5;
+    
+    comps[1].entity = 2;
+    comps[1].val = 5.5;
+    
+    comps[2].entity = 3;
+    comps[2].val = 4.5;
+
+    component_end(&groupdouble, 1);
+    
+    mu_assert(comps[0].entity == 2, "");
+    mu_assert(comps[0].val == 5.5, "");
+    mu_assert(comps[1].entity == 3, "");
+    mu_assert(comps[1].val == 4.5, "");
+    mu_assert(comps[2].entity == 0, "");
+    mu_assert(groupdouble.alive == 2, "");
+    return 0;
+}
+
 int main(int argc, char **argv) {
-    mu_run_test(test_compbgone);
+    mu_run_test(test_compbgone32);
+    mu_run_test(test_compbgone64);
 
     printf("Passed: %d Failed: %d\n", tests_run - tests_failed, tests_failed);
 
