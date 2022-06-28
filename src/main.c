@@ -13,6 +13,8 @@
 #include "draw.h"
 #include "terrain.h"
 
+#ifndef TEST
+
 /* #include "res/floor.h"
 #define RES_FLOOR __res_Floor___Grass_1_64x64_png
 #define RES_FLOOR __res_Floor___Dirt_2_64x64_png
@@ -160,3 +162,5 @@ int main(int argc, char* argv[]) {
     
     return status;
 }
+
+#endif /* TEST */
