@@ -1,3 +1,5 @@
+#ifndef TEST
+
 #ifdef _WIN32a
 #include "SDL.h"
 #else
@@ -12,8 +14,6 @@
 #include "event.h"
 #include "draw.h"
 #include "terrain.h"
-
-#ifndef TEST
 
 /* #include "res/floor.h"
 #define RES_FLOOR __res_Floor___Grass_1_64x64_png

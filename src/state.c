@@ -9,6 +9,7 @@
 #include "state.h"
 
 State* make_state() {
+    /* Using calloc to initialize to zero. */
     State* state = calloc(1, sizeof(State));
     if (state == NULL) {
         ERROR("calloc");
