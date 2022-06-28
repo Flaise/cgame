@@ -62,31 +62,6 @@ int component_init(State* state, Entity entity) {
 
 
 
-
-
-// void entity_end(State* state, Entity entity) {
-    // bool found = false;
-    // for (int i = 0; i < MAX_COMPONENTS; i += 1) {
-        // Avatar* comp = state->avatars[i];
-        // if (found) {
-            // /* Safe because found will never == true on first iteration. */
-            // state->avatars[i - 1] = *comp;
-            // if (comp->entity == 0) {
-                // break;
-            // }
-            // comp->entity = 0;
-        // } else {
-            // if (comp->entity == 0) {
-                // break;
-            // }
-            // if (comp->entity == entity) {
-                // found = true;
-            // }
-        // }
-    // }
-// }
-
-
 AbstractComp* component_at(void* mem, size_t compsize, size_t index) {
     return (AbstractComp*)(mem + (index * compsize));
 }
@@ -116,6 +91,13 @@ void component_end(CompGroup* components, Entity entity) {
     }
     if (found) {
         components->alive -= 1;
+    }
+}
+
+void groups_entity_end(CompGroup* groups, size_t ngroups, Entity entity) {
+    for (size_t i = 0; i < ngroups ; i += 1) {
+        CompGroup* group = &groups[i];
+        component_end(group, entity);
     }
 }
 
@@ -183,9 +165,30 @@ static char* test_compbgone64() {
     return 0;
 }
 
+static char* test_entbgone1() {
+    mu_assert(false, "TODO");
+    /* TODO: implement this after component creation */
+    
+    // CompGroup groupint = compgroup_init(3, sizeof(CompInt));
+    // groupint.alive = 1;
+    // CompInt* comps = (CompInt*)groupint.mem;
+    // 
+    // comps[0].entity = 1;
+    // comps[0].val = 6;
+    // 
+    // CompGroup groupdouble = compgroup_init(3, sizeof(CompDouble));
+    // groupdouble.alive = 3;
+    // CompDouble* comps = (CompDouble*)groupdouble.mem;
+// 
+    // 
+// 
+    // groups_entity_end(&groups, 2, 1);
+}
+
 int main(int argc, char **argv) {
     mu_run_test(test_compbgone32);
     mu_run_test(test_compbgone64);
+    mu_run_test(test_entbgone1);
 
     printf("Passed: %d Failed: %d\n", tests_run - tests_failed, tests_failed);
 
