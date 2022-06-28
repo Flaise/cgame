@@ -33,6 +33,22 @@ typedef struct {
     int select_y;
 } Selection;
 
+/* 0 = no entity */
+typedef int Entity;
+
+// #define MAX_COMPONENTS 20
+
+typedef struct {
+    Entity entity;
+    int x;
+    int y;
+} Position;
+
+typedef struct {
+    Entity entity;
+    Icon icon;
+} Avatar;
+
 typedef struct {
     bool needs_redraw;
     Selection selection;
@@ -42,4 +58,7 @@ typedef struct {
     Icon icon_wall;
     Icon icon_floor;
     Icon icon_pyramid;
+
+    // Position positions[MAX_COMPONENTS];
+    // Avatar avatars[MAX_COMPONENTS];
 } State;
