@@ -25,16 +25,13 @@ CompGroup compgroup_init(size_t total, size_t compsize) {
 // Entity entity_next(State* state) {
     // 
 // }
-// 
-// int component_init(State* state, Entity entity) {
-    // 
-// }
 
-void* component_alloc(CompGroup* group) {
+void* component_alloc(CompGroup* group, Entity entity) {
     if (group->alive == group->total) {
         return NULL;
     }
     void* result = group->mem + group->alive * group->compsize;
+    ((AbstractComp*)result)->entity = entity;
     group->alive += 1;
     return result;
 }

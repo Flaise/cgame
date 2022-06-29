@@ -46,29 +46,33 @@ static char* test_new_component() {
     CompGroup groupint = compgroup_init(3, sizeof(CompInt));
     mu_assert(groupint.alive == 0, "");
     
-    CompInt* comp_a = (CompInt*)component_alloc(&groupint);
+    CompInt* comp_a = (CompInt*)component_alloc(&groupint, 1);
     mu_assert(comp_a != NULL, "");
+    mu_assert(comp_a->entity == 1, "");
     mu_assert(groupint.alive == 1, "");
     comp_a->val = 5;
     
-    CompInt* comp_b = (CompInt*)component_alloc(&groupint);
+    CompInt* comp_b = (CompInt*)component_alloc(&groupint, 2);
     mu_assert(comp_b != NULL, "");
+    mu_assert(comp_b->entity == 2, "");
     mu_assert(groupint.alive == 2, "");
     
     comp_b->val = 6;
     mu_assert(comp_a->val == 5, "");
     
-    CompInt* comp_c = (CompInt*)component_alloc(&groupint);
+    CompInt* comp_c = (CompInt*)component_alloc(&groupint, 3);
     mu_assert(comp_c != NULL, "");
+    mu_assert(comp_c->entity == 3, "");
     mu_assert(groupint.alive == 3, "");
 
     comp_c->val = 7;
     mu_assert(comp_a->val == 5, "");
 
-    CompInt* comp_d = (CompInt*)component_alloc(&groupint);
+    CompInt* comp_d = (CompInt*)component_alloc(&groupint, 4);
     mu_assert(comp_d == NULL, "");
     mu_assert(groupint.alive == 3, "");
     mu_assert(comp_a->val == 5, "");
+    mu_assert(comp_a->entity == 1, "");
 }
 
 static char* test_compbgone32() {
@@ -122,23 +126,13 @@ static char* test_compbgone64() {
 }
 
 static char* test_entbgone1() {
-    mu_assert(false, "TODO");
-    /* TODO: implement this after component creation */
+    CompGroup groupint = compgroup_init(3, sizeof(CompInt));
+    CompInt* comp = (CompInt*)component_alloc(&groupint, 1);
+    mu_assert(comp != NULL, "");
+    mu_assert(groupint.alive == 1, "");
     
-    // CompGroup groupint = compgroup_init(3, sizeof(CompInt));
-    // groupint.alive = 1;
-    // CompInt* comps = (CompInt*)groupint.mem;
-    // 
-    // comps[0].entity = 1;
-    // comps[0].val = 6;
-    // 
-    // CompGroup groupdouble = compgroup_init(3, sizeof(CompDouble));
-    // groupdouble.alive = 3;
-    // CompDouble* comps = (CompDouble*)groupdouble.mem;
-// 
-    // 
-// 
-    // groups_entity_end(&groups, 2, 1);
+    component_end(&groupint, 1);
+    mu_assert(groupint.alive == 0, "");
 }
 
 int main(int argc, char **argv) {
