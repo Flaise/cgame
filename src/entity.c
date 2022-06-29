@@ -23,22 +23,37 @@ CompGroup compgroup_init(size_t total, size_t compsize) {
     return result;
 }
 
-// Entity entity_next(State* state) {
-    // 
-// }
+static AbstractComp* component_at(void* mem, size_t compsize, size_t index) {
+    return (AbstractComp*)(mem + (index * compsize));
+}
 
 void* component_init(CompGroup* group, Entity entity) {
+    if (group == NULL) {
+        return NULL;
+    }
     if (group->alive == group->total) {
         return NULL;
     }
-    void* result = group->mem + group->alive * group->compsize;
-    ((AbstractComp*)result)->entity = entity;
-    group->alive += 1;
-    return result;
-}
+    if (entity == 0) {
+        WARN("Entity can't be 0.");
+        return NULL;
+    }
 
-static AbstractComp* component_at(void* mem, size_t compsize, size_t index) {
-    return (AbstractComp*)(mem + (index * compsize));
+    /* TODO: also do insertion sort here */
+    for (size_t r = group->alive; r > 0;) {
+        /* Loop counter has to decrement first because the size_t can't go negative. */
+        r -= 1;
+        
+        AbstractComp* other = component_at(group->mem, group->compsize, r);
+        if (other->entity == entity) {
+            return NULL;
+        }
+    }
+    
+    AbstractComp* result = component_at(group->mem, group->compsize, group->alive);
+    result->entity = entity;
+    group->alive += 1;
+    return (void*)result;
 }
 
 void component_end(CompGroup* group, Entity entity) {

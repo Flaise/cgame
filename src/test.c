@@ -153,12 +153,12 @@ static char* test_entbgone2() {
     };
     CompGroup* groupa = &groups[0];
     CompGroup* groupb = &groups[1];
-    
+
     CompInt* comp = (CompInt*)component_init(groupa, 1);
     mu_assert(comp != NULL, "");
     mu_assert(groupa->alive == 1, "");
     comp->val = 7;
-    
+
     comp = (CompInt*)component_init(groupa, 2);
     mu_assert(comp != NULL, "");
     mu_assert(groupa->alive == 2, "");
@@ -189,11 +189,27 @@ static char* test_entbgone2() {
     return 0;
 }
 
+static char* test_no_double_component() {
+    CompGroup groupint = compgroup_init(3, sizeof(CompInt));
+    CompInt* comps = (CompInt*)groupint.mem;
+
+    CompInt* comp = comp_int_init(&groupint, 1, 4);
+    mu_assert(comp != NULL, "");
+    comp = comp_int_init(&groupint, 1, 8);
+    mu_assert(comp == NULL, "");
+
+    mu_assert(comps[0].entity == 1, "");
+    mu_assert(comps[0].val == 4, "");
+    
+    return 0;
+}
+
 int main(int argc, char **argv) {
     mu_run_test(test_compbgone32);
     mu_run_test(test_compbgone64);
     mu_run_test(test_entbgone1);
     mu_run_test(test_entbgone2);
+    mu_run_test(test_no_double_component);
 
     printf("Passed: %d Failed: %d\n", tests_run - tests_failed, tests_failed);
 
