@@ -28,17 +28,6 @@ typedef struct {
     double val;
 } CompDouble;
 
-// void draw(state) {
-    // for (int i = 0; i < MAX_COMPONENTS; i += 1) {
-        // // check if entity alive
-        // CPosition* cposition = ...
-        // CIcon* cicon = ...
-// 
-        // draw(cposition, cicon);
-    // }
-// }
-
-
 int tests_run = 0;
 int tests_failed = 0;
 
@@ -46,13 +35,13 @@ static char* test_new_component() {
     CompGroup groupint = compgroup_init(3, sizeof(CompInt));
     mu_assert(groupint.alive == 0, "");
     
-    CompInt* comp_a = (CompInt*)component_alloc(&groupint, 1);
+    CompInt* comp_a = (CompInt*)component_init(&groupint, 1);
     mu_assert(comp_a != NULL, "");
     mu_assert(comp_a->entity == 1, "");
     mu_assert(groupint.alive == 1, "");
     comp_a->val = 5;
     
-    CompInt* comp_b = (CompInt*)component_alloc(&groupint, 2);
+    CompInt* comp_b = (CompInt*)component_init(&groupint, 2);
     mu_assert(comp_b != NULL, "");
     mu_assert(comp_b->entity == 2, "");
     mu_assert(groupint.alive == 2, "");
@@ -60,7 +49,7 @@ static char* test_new_component() {
     comp_b->val = 6;
     mu_assert(comp_a->val == 5, "");
     
-    CompInt* comp_c = (CompInt*)component_alloc(&groupint, 3);
+    CompInt* comp_c = (CompInt*)component_init(&groupint, 3);
     mu_assert(comp_c != NULL, "");
     mu_assert(comp_c->entity == 3, "");
     mu_assert(groupint.alive == 3, "");
@@ -68,7 +57,7 @@ static char* test_new_component() {
     comp_c->val = 7;
     mu_assert(comp_a->val == 5, "");
 
-    CompInt* comp_d = (CompInt*)component_alloc(&groupint, 4);
+    CompInt* comp_d = (CompInt*)component_init(&groupint, 4);
     mu_assert(comp_d == NULL, "");
     mu_assert(groupint.alive == 3, "");
     mu_assert(comp_a->val == 5, "");
@@ -127,7 +116,7 @@ static char* test_compbgone64() {
 
 static char* test_entbgone1() {
     CompGroup groupint = compgroup_init(3, sizeof(CompInt));
-    CompInt* comp = (CompInt*)component_alloc(&groupint, 1);
+    CompInt* comp = (CompInt*)component_init(&groupint, 1);
     mu_assert(comp != NULL, "");
     mu_assert(groupint.alive == 1, "");
     
@@ -140,12 +129,12 @@ static char* test_entbgone1() {
 static char* test_entbgone2() {
     CompGroup groupint = compgroup_init(3, sizeof(CompInt));
 
-    CompInt* comp = (CompInt*)component_alloc(&groupint, 1);
+    CompInt* comp = (CompInt*)component_init(&groupint, 1);
     mu_assert(comp != NULL, "");
     mu_assert(groupint.alive == 1, "");
     comp->val = 3;
 
-    comp = (CompInt*)component_alloc(&groupint, 2);
+    comp = (CompInt*)component_init(&groupint, 2);
     mu_assert(comp != NULL, "");
     mu_assert(groupint.alive == 2, "");
     comp->val = 99;

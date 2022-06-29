@@ -26,7 +26,7 @@ CompGroup compgroup_init(size_t total, size_t compsize) {
     // 
 // }
 
-void* component_alloc(CompGroup* group, Entity entity) {
+void* component_init(CompGroup* group, Entity entity) {
     if (group->alive == group->total) {
         return NULL;
     }
@@ -36,7 +36,7 @@ void* component_alloc(CompGroup* group, Entity entity) {
     return result;
 }
 
-AbstractComp* component_at(void* mem, size_t compsize, size_t index) {
+static AbstractComp* component_at(void* mem, size_t compsize, size_t index) {
     return (AbstractComp*)(mem + (index * compsize));
 }
 
