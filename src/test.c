@@ -133,12 +133,38 @@ static char* test_entbgone1() {
     
     component_end(&groupint, 1);
     mu_assert(groupint.alive == 0, "");
+    
+    return 0;
+}
+
+static char* test_entbgone2() {
+    CompGroup groupint = compgroup_init(3, sizeof(CompInt));
+
+    CompInt* comp = (CompInt*)component_alloc(&groupint, 1);
+    mu_assert(comp != NULL, "");
+    mu_assert(groupint.alive == 1, "");
+    comp->val = 3;
+
+    comp = (CompInt*)component_alloc(&groupint, 2);
+    mu_assert(comp != NULL, "");
+    mu_assert(groupint.alive == 2, "");
+    comp->val = 99;
+
+    component_end(&groupint, 1);
+    mu_assert(groupint.alive == 1, "");
+
+    comp = (CompInt*)groupint.mem;
+    mu_assert(comp->entity == 2, "");
+    mu_assert(comp->val == 99, "");
+    
+    return 0;
 }
 
 int main(int argc, char **argv) {
     mu_run_test(test_compbgone32);
     mu_run_test(test_compbgone64);
     mu_run_test(test_entbgone1);
+    mu_run_test(test_entbgone2);
 
     printf("Passed: %d Failed: %d\n", tests_run - tests_failed, tests_failed);
 
