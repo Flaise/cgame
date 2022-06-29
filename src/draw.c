@@ -6,6 +6,7 @@
 #include "SDL_image.h"
 
 #include "logging.h"
+#include "entity.h"
 #include "constants.h"
 #include "state.h"
 #include "icon.h"

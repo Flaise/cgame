@@ -1,4 +1,15 @@
 
+typedef struct {
+    Entity entity;
+    int x;
+    int y;
+} CPosition;
+
+typedef struct {
+    Entity entity;
+    Icon icon;
+} CAvatar;
+
 /*
     Allocates and returns a new blank State. Caller must free the state. Returns NULL if the
     allocation failed.

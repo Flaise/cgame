@@ -7,6 +7,7 @@
 #endif
 
 #include "logging.h"
+#include "entity.h"
 #include "constants.h"
 #include "icon.h"
 

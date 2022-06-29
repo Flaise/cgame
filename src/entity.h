@@ -1,4 +1,7 @@
 
+/* 0 = no entity */
+typedef int Entity;
+
 typedef struct {
     Entity entity;
 } AbstractComp;

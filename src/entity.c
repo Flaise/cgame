@@ -7,8 +7,8 @@
 
 #include <stddef.h>
 #include "logging.h"
-#include "constants.h"
 #include "entity.h"
+#include "constants.h"
 
 CompGroup compgroup_init(size_t total, size_t compsize) {
     if (total == 0 || compsize == 0) {

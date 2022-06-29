@@ -5,8 +5,8 @@
 #endif
 
 #include "logging.h"
+#include "entity.h"
 #include "constants.h"
-#include "state.h"
 #include "icon.h"
 
 int terrain_update(State* state) {

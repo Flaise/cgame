@@ -5,6 +5,7 @@
 #endif
 
 #include "logging.h"
+#include "entity.h"
 #include "constants.h"
 #include "state.h"
 
@@ -20,6 +21,9 @@ State* make_state() {
     state->selection.hover_y = -1;
     state->selection.select_x = -1;
     state->selection.select_y = -1;
+
+    state->compgroups[COMPTYPE_POSITION] = compgroup_init(10, sizeof(CPosition));
+    state->compgroups[COMPTYPE_AVATAR] = compgroup_init(10, sizeof(CAvatar));
     return state;
 }
 

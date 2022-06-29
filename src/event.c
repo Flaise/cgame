@@ -5,6 +5,7 @@
 #endif
 
 #include "logging.h"
+#include "entity.h"
 #include "constants.h"
 #include "state.h"
 #include "draw.h"
