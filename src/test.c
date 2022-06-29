@@ -18,7 +18,6 @@
 
 #include "minunit.h"
 
-
 typedef struct {
     Entity entity;
     int val;
@@ -28,8 +27,6 @@ typedef struct {
     Entity entity;
     double val;
 } CompDouble;
-
-
 
 // void draw(state) {
     // for (int i = 0; i < MAX_COMPONENTS; i += 1) {
@@ -44,6 +41,35 @@ typedef struct {
 
 int tests_run = 0;
 int tests_failed = 0;
+
+static char* test_new_component() {
+    CompGroup groupint = compgroup_init(3, sizeof(CompInt));
+    mu_assert(groupint.alive == 0, "");
+    
+    CompInt* comp_a = (CompInt*)component_alloc(&groupint);
+    mu_assert(comp_a != NULL, "");
+    mu_assert(groupint.alive == 1, "");
+    comp_a->val = 5;
+    
+    CompInt* comp_b = (CompInt*)component_alloc(&groupint);
+    mu_assert(comp_b != NULL, "");
+    mu_assert(groupint.alive == 2, "");
+    
+    comp_b->val = 6;
+    mu_assert(comp_a->val == 5, "");
+    
+    CompInt* comp_c = (CompInt*)component_alloc(&groupint);
+    mu_assert(comp_c != NULL, "");
+    mu_assert(groupint.alive == 3, "");
+
+    comp_c->val = 7;
+    mu_assert(comp_a->val == 5, "");
+
+    CompInt* comp_d = (CompInt*)component_alloc(&groupint);
+    mu_assert(comp_d == NULL, "");
+    mu_assert(groupint.alive == 3, "");
+    mu_assert(comp_a->val == 5, "");
+}
 
 static char* test_compbgone32() {
     CompGroup groupint = compgroup_init(3, sizeof(CompInt));

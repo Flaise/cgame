@@ -30,21 +30,28 @@ CompGroup compgroup_init(size_t total, size_t compsize) {
     // 
 // }
 
-
+void* component_alloc(CompGroup* group) {
+    if (group->alive == group->total) {
+        return NULL;
+    }
+    void* result = group->mem + group->alive * group->compsize;
+    group->alive += 1;
+    return result;
+}
 
 AbstractComp* component_at(void* mem, size_t compsize, size_t index) {
     return (AbstractComp*)(mem + (index * compsize));
 }
 
-void component_end(CompGroup* components, Entity entity) {
+void component_end(CompGroup* group, Entity entity) {
     bool found = false;
-    for (size_t index = 0; index < components->alive; index += 1) {
-        AbstractComp* comp = component_at(components->mem, components->compsize, index);
+    for (size_t index = 0; index < group->alive; index += 1) {
+        AbstractComp* comp = component_at(group->mem, group->compsize, index);
         if (found) {
             /* memcpy is safe because found will never == true on first iteration. */
-            void* dest = components->mem + (index - 1) * components->compsize;
-            void* source = components->mem + (index * components->compsize);
-            memcpy(dest, source, components->compsize);
+            void* dest = group->mem + (index - 1) * group->compsize;
+            void* source = group->mem + (index * group->compsize);
+            memcpy(dest, source, group->compsize);
             
             if (comp->entity == 0) {
                 break;
@@ -60,13 +67,13 @@ void component_end(CompGroup* components, Entity entity) {
         }
     }
     if (found) {
-        components->alive -= 1;
+        group->alive -= 1;
     }
 }
 
-void groups_entity_end(CompGroup* groups, size_t ngroups, Entity entity) {
+void groups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity) {
     for (size_t i = 0; i < ngroups ; i += 1) {
-        CompGroup* group = &groups[i];
+        CompGroup* group = &group_arr[i];
         component_end(group, entity);
     }
 }

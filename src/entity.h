@@ -10,6 +10,7 @@ typedef struct {
     size_t compsize;
 } CompGroup;
 
+void* component_alloc(CompGroup* group);
 CompGroup compgroup_init(size_t total, size_t compsize);
-void component_end(CompGroup* components, Entity entity);
-void groups_entity_end(CompGroup* groups, size_t ngroups, Entity entity);
+void component_end(CompGroup* group, Entity entity);
+void groups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity);

@@ -13,7 +13,7 @@
 Icon icon_init(TexID texture_id, SDL_Rect source_rect) {
     if (texture_id < 0 || texture_id >= TEXTURE_COUNT) {
         ERROR("invalid texture id");
-        /* this function doesn't have a way to signal an error */
+        /* This function doesn't have a way to signal an error so just handle it in icon_draw(). */
     }
     
     Icon result = {
