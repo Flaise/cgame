@@ -10,6 +10,7 @@
 #include "logging.h"
 #include "entity.h"
 #include "constants.h"
+#include "component.h"
 #include "state.h"
 #include "icon.h"
 #include "event.h"
@@ -22,6 +23,14 @@ typedef struct {
     Entity entity;
     int val;
 } CompInt;
+
+CompInt* comp_int_init(CompGroup* group, Entity entity, int val) {
+    CompInt* result = (CompInt*)component_init(group, entity);
+    if (result != NULL) {
+        result->val = val;
+    }
+    return result;
+}
 
 typedef struct {
     Entity entity;
@@ -122,11 +131,11 @@ static char* test_entbgone1() {
     CompGroup* groupa = &groups[0];
     CompGroup* groupb = &groups[1];
     
-    CompInt* comp = (CompInt*)component_init(groupa, 1);
+    CompInt* comp = comp_int_init(groupa, 1, 4);
     mu_assert(comp != NULL, "");
     mu_assert(groupa->alive == 1, "");
 
-    comp = (CompInt*)component_init(groupb, 1);
+    comp = comp_int_init(groupb, 1, 5);
     mu_assert(comp != NULL, "");
     mu_assert(groupb->alive == 1, "");
 

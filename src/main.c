@@ -10,6 +10,7 @@
 #include "logging.h"
 #include "entity.h"
 #include "constants.h"
+#include "component.h"
 #include "state.h"
 #include "icon.h"
 #include "event.h"
@@ -138,6 +139,25 @@ int run(State* state) {
     if (terrain_update(state) != 0) {
         WARN("terrain_update");
     }
+
+
+
+    /* TODO: need character/bot/piece/whatever module */
+
+    /* TODO: icon_texture_init for entire texture */
+    state->icon_dragon = icon_tile_init(TEXTURE_DRAGON, 128, 0, 0);
+    state->icon_knight = icon_tile_init(TEXTURE_KNIGHT, 128, 0, 0);
+    state->icon_sheep = icon_tile_init(TEXTURE_SHEEP, 128, 0, 0);
+
+    Entity entity = 1; /* TODO: function to get next entity */
+
+    if (position_init(&state->components, 1, 2, 1) == NULL) {
+        WARN("position_init");
+    }
+    if (avatar_init(&state->components, 1, state->icon_dragon) == NULL) {
+        WARN("avatar_init");
+    }
+    
 
     return events_all(state);
 }

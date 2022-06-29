@@ -7,6 +7,7 @@
 #include "logging.h"
 #include "entity.h"
 #include "constants.h"
+#include "component.h"
 #include "state.h"
 
 State* make_state() {
@@ -21,9 +22,7 @@ State* make_state() {
     state->selection.hover_y = -1;
     state->selection.select_x = -1;
     state->selection.select_y = -1;
-
-    state->compgroups[COMPTYPE_POSITION] = compgroup_init(10, sizeof(CPosition));
-    state->compgroups[COMPTYPE_AVATAR] = compgroup_init(10, sizeof(CAvatar));
+    state->components = make_components();
     return state;
 }
 

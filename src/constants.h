@@ -17,10 +17,6 @@
 #define TEXTURE_TERRAIN 4
 #define TEXTURE_COUNT 5
 
-#define COMPTYPE_POSITION 0
-#define COMPTYPE_AVATAR 1
-#define COMPTYPE_COUNT 2
-
 /* Putting type definitions here to resolve issues with circular imports. */
 
 typedef int TexID;
@@ -37,15 +33,39 @@ typedef struct {
     int select_y;
 } Selection;
 
+#define COMPTYPE_POSITION 0
+#define COMPTYPE_AVATAR 1
+#define COMPTYPE_COUNT 2
+
+typedef struct {
+    Entity entity;
+    int x;
+    int y;
+} CPosition;
+
+typedef struct {
+    Entity entity;
+    Icon icon;
+} CAvatar;
+
+typedef struct {
+    CompGroup compgroups[COMPTYPE_COUNT];
+} Components;
+
 typedef struct {
     bool needs_redraw;
+    
     Selection selection;
+    Components components;
+    
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* textures[TEXTURE_COUNT];
+    
     Icon icon_wall;
     Icon icon_floor;
     Icon icon_pyramid;
-
-    CompGroup compgroups[COMPTYPE_COUNT];
+    Icon icon_dragon;
+    Icon icon_knight;
+    Icon icon_sheep;
 } State;

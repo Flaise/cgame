@@ -8,6 +8,7 @@
 #include "logging.h"
 #include "entity.h"
 #include "constants.h"
+#include "component.h"
 #include "state.h"
 #include "icon.h"
 #include "draw.h"

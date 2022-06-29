@@ -7,6 +7,7 @@
 #include "logging.h"
 #include "entity.h"
 #include "constants.h"
+#include "component.h"
 #include "icon.h"
 
 int terrain_update(State* state) {

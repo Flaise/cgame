@@ -9,6 +9,7 @@
 #include "logging.h"
 #include "entity.h"
 #include "constants.h"
+#include "component.h"
 #include "icon.h"
 
 Icon icon_init(TexID texture_id, SDL_Rect source_rect) {
