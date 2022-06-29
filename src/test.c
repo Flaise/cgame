@@ -189,7 +189,7 @@ static char* test_entbgone2() {
     return 0;
 }
 
-static char* test_no_double_component() {
+static char* test_no_duplicate_component() {
     CompGroup groupint = compgroup_init(3, sizeof(CompInt));
     CompInt* comps = (CompInt*)groupint.mem;
 
@@ -204,12 +204,71 @@ static char* test_no_double_component() {
     return 0;
 }
 
+static char* test_insertion_sort() {
+    CompGroup groupint = compgroup_init(3, sizeof(CompInt));
+    CompInt* comps = (CompInt*)groupint.mem;
+
+    CompInt* comp = comp_int_init(&groupint, 2, 4);
+    mu_assert(comp != NULL, "");
+    comp = comp_int_init(&groupint, 1, 8);
+    mu_assert(comp != NULL, "");
+    mu_assert(groupint.alive == 2, "");
+    
+    mu_assert(comps[0].entity == 1, "");
+    mu_assert(comps[0].val == 8, "");
+    mu_assert(comps[1].entity == 2, "");
+    mu_assert(comps[1].val == 4, "");
+
+    return 0;
+}
+
+static char* test_insertion_sort_filled() {
+    CompGroup groupint = compgroup_init(3, sizeof(CompInt));
+    CompInt* comps = (CompInt*)groupint.mem;
+
+    CompInt* comp = comp_int_init(&groupint, 3, 4);
+    mu_assert(comp != NULL, "");
+    comp = comp_int_init(&groupint, 2, 8);
+    mu_assert(comp != NULL, "");
+    comp = comp_int_init(&groupint, 1, 16);
+    mu_assert(comp != NULL, "");
+    mu_assert(groupint.alive == 3, "");
+    
+    mu_assert(comps[0].entity == 1, "");
+    mu_assert(comps[0].val == 16, "");
+    mu_assert(comps[1].entity == 2, "");
+    mu_assert(comps[1].val == 8, "");
+    mu_assert(comps[2].entity == 3, "");
+    mu_assert(comps[2].val == 4, "");
+
+    return 0;
+}
+
+static char* test_too_many_components() {
+    CompGroup groupint = compgroup_init(1, sizeof(CompInt));
+    CompInt* comps = (CompInt*)groupint.mem;
+
+    CompInt* comp = comp_int_init(&groupint, 1, 4);
+    mu_assert(comp != NULL, "");
+    comp = comp_int_init(&groupint, 2, 8);
+    mu_assert(comp == NULL, "");
+    mu_assert(groupint.alive == 1, "");
+    
+    mu_assert(comps[0].entity == 1, "");
+    mu_assert(comps[0].val == 4, "");
+
+    return 0;
+}
+
 int main(int argc, char **argv) {
     mu_run_test(test_compbgone32);
     mu_run_test(test_compbgone64);
     mu_run_test(test_entbgone1);
     mu_run_test(test_entbgone2);
-    mu_run_test(test_no_double_component);
+    mu_run_test(test_no_duplicate_component);
+    mu_run_test(test_insertion_sort);
+    mu_run_test(test_insertion_sort_filled);
+    mu_run_test(test_too_many_components);
 
     printf("Passed: %d Failed: %d\n", tests_run - tests_failed, tests_failed);
 

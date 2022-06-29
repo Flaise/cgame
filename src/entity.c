@@ -39,6 +39,8 @@ void* component_init(CompGroup* group, Entity entity) {
         return NULL;
     }
 
+    size_t dest_index = group->alive;
+
     /* TODO: also do insertion sort here */
     for (size_t r = group->alive; r > 0;) {
         /* Loop counter has to decrement first because the size_t can't go negative. */
@@ -47,10 +49,19 @@ void* component_init(CompGroup* group, Entity entity) {
         AbstractComp* other = component_at(group->mem, group->compsize, r);
         if (other->entity == entity) {
             return NULL;
+        } else if (other->entity > entity) {
+            
+            void* source = group->mem + r * group->compsize;
+            void* dest = group->mem + (r + 1) * group->compsize;
+            memcpy(dest, source, group->compsize);
+        
+            dest_index -= 1;
+        } else {
+            break;
         }
     }
     
-    AbstractComp* result = component_at(group->mem, group->compsize, group->alive);
+    AbstractComp* result = component_at(group->mem, group->compsize, dest_index);
     result->entity = entity;
     group->alive += 1;
     return (void*)result;
