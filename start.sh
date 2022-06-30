@@ -17,10 +17,10 @@ fi
 # COMPILE C
 
 if [[ $1 == 'test' ]]; then
-    DEFINE="-D TEST"
+    DEFINE="-D DEBUG -D TEST"
     BIN="bin/cgame_test"
 else
-    DEFINE=""
+    DEFINE="-D DEBUG"
     BIN="bin/cgame"
 fi
 

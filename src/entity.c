@@ -5,6 +5,7 @@
 #endif
 #include "SDL_image.h"
 
+#include <stdbool.h>
 #include <stddef.h>
 #include "logging.h"
 #include "entity.h"
@@ -40,8 +41,7 @@ void* component_init(CompGroup* group, Entity entity) {
     }
 
     size_t dest_index = group->alive;
-
-    /* TODO: also do insertion sort here */
+    
     for (size_t r = group->alive; r > 0;) {
         /* Loop counter has to decrement first because the size_t can't go negative. */
         r -= 1;
@@ -100,4 +100,54 @@ void groups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity) {
         CompGroup* group = &group_arr[i];
         component_end(group, entity);
     }
+}
+
+bool component_iterate(CompGroup** groups, void** comps, int8_t ncomps) {
+
+#ifdef DEBUG
+    int8_t null_count = 0;
+    for (int8_t r = 0; r < ncomps; r += 1) {
+        if (comps[r] == NULL) {
+            null_count += 1;
+        }
+
+        if (groups[r] == NULL) {
+            ERROR("component group can't be NULL");
+            return false;
+        }
+    }
+    if (null_count != 0 && null_count != ncomps) {
+        ERROR("comps must be all NULL or none NULL");
+        return false;
+    }
+#endif /* DEBUG */
+
+    for (int8_t r = 0; r < ncomps; r += 1) {
+        if (comps[r] == NULL) {
+            comps[r] = groups[r]->mem;
+        } else {
+            comps[r] += groups[r]->compsize;
+        }
+        
+        if (comps[r] - groups[r]->mem >= groups[r]->compsize * groups[r]->alive) {
+            /* A pointer reached the end of the component group. */
+            return false;
+        }
+    }
+
+    bool matching = true;
+    Entity current = ((AbstractComp*)comps[0])->entity;
+    for (int8_t r = 0; r < ncomps; r += 1) {
+        if (((AbstractComp*)comps[r])->entity != current) {
+            matching = false;
+            break;
+        }
+    }
+    if (matching) {
+        return true;
+    }
+
+    /* TODO: out-of-step iteration for mismatching lists */
+    
+    return false;
 }

@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdbool.h>
 
 /* 0 = no entity */
 typedef uint32_t Entity;
@@ -23,7 +24,7 @@ CompGroup compgroup_init(size_t total, size_t compsize);
 
 /*
  Allocates a new component in the component group.
- Returns: A pointer to the new component or NULL if the group is out of memory.
+ Returns: An borrowing pointer to the new component or NULL if the group is out of memory.
  */
 void* component_init(CompGroup* group, Entity entity);
 
@@ -36,3 +37,5 @@ void component_end(CompGroup* group, Entity entity);
  Removes all components attached to the specified entity, if any exist.
  */
 void groups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity);
+
+bool component_iterate(CompGroup** groups, void** comps, int8_t ncomps);
