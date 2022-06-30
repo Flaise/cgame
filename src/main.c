@@ -16,6 +16,7 @@
 #include "event.h"
 #include "draw.h"
 #include "terrain.h"
+#include "select.h"
 
 /* #include "res/floor.h"
 #define RES_FLOOR __res_Floor___Grass_1_64x64_png
