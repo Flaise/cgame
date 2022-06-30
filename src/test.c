@@ -313,7 +313,6 @@ static char* test_iterate_all() {
 }
 
 static char* test_iterate_partial() {
-    INFO("test_iterate_partial");
     CompGroup groupa = compgroup_init(5, sizeof(CompInt));
     CompGroup groupb = compgroup_init(5, sizeof(CompInt));
 
@@ -321,12 +320,50 @@ static char* test_iterate_partial() {
     comp_int_init(&groupb, 1, 5);
     
     comp_int_init(&groupa, 2, 6);
-    // comp_int_init(&groupb, 2, 9);
     
     comp_int_init(&groupa, 3, 8);
     comp_int_init(&groupb, 3, 9);
     
-    // comp_int_init(&groupa, 4, 8);
+    comp_int_init(&groupb, 4, 11);
+    
+    comp_int_init(&groupa, 5, 12);
+    comp_int_init(&groupb, 5, 13);
+
+    int result[7] = {0, 0, 0, 0, 0, 0, 0};
+    int index = 0;
+
+    CompGroup* groups[] = {&groupa, &groupb};
+    void* comps[] = {NULL, NULL};
+    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
+        CompInt* a = comps[0];
+        CompInt* b = comps[1];
+
+        result[index] = a->val;
+        result[index + 1] = b->val;
+        index += 2;
+    }
+
+    mu_assert(result[0] == 4, "");
+    mu_assert(result[1] == 5, "");
+    mu_assert(result[2] == 8, "");
+    mu_assert(result[3] == 9, "");
+    mu_assert(result[4] == 12, "");
+    mu_assert(result[5] == 13, "");
+    mu_assert(result[6] == 0, "");
+    
+    return 0;
+}
+
+static char* test_iterate_partial_skip() {
+    CompGroup groupa = compgroup_init(5, sizeof(CompInt));
+    CompGroup groupb = compgroup_init(5, sizeof(CompInt));
+
+    comp_int_init(&groupa, 1, 4);
+    comp_int_init(&groupb, 1, 5);
+    
+    comp_int_init(&groupa, 3, 8);
+    comp_int_init(&groupb, 3, 9);
+    
     comp_int_init(&groupb, 4, 11);
     
     comp_int_init(&groupa, 5, 12);
@@ -369,6 +406,7 @@ int main(int argc, char **argv) {
     mu_run_test(test_iterate_empty);
     mu_run_test(test_iterate_all);
     mu_run_test(test_iterate_partial);
+    mu_run_test(test_iterate_partial_skip);
 
     printf("Passed: %d Failed: %d\n", tests_run - tests_failed, tests_failed);
 
