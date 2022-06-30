@@ -19,19 +19,14 @@
 #include "select.h"
 #include "piece.h"
 
-/* #include "res/floor.h"
-#define RES_FLOOR __res_Floor___Grass_1_64x64_png
-#define RES_FLOOR __res_Floor___Dirt_2_64x64_png
-#include "res/wall.h"
-#define RES_WALL __res_Wall___Brick_1_64x64_png
-#define RES_WALL __res_Wall___Brick_3_64x64_png */
-
 #include "res/terrain.h"
 #define RES_TILES __res_Tiny_Top_Down_32x32_png
 #include "res/dragon.h"
 #define RES_DRAGON __res_dragon_png
 #include "res/knight.h"
 #define RES_KNIGHT __res_knight_png
+#include "res/knight_mounted.h"
+#define RES_MKNIGHT __res_knight_mounted_png
 #include "res/sheep.h"
 #define RES_SHEEP __res_sheep_png
 
@@ -101,6 +96,10 @@ int textures_init(State* state) {
         return 1;
     }
     if (texture_load_const_png(state, TEXTURE_KNIGHT, RES_KNIGHT, sizeof(RES_KNIGHT)) != 0) {
+        ERROR("texture_load_const_png (knight)");
+        return 1;
+    }
+    if (texture_load_const_png(state, TEXTURE_MKNIGHT, RES_MKNIGHT, sizeof(RES_MKNIGHT)) != 0) {
         ERROR("texture_load_const_png (knight)");
         return 1;
     }

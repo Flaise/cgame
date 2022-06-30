@@ -3,13 +3,10 @@
 
 if [[ $1 != 'test' ]]; then
     mkdir -p ./src/res || exit 1
-    # xxd --include "./res/Floor - Grass 1 64x64.png" ./src/res/floor.h
-    # xxd --include "./res/Floor - Dirt 2 64x64.png" ./src/res/floor.h
-    # xxd --include "./res/Wall - Brick 1 64x64.png" ./src/res/wall.h
-    # xxd --include "./res/Wall - Brick 3 64x64.png" ./src/res/wall.h
     xxd --include "./res/Tiny Top Down 32x32.png" ./src/res/terrain.h
     xxd --include "./res/dragon.png" ./src/res/dragon.h
     xxd --include "./res/knight.png" ./src/res/knight.h
+    xxd --include "./res/knight_mounted.png" ./src/res/knight_mounted.h
     xxd --include "./res/sheep.png" ./src/res/sheep.h
 fi
 

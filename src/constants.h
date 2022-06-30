@@ -15,7 +15,8 @@
 #define TEXTURE_KNIGHT 2
 #define TEXTURE_SHEEP 3
 #define TEXTURE_TERRAIN 4
-#define TEXTURE_COUNT 5
+#define TEXTURE_MKNIGHT 5
+#define TEXTURE_COUNT 6
 
 /* Putting type definitions here to resolve issues with circular imports. */
 
