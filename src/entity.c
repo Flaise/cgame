@@ -95,7 +95,7 @@ void component_end(CompGroup* group, Entity entity) {
     }
 }
 
-void groups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity) {
+void compgroups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity) {
     for (size_t i = 0; i < ngroups ; i += 1) {
         CompGroup* group = &group_arr[i];
         component_end(group, entity);
@@ -134,7 +134,6 @@ bool component_iterate(CompGroup** groups, void** comps, int8_t ncomps) {
     /* Advance pointer of lowest entity until all pointers match. */
     while (true) {
         if (comps[0] - groups[0]->mem >= groups[0]->compsize * groups[0]->alive) {
-            printf("\n");
             /* A pointer reached the end of the component group. */
             return false;
         }
@@ -145,17 +144,13 @@ bool component_iterate(CompGroup** groups, void** comps, int8_t ncomps) {
         Entity next_low = lowest;
         int8_t lowest_index = 0;
 
-        printf("found %d ", lowest);
-
         for (int8_t r = 1; r < ncomps; r += 1) {        
             if (comps[r] - groups[r]->mem >= groups[r]->compsize * groups[r]->alive) {
-                printf("\n");
                 /* A pointer reached the end of the component group. */
                 return false;
             }
         
             Entity current = ((AbstractComp*)comps[r])->entity;
-            printf("%d ", current);
             if (current != lowest) {
                 matching = false;
 
@@ -168,16 +163,11 @@ bool component_iterate(CompGroup** groups, void** comps, int8_t ncomps) {
                 }
             }
         }
-        printf("\n");
         if (matching) {
             /* Yay. */
             return true;
         }
 
-        printf("increment comps[%d]\n", lowest_index);
-
         comps[lowest_index] += groups[lowest_index]->compsize;
-
-        printf("new entity=%d\n", ((AbstractComp*)comps[lowest_index])->entity);
     }
 }

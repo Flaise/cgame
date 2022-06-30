@@ -148,7 +148,7 @@ static char* test_entbgone1() {
     mu_assert(comp != NULL, "");
     mu_assert(groupb->alive == 1, "");
 
-    groups_entity_end((CompGroup*)groups, 2, 1);
+    compgroups_entity_end((CompGroup*)groups, 2, 1);
     mu_assert(groupa->alive == 0, "");
     mu_assert(groupb->alive == 0, "");
     
@@ -183,7 +183,7 @@ static char* test_entbgone2() {
     mu_assert(groupb->alive == 2, "");
     comp->val = 10;
 
-    groups_entity_end((CompGroup*)groups, 2, 1);
+    compgroups_entity_end((CompGroup*)groups, 2, 1);
     mu_assert(groupa->alive == 1, "");
     mu_assert(groupb->alive == 1, "");
     

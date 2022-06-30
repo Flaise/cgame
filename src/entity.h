@@ -36,6 +36,6 @@ void component_end(CompGroup* group, Entity entity);
 /*
  Removes all components attached to the specified entity, if any exist.
  */
-void groups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity);
+void compgroups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity);
 
 bool component_iterate(CompGroup** groups, void** comps, int8_t ncomps);
