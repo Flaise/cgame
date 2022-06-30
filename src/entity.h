@@ -38,4 +38,31 @@ void component_end(CompGroup* group, Entity entity);
  */
 void compgroups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity);
 
+/*
+ Successive calls yield components that share an entity. Skips over entities that don't have all of
+ the given component types.
+
+ Usage:
+    CompGroup groupa = compgroup_init(5, sizeof(ComponentA));
+    CompGroup groupb = compgroup_init(5, sizeof(ComponentB));
+
+    CompGroup* groups[] = {&groupa, &groupb};
+    void* comps[] = {NULL, NULL};
+    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
+        ComponentA* a = comps[0];
+        ComponentB* b = comps[1];
+
+        // do something with a and b
+    }
+
+ groups: Pointer to an array of pointers to CompGroup objects.
+ comps: Pointer to an array of pointers to components. The pointers in this array should be
+    initialized to NULL when beginning iteration. After each call to component_iterate() returns,
+    they will be updated to point at the components of the next entity.
+ ncomps: The number of components and component groups to iterate. The pointer of each component in
+    comps corresponds to the pointer at the same index of groups. Each array should be the same
+    length or at least be as long or longer than ncomps.
+ Returns: true if the next entity was found and the pointers in comps were updated, or false if
+    iteration is done.
+ */
 bool component_iterate(CompGroup** groups, void** comps, int8_t ncomps);

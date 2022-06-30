@@ -50,7 +50,6 @@ void* component_init(CompGroup* group, Entity entity) {
         if (other->entity == entity) {
             return NULL;
         } else if (other->entity > entity) {
-            
             void* source = group->mem + r * group->compsize;
             void* dest = group->mem + (r + 1) * group->compsize;
             memcpy(dest, source, group->compsize);
@@ -149,7 +148,7 @@ bool component_iterate(CompGroup** groups, void** comps, int8_t ncomps) {
                 /* A pointer reached the end of the component group. */
                 return false;
             }
-        
+            
             Entity current = ((AbstractComp*)comps[r])->entity;
             if (current != lowest) {
                 matching = false;
@@ -170,4 +169,6 @@ bool component_iterate(CompGroup** groups, void** comps, int8_t ncomps) {
 
         comps[lowest_index] += groups[lowest_index]->compsize;
     }
+
+    /* Generic data structures in C are difficult. */
 }
