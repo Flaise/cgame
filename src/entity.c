@@ -122,32 +122,62 @@ bool component_iterate(CompGroup** groups, void** comps, int8_t ncomps) {
     }
 #endif /* DEBUG */
 
+    /* Advance all pointers by 1. */
     for (int8_t r = 0; r < ncomps; r += 1) {
         if (comps[r] == NULL) {
             comps[r] = groups[r]->mem;
         } else {
             comps[r] += groups[r]->compsize;
         }
-        
-        if (comps[r] - groups[r]->mem >= groups[r]->compsize * groups[r]->alive) {
+    }
+
+    /* Advance pointer of lowest entity until all pointers match. */
+    while (true) {
+        if (comps[0] - groups[0]->mem >= groups[0]->compsize * groups[0]->alive) {
+            printf("\n");
             /* A pointer reached the end of the component group. */
             return false;
         }
-    }
+        
+        bool matching = true;
 
-    bool matching = true;
-    Entity current = ((AbstractComp*)comps[0])->entity;
-    for (int8_t r = 0; r < ncomps; r += 1) {
-        if (((AbstractComp*)comps[r])->entity != current) {
-            matching = false;
-            break;
+        Entity lowest = ((AbstractComp*)comps[0])->entity;
+        Entity next_low = lowest;
+        int8_t lowest_index = 0;
+
+        printf("found %d ", lowest);
+
+        for (int8_t r = 1; r < ncomps; r += 1) {        
+            if (comps[r] - groups[r]->mem >= groups[r]->compsize * groups[r]->alive) {
+                printf("\n");
+                /* A pointer reached the end of the component group. */
+                return false;
+            }
+        
+            Entity current = ((AbstractComp*)comps[r])->entity;
+            printf("%d ", current);
+            if (current != lowest) {
+                matching = false;
+
+                if (current < lowest) {
+                    next_low = lowest;
+                    lowest = current;
+                    lowest_index = r;
+                } else if (current < next_low) {
+                    next_low = current;
+                }
+            }
         }
-    }
-    if (matching) {
-        return true;
-    }
+        printf("\n");
+        if (matching) {
+            /* Yay. */
+            return true;
+        }
 
-    /* TODO: out-of-step iteration for mismatching lists */
-    
-    return false;
+        printf("increment comps[%d]\n", lowest_index);
+
+        comps[lowest_index] += groups[lowest_index]->compsize;
+
+        printf("new entity=%d\n", ((AbstractComp*)comps[lowest_index])->entity);
+    }
 }
