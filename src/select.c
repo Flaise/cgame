@@ -8,11 +8,6 @@
 #include "entity.h"
 #include "constants.h"
 
-static bool in_view(int32_t x, int32_t y) {
-    /* < VIEW_WIDTH because <= will still create a vertical bar when hovering */
-    return x > 0 && y > 0 && x < VIEW_WIDTH && y < VIEW_HEIGHT;
-}
-
 void select_draw(State* state) {
     Selection* sel = &state->selection;
 
@@ -52,6 +47,32 @@ void select_draw(State* state) {
     }
 }
 
+static bool in_view(int32_t x, int32_t y) {
+    /* < VIEW_WIDTH because <= will still create a vertical bar when hovering */
+    return x > 0 && y > 0 && x < VIEW_WIDTH && y < VIEW_HEIGHT;
+}
+
+static Entity selectable_at_lpixel(State* state, int32_t x, int32_t y) {
+    if (!in_view(x, y)) {
+        return 0;
+    }
+    
+    CompGroup* groups[] = {
+        &state->components.compgroups[COMPTYPE_SELECTABLE],
+        &state->components.compgroups[COMPTYPE_POSITION],
+    };
+    void* comps[] = {NULL, NULL};
+    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
+        CPosition* position = (CPosition*)comps[1];
+
+        if (x / TILE_SIZE == position->x && y / TILE_SIZE == position->y) {
+            return position->entity;
+        }
+    }
+
+    return 0;
+}
+
 void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
     if (!(button == SDL_BUTTON_LEFT || button == SDL_BUTTON_RIGHT)) {
         return;
@@ -59,12 +80,26 @@ void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
     
     Selection* sel = &state->selection;
 
-    if (in_view(x, y) && (sel->select_x < 0 || sel->select_y < 0)) {
-        sel->select_x = x / TILE_SIZE;
-        sel->select_y = y / TILE_SIZE;
+    if (sel->select_x < 0 || sel->select_y < 0) {
+        Entity subject = selectable_at_lpixel(state, x, y);
+        if (subject != 0) {
+            sel->select_x = x / TILE_SIZE;
+            sel->select_y = y / TILE_SIZE;
+            sel->subject = subject;
+        }
     } else {
+        if (sel->subject != 0) {
+            CPosition* position = component_of(
+                &state->components.compgroups[COMPTYPE_POSITION], sel->subject);
+            if (position != NULL) {
+                position->x = x / TILE_SIZE;
+                position->y = y / TILE_SIZE;
+            }
+        }
+        
         sel->select_x = -1;
         sel->select_y = -1;
+        sel->subject = 0;
     }
 }
 

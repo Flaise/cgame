@@ -34,6 +34,7 @@ typedef struct {
     int hover_y;
     int select_x;
     int select_y;
+    Entity subject;
 } Selection;
 
 #define COMPTYPE_POSITION 0

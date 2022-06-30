@@ -94,6 +94,24 @@ void component_end(CompGroup* group, Entity entity) {
     }
 }
 
+void* component_of(CompGroup* group, Entity entity) {
+    if (group == NULL) {
+        return NULL;
+    }
+    if (entity == 0) {
+        return NULL;
+    }
+
+    for (size_t r = 0; r < group->alive; r += 1) {
+        AbstractComp* other = component_at(group->mem, group->compsize, r);
+        if (other->entity == entity) {
+            return other;
+        }
+    }
+    
+    return NULL;
+}
+
 void compgroups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity) {
     for (size_t i = 0; i < ngroups ; i += 1) {
         CompGroup* group = &group_arr[i];

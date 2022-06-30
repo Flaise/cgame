@@ -24,7 +24,7 @@ CompGroup compgroup_init(size_t total, size_t compsize);
 
 /*
  Allocates a new component in the component group.
- Returns: An borrowing pointer to the new component or NULL if the group is out of memory.
+ Returns: A borrowed reference to the new component or NULL if the group is out of memory.
  */
 void* component_init(CompGroup* group, Entity entity);
 
@@ -32,6 +32,8 @@ void* component_init(CompGroup* group, Entity entity);
  Removes the component attached to the specified entity if it exists.
  */
 void component_end(CompGroup* group, Entity entity);
+
+void* component_of(CompGroup* group, Entity entity);
 
 /*
  Removes all components attached to the specified entity, if any exist.

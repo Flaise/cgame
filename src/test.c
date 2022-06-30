@@ -394,6 +394,19 @@ static char* test_iterate_partial_skip() {
     return 0;
 }
 
+static char* test_component_for_entity() {
+    CompGroup groupa = compgroup_init(5, sizeof(CompInt));
+
+    mu_assert(component_of(&groupa, 1) == NULL, "");
+    
+    comp_int_init(&groupa, 1, 4);
+    
+    mu_assert(component_of(&groupa, 1) == groupa.mem, "");
+    mu_assert(component_of(&groupa, 0) == NULL, "");
+    
+    return 0;
+}
+
 int main(int argc, char **argv) {
     mu_run_test(test_compbgone32);
     mu_run_test(test_compbgone64);
@@ -407,6 +420,7 @@ int main(int argc, char **argv) {
     mu_run_test(test_iterate_all);
     mu_run_test(test_iterate_partial);
     mu_run_test(test_iterate_partial_skip);
+    mu_run_test(test_component_for_entity);
 
     printf("Passed: %d Failed: %d\n", tests_run - tests_failed, tests_failed);
 
