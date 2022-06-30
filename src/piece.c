@@ -10,13 +10,6 @@
 #include "component.h"
 #include "icon.h"
 
-void piece_init(State* state) {
-    /* TODO: icon_texture_init for entire texture */
-    state->icon_dragon = icon_tile_init(TEXTURE_DRAGON, 128, 0, 0);
-    state->icon_knight = icon_tile_init(TEXTURE_KNIGHT, 128, 0, 0);
-    state->icon_sheep = icon_tile_init(TEXTURE_SHEEP, 128, 0, 0);
-}
-
 void level_1_init(State* state) {
     /* TODO: clear entities from previous level */
     
@@ -41,6 +34,22 @@ void level_1_init(State* state) {
         WARN("position_init");
     }
     if (avatar_init(&state->components, entity, state->icon_sheep) == NULL) {
+        WARN("avatar_init");
+    }
+    
+    entity = 4;
+    if (position_init(&state->components, entity, 4, 2) == NULL) {
+        WARN("position_init");
+    }
+    if (avatar_init(&state->components, entity, state->icon_horse) == NULL) {
+        WARN("avatar_init");
+    }
+    
+    entity = 5;
+    if (position_init(&state->components, entity, 7, 3) == NULL) {
+        WARN("position_init");
+    }
+    if (avatar_init(&state->components, entity, state->icon_dog) == NULL) {
         WARN("avatar_init");
     }
 }

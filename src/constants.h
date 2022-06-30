@@ -16,7 +16,9 @@
 #define TEXTURE_SHEEP 3
 #define TEXTURE_TERRAIN 4
 #define TEXTURE_MKNIGHT 5
-#define TEXTURE_COUNT 6
+#define TEXTURE_DOG 6
+#define TEXTURE_HORSE 7
+#define TEXTURE_COUNT 8
 
 /* Putting type definitions here to resolve issues with circular imports. */
 
@@ -69,4 +71,6 @@ typedef struct {
     Icon icon_dragon;
     Icon icon_knight;
     Icon icon_sheep;
+    Icon icon_dog;
+    Icon icon_horse;
 } State;

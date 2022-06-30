@@ -29,6 +29,10 @@
 #define RES_MKNIGHT __res_knight_mounted_png
 #include "res/sheep.h"
 #define RES_SHEEP __res_sheep_png
+#include "res/dog.h"
+#define RES_DOG __res_dog_png
+#include "res/horse.h"
+#define RES_HORSE __res_horse_png
 
 int window_init(State* state) {
     SDL_Rect bounds;
@@ -47,7 +51,7 @@ int window_init(State* state) {
        like a maximized window. */
 
     SDL_Window* win = SDL_CreateWindow(
-        "They're statues", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        "They still don't do anything", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         bounds.w, bounds.h,
         SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE
     );
@@ -100,13 +104,28 @@ int textures_init(State* state) {
         return 1;
     }
     if (texture_load_const_png(state, TEXTURE_MKNIGHT, RES_MKNIGHT, sizeof(RES_MKNIGHT)) != 0) {
-        ERROR("texture_load_const_png (knight)");
+        ERROR("texture_load_const_png (mounted knight)");
         return 1;
     }
     if (texture_load_const_png(state, TEXTURE_SHEEP, RES_SHEEP, sizeof(RES_SHEEP)) != 0) {
         ERROR("texture_load_const_png (sheep)");
         return 1;
     }
+    if (texture_load_const_png(state, TEXTURE_DOG, RES_DOG, sizeof(RES_DOG)) != 0) {
+        ERROR("texture_load_const_png (dog)");
+        return 1;
+    }
+    if (texture_load_const_png(state, TEXTURE_HORSE, RES_HORSE, sizeof(RES_HORSE)) != 0) {
+        ERROR("texture_load_const_png (horse)");
+        return 1;
+    }
+
+    /* TODO: icon_texture_init for entire texture */
+    state->icon_dragon = icon_tile_init(TEXTURE_DRAGON, 128, 0, 0);
+    state->icon_knight = icon_tile_init(TEXTURE_KNIGHT, 128, 0, 0);
+    state->icon_sheep = icon_tile_init(TEXTURE_SHEEP, 128, 0, 0);
+    state->icon_dog = icon_tile_init(TEXTURE_DOG, 128, 0, 0);
+    state->icon_horse = icon_tile_init(TEXTURE_HORSE, 128, 0, 0);
 
     /* Unconditionally unload IMG because no more textures will be loaded. */
     IMG_Quit();
@@ -137,7 +156,6 @@ int run(State* state) {
     if (terrain_init(state) != 0) {
         return 1;
     }
-    piece_init(state);
     if (terrain_update(state) != 0) {
         WARN("terrain_update");
     }

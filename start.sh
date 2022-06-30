@@ -8,6 +8,8 @@ if [[ $1 != 'test' ]]; then
     xxd --include "./res/knight.png" ./src/res/knight.h
     xxd --include "./res/knight_mounted.png" ./src/res/knight_mounted.h
     xxd --include "./res/sheep.png" ./src/res/sheep.h
+    xxd --include "./res/dog.png" ./src/res/dog.h
+    xxd --include "./res/horse.png" ./src/res/horse.h
 fi
 
 
