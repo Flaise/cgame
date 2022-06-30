@@ -10,6 +10,7 @@
 #include "component.h"
 #include "state.h"
 #include "draw.h"
+#include "select.h"
 
 typedef enum {
     Proceed,
@@ -18,52 +19,22 @@ typedef enum {
 } Status;
 
 void size_changed(State* state, int width, int height) {
-    /* letterboxing is done automatically with SDL_RenderSetLogicalSize */
+    /* Letterboxing is done automatically with SDL_RenderSetLogicalSize. */
     redraw(state);
 }
 
-bool in_view(Sint32 x, Sint32 y) {
-    /* < VIEW_WIDTH because <= will still create a vertical bar when hovering */
-    return x > 0 && y > 0 && x < VIEW_WIDTH && y < VIEW_HEIGHT;
-}
-
 void mouse_motion(State* state, Sint32 x, Sint32 y) {
-    Selection* sel = &state->selection;
-    
-    if (in_view(x, y)) {
-        sel->hover_x = x / TILE_SIZE;
-        sel->hover_y = y / TILE_SIZE;
-    } else {
-        sel->hover_x = -1;
-        sel->hover_y = -1;
-    }
-
+    select_mouse_move(state, x, y);
     redraw(state);
 }
 
 void mouse_leave(State* state) {
-    Selection* sel = &state->selection;
-    sel->hover_x = -1;
-    sel->hover_y = -1;
-    
+    select_mouse_leave(state);
     redraw(state);
 }
 
 void mouse_button(State* state, Uint8 button, Sint32 x, Sint32 y) {
-    if (!(button == SDL_BUTTON_LEFT || button == SDL_BUTTON_RIGHT)) {
-        return;
-    }
-    
-    Selection* sel = &state->selection;
-
-    if (in_view(x, y) && (sel->select_x < 0 || sel->select_y < 0)) {
-        sel->select_x = x / TILE_SIZE;
-        sel->select_y = y / TILE_SIZE;
-    } else {
-        sel->select_x = -1;
-        sel->select_y = -1;
-    }
-    
+    select_mouse_press(state, button, x, y);
     redraw(state);
 }
 
@@ -106,7 +77,7 @@ int events_all(State* state) {
     }
     
     while (true) {
-        /* process event */
+        /* Process event. */
         Status stat = events_pending(state);
         if (stat == Exit) {
             return 0;
@@ -114,7 +85,7 @@ int events_all(State* state) {
             return 1;
         }
 
-        /* redraw */
+        /* Redraw. */
         if (state->needs_redraw) {
             if (draw_now(state) != 0) {
                 return 1;
