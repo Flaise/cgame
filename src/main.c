@@ -17,6 +17,7 @@
 #include "draw.h"
 #include "terrain.h"
 #include "select.h"
+#include "piece.h"
 
 /* #include "res/floor.h"
 #define RES_FLOOR __res_Floor___Grass_1_64x64_png
@@ -51,7 +52,7 @@ int window_init(State* state) {
        like a maximized window. */
 
     SDL_Window* win = SDL_CreateWindow(
-        "Interactive at last", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        "They're statues", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         bounds.w, bounds.h,
         SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE
     );
@@ -137,28 +138,12 @@ int run(State* state) {
     if (terrain_init(state) != 0) {
         return 1;
     }
+    piece_init(state);
     if (terrain_update(state) != 0) {
         WARN("terrain_update");
     }
 
-
-
-    /* TODO: need character/bot/piece/whatever module */
-
-    /* TODO: icon_texture_init for entire texture */
-    state->icon_dragon = icon_tile_init(TEXTURE_DRAGON, 128, 0, 0);
-    state->icon_knight = icon_tile_init(TEXTURE_KNIGHT, 128, 0, 0);
-    state->icon_sheep = icon_tile_init(TEXTURE_SHEEP, 128, 0, 0);
-
-    Entity entity = 1; /* TODO: function to get next entity */
-
-    if (position_init(&state->components, 1, 2, 1) == NULL) {
-        WARN("position_init");
-    }
-    if (avatar_init(&state->components, 1, state->icon_dragon) == NULL) {
-        WARN("avatar_init");
-    }
-    
+    level_1_init(state);
 
     return events_all(state);
 }

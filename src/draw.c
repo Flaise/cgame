@@ -14,6 +14,7 @@
 #include "draw.h"
 #include "terrain.h"
 #include "select.h"
+#include "avatar.h"
 
 void redraw(State* state) {
     state->needs_redraw = true;
@@ -34,6 +35,7 @@ int draw_now(State* state) {
     }
 
     terrain_draw(state);
+    avatar_draw(state);
     select_draw(state);
     
     SDL_RenderPresent(state->renderer);
