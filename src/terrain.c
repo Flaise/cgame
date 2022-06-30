@@ -93,7 +93,7 @@ int terrain_init(State* state) {
 
     /* Initialize tiles. */
 
-    state->icon_floor = icon_tile_init(TEXTURE_TILES, 32, 3, 5);
+    state->icon_floor = icon_tile_init(TEXTURE_TILES, 32, 3, 7);
     state->icon_wall = icon_tile_init(TEXTURE_TILES, 32, 1, 2);
     state->icon_pyramid = icon_tile_init(TEXTURE_TILES, 32, 1, 0);
     
