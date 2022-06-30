@@ -11,6 +11,7 @@ Components make_components() {
     Components result;
     result.compgroups[COMPTYPE_POSITION] = compgroup_init(10, sizeof(CPosition));
     result.compgroups[COMPTYPE_AVATAR] = compgroup_init(10, sizeof(CAvatar));
+    result.compgroups[COMPTYPE_SELECTABLE] = compgroup_init(10, sizeof(CSelectable));
     return result;
 }
 
@@ -30,5 +31,11 @@ CAvatar* avatar_init(Components* components, Entity entity, Icon icon) {
     if (result != NULL) {
         result->icon = icon;
     }
+    return result;
+}
+
+CSelectable* selectable_init(Components* components, Entity entity) {
+    CompGroup* group = &components->compgroups[COMPTYPE_SELECTABLE];
+    CSelectable* result = (CSelectable*)component_init(group, entity);
     return result;
 }

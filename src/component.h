@@ -14,3 +14,7 @@ CPosition* position_init(Components* components, Entity entity, int x, int y);
  */
 CAvatar* avatar_init(Components* components, Entity entity, Icon icon);
 
+/*
+ Returns: A pointer to the newly initialized component or NULL if out of memory.
+ */
+CSelectable* selectable_init(Components* components, Entity entity);

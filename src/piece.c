@@ -10,46 +10,33 @@
 #include "component.h"
 #include "icon.h"
 
+void make_generic_piece(State* state, Entity entity, int32_t x, int32_t y, Icon icon) {
+    if (position_init(&state->components, entity, x, y) == NULL) {
+        WARN("position_init");
+    }
+    if (avatar_init(&state->components, entity, icon) == NULL) {
+        WARN("avatar_init");
+    }
+    if (selectable_init(&state->components, entity) == NULL) {
+        WARN("selectable_init");
+    }
+}
+
 void level_1_init(State* state) {
     /* TODO: clear entities from previous level */
     
     Entity entity = 1; /* TODO: function to get next entity */
-    if (position_init(&state->components, entity, 2, 1) == NULL) {
-        WARN("position_init");
-    }
-    if (avatar_init(&state->components, entity, state->icon_dragon) == NULL) {
-        WARN("avatar_init");
-    }
+    make_generic_piece(state, entity, 2, 1, state->icon_dragon);
     
     entity = 2;
-    if (position_init(&state->components, entity, 4, 3) == NULL) {
-        WARN("position_init");
-    }
-    if (avatar_init(&state->components, entity, state->icon_knight) == NULL) {
-        WARN("avatar_init");
-    }
+    make_generic_piece(state, entity, 4, 3, state->icon_knight);
     
     entity = 3;
-    if (position_init(&state->components, entity, 4, 1) == NULL) {
-        WARN("position_init");
-    }
-    if (avatar_init(&state->components, entity, state->icon_sheep) == NULL) {
-        WARN("avatar_init");
-    }
+    make_generic_piece(state, entity, 4, 1, state->icon_sheep);
     
     entity = 4;
-    if (position_init(&state->components, entity, 4, 2) == NULL) {
-        WARN("position_init");
-    }
-    if (avatar_init(&state->components, entity, state->icon_horse) == NULL) {
-        WARN("avatar_init");
-    }
+    make_generic_piece(state, entity, 4, 2, state->icon_horse);
     
     entity = 5;
-    if (position_init(&state->components, entity, 7, 3) == NULL) {
-        WARN("position_init");
-    }
-    if (avatar_init(&state->components, entity, state->icon_dog) == NULL) {
-        WARN("avatar_init");
-    }
+    make_generic_piece(state, entity, 7, 3, state->icon_dog);
 }

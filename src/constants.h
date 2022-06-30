@@ -38,7 +38,8 @@ typedef struct {
 
 #define COMPTYPE_POSITION 0
 #define COMPTYPE_AVATAR 1
-#define COMPTYPE_COUNT 2
+#define COMPTYPE_SELECTABLE 2
+#define COMPTYPE_COUNT 3
 
 typedef struct {
     Entity entity;
@@ -50,6 +51,10 @@ typedef struct {
     Entity entity;
     Icon icon;
 } CAvatar;
+
+typedef struct {
+    Entity entity;
+} CSelectable;
 
 typedef struct {
     CompGroup compgroups[COMPTYPE_COUNT];
