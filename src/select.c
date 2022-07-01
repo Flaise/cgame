@@ -86,7 +86,11 @@ void select_draw(State* state) {
 
 static bool in_view(int32_t x, int32_t y) {
     /* < VIEW_WIDTH because <= will still create a vertical bar when hovering */
-    return x > 0 && y > 0 && x < VIEW_WIDTH && y < VIEW_HEIGHT;
+    return x >= 0 && y >= 0 && x < VIEW_WIDTH && y < VIEW_HEIGHT;
+}
+
+static bool in_board(int32_t tile_x, int32_t tile_y) {
+    return tile_x >= 0 && tile_y >= 0 && tile_x < TILES_ACROSS && tile_y < TILES_DOWN;
 }
 
 static Entity selectable_at_lpixel(State* state, int32_t x, int32_t y) {
@@ -137,17 +141,22 @@ static void update_validity(State* state, int32_t x, int32_t y) {
     sel->hover_valid = ((subject == 0) == selection_visible);
 }
 
-static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
+typedef struct {
+    bool herded;
+    int32_t dx;
+    int32_t dy;
+} Herdment;
+
+static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32_t tile_y) {
+    Herdment result = {false, 0, 0};
+    
     if (subject == 0) {
         ERROR("entity can't be 0");
-        return;
+        return result;
     }
-    if (!in_view(x, y)) {
-        return;
+    if (!in_board(tile_x, tile_y)) {
+        return result;
     }
-
-    int32_t tile_x = x / TILE_SIZE;
-    int32_t tile_y = y / TILE_SIZE;
 
     bool interacted = false;
 
@@ -197,16 +206,65 @@ static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
         interacted = true;
     }
 
-    if (!interacted) {
-        if (type_at(state, COMPTYPE_OBSTRUCTION, tile_x, tile_y) != 0) {
-            return;
-        }
+    if (!interacted && type_at(state, COMPTYPE_OBSTRUCTION, tile_x, tile_y) != 0) {
+        return result;
     }
     
     CPosition* position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
-    if (position != NULL) {
-        position->x = tile_x;
-        position->y = tile_y;
+    if (position == NULL) {
+        return result;
+    }
+
+    int32_t dx = tile_x - position->x;
+    int32_t dy = tile_y - position->y;
+    
+    position->x = tile_x;
+    position->y = tile_y;
+
+    bool is_herder =
+        (component_of(&state->components.compgroups[COMPTYPE_HERDER], subject) != NULL);
+    if (is_herder) {
+        result.herded = true;
+        result.dx = dx;
+        result.dy = dy;
+    }
+    return result;
+}
+
+typedef struct {
+    Entity entity;
+    int32_t dest_x;
+    int32_t dest_y;
+} HerdMe;
+
+void herd(State* state, int32_t dx, int32_t dy) {
+    size_t max_herdmes = 10;
+    HerdMe herdus[max_herdmes];
+    memset(herdus, 0, max_herdmes * sizeof(HerdMe));
+    size_t next_herdme = 0;
+
+    CompGroup* groups[] = {
+        &state->components.compgroups[COMPTYPE_FLOCK],
+        &state->components.compgroups[COMPTYPE_POSITION],
+    };
+    void* comps[] = {NULL, NULL};
+    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
+        CPosition* position = (CPosition*)comps[1];
+
+        herdus[next_herdme] = (HerdMe){position->entity, position->x + dx, position->y + dy};
+        next_herdme += 1;
+        if (next_herdme >= max_herdmes) {
+            WARN("too many entities to herd");
+            break;
+        }        
+    }
+    
+    for (size_t r = 0; r < max_herdmes; r += 1) {
+        if (herdus[r].entity == 0) {
+            break;
+        }
+        
+        command_move(state, herdus[r].entity, herdus[r].dest_x, herdus[r].dest_y);
     }
 }
 
@@ -226,14 +284,19 @@ void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
         }
     } else {
         if (sel->subject != 0) {
-            command_move(state, sel->subject, x, y);
+            int32_t tile_x = x / TILE_SIZE;
+            int32_t tile_y = y / TILE_SIZE;
+            Herdment herdment = command_move(state, sel->subject, tile_x, tile_y);
+            if (herdment.herded) {
+                herd(state, herdment.dx, herdment.dy);
+            }
         }
         
         sel->select_x = -1;
         sel->select_y = -1;
         sel->subject = 0;
-        update_validity(state, x, y);
     }
+    update_validity(state, x, y);
 }
 
 void select_mouse_move(State* state, int32_t x, int32_t y) {
