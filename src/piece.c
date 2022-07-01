@@ -27,18 +27,23 @@ void level_1_init(State* state) {
     
     Entity entity = 1; /* TODO: function to get next entity */
     make_generic_piece(state, entity, 2, 1, state->icon_dragon);
+    munch_init(&state->components, entity);
     
     entity = 2;
     make_generic_piece(state, entity, 4, 3, state->icon_knight);
     rider_init(&state->components, entity);
+    edible_init(&state->components, entity);
     
     entity = 3;
     make_generic_piece(state, entity, 4, 1, state->icon_sheep);
+    edible_init(&state->components, entity);
     
     entity = 4;
     make_generic_piece(state, entity, 4, 2, state->icon_horse);
     mount_init(&state->components, entity);
+    edible_init(&state->components, entity);
     
     entity = 5;
     make_generic_piece(state, entity, 7, 3, state->icon_dog);
+    edible_init(&state->components, entity);
 }

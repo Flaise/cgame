@@ -14,6 +14,8 @@ Components make_components() {
     result.compgroups[COMPTYPE_SELECTABLE] = compgroup_init(10, sizeof(CSelectable));
     result.compgroups[COMPTYPE_MOUNT] = compgroup_init(1, sizeof(CMount));
     result.compgroups[COMPTYPE_RIDER] = compgroup_init(1, sizeof(CRider));
+    result.compgroups[COMPTYPE_MUNCH] = compgroup_init(1, sizeof(CMunch));
+    result.compgroups[COMPTYPE_EDIBLE] = compgroup_init(10, sizeof(CEdible));
     return result;
 }
 
@@ -55,5 +57,17 @@ CMount* mount_init(Components* components, Entity entity) {
 CRider* rider_init(Components* components, Entity entity) {
     CompGroup* group = &components->compgroups[COMPTYPE_RIDER];
     CRider* result = (CRider*)component_init(group, entity);
+    return result;
+}
+
+CMunch* munch_init(Components* components, Entity entity) {
+    CompGroup* group = &components->compgroups[COMPTYPE_MUNCH];
+    CMunch* result = (CMunch*)component_init(group, entity);
+    return result;
+}
+
+CEdible* edible_init(Components* components, Entity entity) {
+    CompGroup* group = &components->compgroups[COMPTYPE_EDIBLE];
+    CEdible* result = (CEdible*)component_init(group, entity);
     return result;
 }

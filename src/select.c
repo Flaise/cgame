@@ -127,6 +127,23 @@ static Entity mount_at(State* state, int32_t tile_x, int32_t tile_y) {
     return 0;
 }
 
+static Entity edible_at(State* state, int32_t tile_x, int32_t tile_y) {
+    CompGroup* groups[] = {
+        &state->components.compgroups[COMPTYPE_EDIBLE],
+        &state->components.compgroups[COMPTYPE_POSITION],
+    };
+    void* comps[] = {NULL, NULL};
+    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
+        CPosition* position = (CPosition*)comps[1];
+
+        if (tile_x == position->x && tile_y == position->y) {
+            return position->entity;
+        }
+    }
+
+    return 0;
+}
+
 static void update_validity(State* state, int32_t x, int32_t y) {
     Selection* sel = &state->selection;
     
@@ -163,6 +180,16 @@ static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
         if (avatar != NULL) {
             avatar->icon = state->icon_mknight;
         }
+    }
+    
+    Entity edible = edible_at(state, tile_x, tile_y);
+    bool is_munch = (component_of(
+        &state->components.compgroups[COMPTYPE_MUNCH],
+        subject
+    ) != NULL);
+    
+    if (edible != 0 && is_munch) {
+        components_entity_end(&state->components, edible);
     }
     
     CPosition* position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);

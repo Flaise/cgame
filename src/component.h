@@ -30,3 +30,13 @@ CMount* mount_init(Components* components, Entity entity);
  Returns: A pointer to the newly initialized component or NULL if out of memory.
  */
 CRider* rider_init(Components* components, Entity entity);
+
+/*
+ Returns: A pointer to the newly initialized component or NULL if out of memory.
+ */
+CMunch* munch_init(Components* components, Entity entity);
+
+/*
+ Returns: A pointer to the newly initialized component or NULL if out of memory.
+ */
+CEdible* edible_init(Components* components, Entity entity);
