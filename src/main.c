@@ -51,7 +51,7 @@ int window_init(State* state) {
        like a maximized window. */
 
     SDL_Window* win = SDL_CreateWindow(
-        "Almost a puzzle", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        "Don't Eat My Sheep!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         bounds.w, bounds.h,
         SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE
     );

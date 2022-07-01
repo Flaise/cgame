@@ -1,8 +1,16 @@
-# cgame
+# Don't Eat My Sheep!
 
 ## Motivation
 
-Someone wanted to c me write in C. So here's a puzzle game written in C99.
+Someone wanted to c me write a program in C. So here's a puzzle game written in C99.
+
+## How2play
+
+The dragon wants to eat up all the livestock so the knight wants to slay the dragon before that can
+happen. Click on a piece, then click a square next to the piece to make a move. Pieces only move 1
+square at a time and not diagonally. In order for the knight to slay the dragon, he must first be
+moved onto the same square as his horse in order to mount the horse. Then he can joust the dragon by
+moving onto the same square as the dragon.
 
 ## Installation: Ubuntu
 
