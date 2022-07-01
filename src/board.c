@@ -56,17 +56,22 @@ void level_1_init(State* state) {
     /* Pieces. */
     
     Entity entity = 1; /* TODO: function to get next entity */
-    make_generic_piece(state, entity, 2, 1, state->icon_dragon);
+    make_generic_piece(state, entity, 2, 0, state->icon_dragon);
     munch_init(&state->components, entity);
     slayme_init(&state->components, entity);
     
     entity += 1;
-    make_generic_piece(state, entity, 4, 3, state->icon_knight);
+    make_generic_piece(state, entity, 4, 4, state->icon_knight);
     rider_init(&state->components, entity);
     edible_init(&state->components, entity);
     
     entity += 1;
     make_generic_piece(state, entity, 4, 1, state->icon_sheep);
+    edible_init(&state->components, entity);
+    flock_init(&state->components, entity);
+    
+    entity += 1;
+    make_generic_piece(state, entity, 2, 3, state->icon_sheep);
     edible_init(&state->components, entity);
     flock_init(&state->components, entity);
     
@@ -103,10 +108,12 @@ void level_1_init(State* state) {
         make_wall(state, entity, r, 5, WALL_NORMAL);
     }
     
-    for (int32_t r = 6; r < 9; r += 1) {
+    for (int32_t r = 7; r < 9; r += 1) {
         entity += 1;
         make_wall(state, entity, r, 0, WALL_NORMAL);
     }
+    entity += 1;
+    make_wall(state, entity, 6, 0, WALL_PYRAMID);
 
     terrain_update(state);
 }
