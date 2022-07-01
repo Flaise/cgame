@@ -17,7 +17,7 @@
 #include "draw.h"
 #include "terrain.h"
 #include "select.h"
-#include "piece.h"
+#include "board.h"
 
 #include "res/terrain.h"
 #define RES_TILES __res_Tiny_Top_Down_32x32_png
