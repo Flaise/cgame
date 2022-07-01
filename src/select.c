@@ -8,42 +8,70 @@
 #include "entity.h"
 #include "constants.h"
 
+typedef struct {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
+} RGBA;
+
+RGBA color_move_valid = {40, 110, 90, 120};
+RGBA color_move_invalid = {150, 70, 60, 120};
+
+RGBA color_selection = {150, 170, 60, 100};
+
+RGBA color_select_valid = {40, 110, 90, 120};
+RGBA color_select_empty = {40, 110, 90, 50};
+
+static void set_color(State* state, RGBA color) {
+    int8_t r = color.r;
+    int8_t g = color.g;
+    int8_t b = color.b;
+    int8_t a = color.a;
+    if (SDL_SetRenderDrawColor(state->renderer, r, g, b, a) != 0) {
+        WARN("SDL_SetRenderDrawColor");
+    }
+}
+
+static void draw_tile_rect(State* state, int32_t tile_x, int32_t tile_y) {
+    SDL_Rect rect = {
+        .x = tile_x * TILE_SIZE,
+        .y = tile_y * TILE_SIZE,
+        .w = TILE_SIZE,
+        .h = TILE_SIZE,
+    };
+
+    if (SDL_RenderFillRect(state->renderer, &rect) != 0) {
+        WARN("SDL_RenderFillRect");
+    }
+}
+
 void select_draw(State* state) {
     Selection* sel = &state->selection;
 
-    if (sel->select_x >= 0 && sel->select_y >= 0) {
-        if (SDL_SetRenderDrawColor(state->renderer, 110, 70, 60, 140) != 0) {
-            WARN("SDL_SetRenderDrawColor");
-        }
+    bool selection_visible = sel->select_x >= 0 && sel->select_y >= 0;
+    bool hover_visible = sel->hover_x >= 0 && sel->hover_y >= 0;
+    bool overlap = selection_visible && hover_visible
+        && sel->select_x == sel->hover_x && sel->select_y == sel->hover_y;
 
-        SDL_Rect hover = {
-            .x = sel->select_x * TILE_SIZE,
-            .y = sel->select_y * TILE_SIZE,
-            .w = TILE_SIZE,
-            .h = TILE_SIZE,
-        };
-
-        if (SDL_RenderFillRect(state->renderer, &hover) != 0) {
-            WARN("SDL_RenderFillRect");
+    if (selection_visible) {
+        RGBA color = color_selection;
+        if (overlap) {
+            color = color_move_invalid;
         }
+        set_color(state, color);
+        draw_tile_rect(state, sel->select_x, sel->select_y);
     }
     
-    if (sel->hover_x >= 0 && sel->hover_y >= 0
-    && !(sel->hover_x == sel->select_x && sel->hover_y == sel->select_y)) {
-        if (SDL_SetRenderDrawColor(state->renderer, 40, 110, 90, 140) != 0) {
-            WARN("SDL_SetRenderDrawColor");
+    if (!overlap && hover_visible) {
+        RGBA color;
+        if (selection_visible) {
+            color = color_move_valid;
+        } else {
+            color = color_select_valid;
         }
-
-        SDL_Rect hover = {
-            .x = sel->hover_x * TILE_SIZE,
-            .y = sel->hover_y * TILE_SIZE,
-            .w = TILE_SIZE,
-            .h = TILE_SIZE,
-        };
-
-        if (SDL_RenderFillRect(state->renderer, &hover) != 0) {
-            WARN("SDL_RenderFillRect");
-        }
+        set_color(state, color);
+        draw_tile_rect(state, sel->hover_x, sel->hover_y);
     }
 }
 
