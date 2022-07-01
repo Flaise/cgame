@@ -7,6 +7,7 @@
 #include "logging.h"
 #include "entity.h"
 #include "constants.h"
+#include "component.h"
 
 typedef struct {
     uint8_t r;
@@ -18,7 +19,7 @@ typedef struct {
 RGBA color_move_valid = {40, 130, 100, 130};
 RGBA color_move_invalid = {150, 70, 60, 150};
 
-RGBA color_selection = {150, 170, 60, 100};
+RGBA color_selection = {150, 170, 60, 130};
 
 RGBA color_select_valid = {40, 130, 100, 130};
 RGBA color_select_empty = {40, 130, 100, 70};
@@ -109,6 +110,23 @@ static Entity selectable_at_lpixel(State* state, int32_t x, int32_t y) {
     return 0;
 }
 
+static Entity mount_at(State* state, int32_t tile_x, int32_t tile_y) {
+    CompGroup* groups[] = {
+        &state->components.compgroups[COMPTYPE_MOUNT],
+        &state->components.compgroups[COMPTYPE_POSITION],
+    };
+    void* comps[] = {NULL, NULL};
+    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
+        CPosition* position = (CPosition*)comps[1];
+
+        if (tile_x == position->x && tile_y == position->y) {
+            return position->entity;
+        }
+    }
+
+    return 0;
+}
+
 static void update_validity(State* state, int32_t x, int32_t y) {
     Selection* sel = &state->selection;
     
@@ -117,6 +135,41 @@ static void update_validity(State* state, int32_t x, int32_t y) {
     // TODO: check for obstruction/mount/etc instead of selectable
     Entity subject = selectable_at_lpixel(state, x, y);
     sel->hover_valid = ((subject == 0) == selection_visible);
+}
+
+static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
+    if (subject == 0) {
+        ERROR("entity can't be 0");
+        return;
+    }
+
+    int32_t tile_x = x / TILE_SIZE;
+    int32_t tile_y = y / TILE_SIZE;
+
+    Entity mount = mount_at(state, tile_x, tile_y);
+    bool is_rider = (component_of(
+        &state->components.compgroups[COMPTYPE_RIDER],
+        subject
+    ) != NULL);
+    
+    if (mount != 0 && is_rider) {
+        components_entity_end(&state->components, mount);
+        component_end(&state->components.compgroups[COMPTYPE_RIDER], subject);
+
+        CAvatar* avatar = (CAvatar*)component_of(
+            &state->components.compgroups[COMPTYPE_AVATAR],
+            subject
+        );
+        if (avatar != NULL) {
+            avatar->icon = state->icon_mknight;
+        }
+    }
+    
+    CPosition* position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
+    if (position != NULL) {
+        position->x = tile_x;
+        position->y = tile_y;
+    }
 }
 
 void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
@@ -135,12 +188,7 @@ void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
         }
     } else {
         if (sel->subject != 0) {
-            CPosition* position = component_of(
-                &state->components.compgroups[COMPTYPE_POSITION], sel->subject);
-            if (position != NULL) {
-                position->x = x / TILE_SIZE;
-                position->y = y / TILE_SIZE;
-            }
+            command_move(state, sel->subject, x, y);
         }
         
         sel->select_x = -1;

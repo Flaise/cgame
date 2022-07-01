@@ -12,7 +12,13 @@ Components make_components() {
     result.compgroups[COMPTYPE_POSITION] = compgroup_init(10, sizeof(CPosition));
     result.compgroups[COMPTYPE_AVATAR] = compgroup_init(10, sizeof(CAvatar));
     result.compgroups[COMPTYPE_SELECTABLE] = compgroup_init(10, sizeof(CSelectable));
+    result.compgroups[COMPTYPE_MOUNT] = compgroup_init(1, sizeof(CMount));
+    result.compgroups[COMPTYPE_RIDER] = compgroup_init(1, sizeof(CRider));
     return result;
+}
+
+void components_entity_end(Components* comps, Entity entity) {
+    compgroups_entity_end(comps->compgroups, COMPTYPE_COUNT, entity);
 }
 
 CPosition* position_init(Components* components, Entity entity, int x, int y) {
@@ -37,5 +43,17 @@ CAvatar* avatar_init(Components* components, Entity entity, Icon icon) {
 CSelectable* selectable_init(Components* components, Entity entity) {
     CompGroup* group = &components->compgroups[COMPTYPE_SELECTABLE];
     CSelectable* result = (CSelectable*)component_init(group, entity);
+    return result;
+}
+
+CMount* mount_init(Components* components, Entity entity) {
+    CompGroup* group = &components->compgroups[COMPTYPE_MOUNT];
+    CMount* result = (CMount*)component_init(group, entity);
+    return result;
+}
+
+CRider* rider_init(Components* components, Entity entity) {
+    CompGroup* group = &components->compgroups[COMPTYPE_RIDER];
+    CRider* result = (CRider*)component_init(group, entity);
     return result;
 }

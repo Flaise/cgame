@@ -123,6 +123,7 @@ int textures_init(State* state) {
     /* TODO: icon_texture_init for entire texture */
     state->icon_dragon = icon_tile_init(TEXTURE_DRAGON, 128, 0, 0);
     state->icon_knight = icon_tile_init(TEXTURE_KNIGHT, 128, 0, 0);
+    state->icon_mknight = icon_tile_init(TEXTURE_MKNIGHT, 128, 0, 0);
     state->icon_sheep = icon_tile_init(TEXTURE_SHEEP, 128, 0, 0);
     state->icon_dog = icon_tile_init(TEXTURE_DOG, 128, 0, 0);
     state->icon_horse = icon_tile_init(TEXTURE_HORSE, 128, 0, 0);

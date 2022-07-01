@@ -404,6 +404,10 @@ static char* test_component_for_entity() {
     mu_assert(component_of(&groupa, 1) == groupa.mem, "");
     mu_assert(component_of(&groupa, 0) == NULL, "");
     
+    comp_int_init(&groupa, 2, 9);
+    mu_assert(component_of(&groupa, 1) == groupa.mem, "");
+    mu_assert(component_of(&groupa, 2) == groupa.mem + sizeof(CompInt), "");
+    
     return 0;
 }
 
