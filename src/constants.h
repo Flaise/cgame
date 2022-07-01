@@ -80,7 +80,8 @@ typedef struct {
     SDL_Texture* textures[TEXTURE_COUNT];
     
     Icon icon_wall;
-    Icon icon_floor;
+    Icon icon_floor_a;
+    Icon icon_floor_b;
     Icon icon_pyramid;
     Icon icon_dragon;
     Icon icon_knight;

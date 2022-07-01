@@ -39,11 +39,17 @@ int terrain_update(State* state) {
         .h = TILE_SIZE,
     };
     
-    for (int y = 1; y < TILES_DOWN - 1; y += 1) {
-        for (int x = 1; x < TILES_ACROSS - 1; x += 1) {
+    for (int y = 0; y < TILES_DOWN; y += 1) {
+        for (int x = 0; x < TILES_ACROSS; x += 1) {
             dstrect.x = x * TILE_SIZE;
             dstrect.y = y * TILE_SIZE;
-            icon_draw(state, &state->icon_floor, &dstrect);
+
+            Icon* icon = &state->icon_floor_a;
+            if ((x + y) % 2 == 0) {
+                icon = &state->icon_floor_b;
+            }
+            
+            icon_draw(state, icon, &dstrect);
         }
     }
 
@@ -93,7 +99,8 @@ int terrain_init(State* state) {
 
     /* Initialize tiles. */
 
-    state->icon_floor = icon_tile_init(TEXTURE_TILES, 32, 3, 7);
+    state->icon_floor_a = icon_tile_init(TEXTURE_TILES, 32, 3, 7);
+    state->icon_floor_b = icon_tile_init(TEXTURE_TILES, 32, 1, 7);
     state->icon_wall = icon_tile_init(TEXTURE_TILES, 32, 1, 2);
     state->icon_pyramid = icon_tile_init(TEXTURE_TILES, 32, 1, 0);
     
