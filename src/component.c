@@ -18,6 +18,7 @@ Components make_components() {
     result.compgroups[COMPTYPE_EDIBLE] = compgroup_init(10, sizeof(CEdible));
     result.compgroups[COMPTYPE_SLAYER] = compgroup_init(1, sizeof(CSlayer));
     result.compgroups[COMPTYPE_SLAYME] = compgroup_init(1, sizeof(CSlayMe));
+    result.compgroups[COMPTYPE_OBSTRUCTION] = compgroup_init(10, sizeof(CObstruction));
     return result;
 }
 
@@ -75,4 +76,8 @@ CSlayer* slayer_init(Components* components, Entity entity) {
 
 CSlayMe* slayme_init(Components* components, Entity entity) {
     return (CSlayMe*)empty_init(components, COMPTYPE_SLAYME, entity);
+}
+
+CObstruction* obstruction_init(Components* components, Entity entity) {
+    return (CObstruction*)empty_init(components, COMPTYPE_OBSTRUCTION, entity);
 }

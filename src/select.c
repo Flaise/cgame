@@ -149,6 +149,8 @@ static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
     int32_t tile_x = x / TILE_SIZE;
     int32_t tile_y = y / TILE_SIZE;
 
+    bool interacted = false;
+
     /* knight + horse = mounted */
     Entity mount = type_at(state, COMPTYPE_MOUNT, tile_x, tile_y);
     bool is_rider = (component_of(
@@ -167,6 +169,8 @@ static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
             avatar->icon = state->icon_mknight;
         }
         slayer_init(&state->components, subject);
+        
+        interacted = true;
     }
 
     /* draggy + livestock = munch */
@@ -177,6 +181,8 @@ static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
     ) != NULL);
     if (edible != 0 && is_munch) {
         components_entity_end(&state->components, edible);
+        
+        interacted = true;
     }
 
     /* knight + draggy = yay */
@@ -187,6 +193,14 @@ static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
     ) != NULL);
     if (slayme != 0 && is_slayer) {
         components_entity_end(&state->components, slayme);
+        
+        interacted = true;
+    }
+
+    if (!interacted) {
+        if (type_at(state, COMPTYPE_OBSTRUCTION, tile_x, tile_y) != 0) {
+            return;
+        }
     }
     
     CPosition* position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);

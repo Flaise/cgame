@@ -20,6 +20,9 @@ void make_generic_piece(State* state, Entity entity, int32_t x, int32_t y, Icon 
     if (selectable_init(&state->components, entity) == NULL) {
         WARN("selectable_init");
     }
+    if (obstruction_init(&state->components, entity) == NULL) {
+        WARN("obstruction_init");
+    }
 }
 
 void level_1_init(State* state) {

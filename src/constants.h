@@ -47,7 +47,8 @@ typedef struct {
 #define COMPTYPE_EDIBLE 6
 #define COMPTYPE_SLAYER 7
 #define COMPTYPE_SLAYME 8
-#define COMPTYPE_COUNT 9
+#define COMPTYPE_OBSTRUCTION 9
+#define COMPTYPE_COUNT 10
 
 typedef struct {
     Entity entity;
@@ -62,7 +63,7 @@ typedef struct {
 
 typedef struct {
     Entity entity;
-} CSelectable, CMount, CRider, CMunch, CEdible, CSlayer, CSlayMe;
+} CSelectable, CMount, CRider, CMunch, CEdible, CSlayer, CSlayMe, CObstruction;
 
 typedef struct {
     CompGroup compgroups[COMPTYPE_COUNT];
