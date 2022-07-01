@@ -30,52 +30,44 @@ int terrain_update(State* state) {
         WARN("SDL_RenderClear");
     }
 
-    /* Draw tiles. */
+    /* Default floor tiles. */
 
-    SDL_Rect dstrect = {
+    SDL_Rect dest_rect = {
         .x = 0,
         .y = 0,
         .w = TILE_SIZE,
         .h = TILE_SIZE,
     };
-    
     for (int y = 0; y < TILES_DOWN; y += 1) {
         for (int x = 0; x < TILES_ACROSS; x += 1) {
-            dstrect.x = x * TILE_SIZE;
-            dstrect.y = y * TILE_SIZE;
+            dest_rect.x = x * TILE_SIZE;
+            dest_rect.y = y * TILE_SIZE;
 
             Icon* icon = &state->icon_floor_a;
             if ((x + y) % 2 == 0) {
                 icon = &state->icon_floor_b;
             }
             
-            icon_draw(state, icon, &dstrect);
+            icon_draw(state, icon, &dest_rect);
         }
     }
 
-    for (int y = 0; y < TILES_DOWN; y += 1) {
-        for (int x = 0; x < TILES_ACROSS; x += 1) {
-            if (!(x == 0 || y == 0 || x == TILES_ACROSS - 1 || y == TILES_DOWN - 1)) {
-                continue;
-            }
-            dstrect.x = x * TILE_SIZE;
-            dstrect.y = y * TILE_SIZE;
-            icon_draw(state, &state->icon_wall, &dstrect);
-        }
+    /* Dynamic terrain tiles. */
+
+    CompGroup* groups[] = {
+        &state->components.compgroups[COMPTYPE_TILE],
+        &state->components.compgroups[COMPTYPE_POSITION],
+    };
+    void* comps[] = {NULL, NULL};
+    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
+        CTile* tile = (CTile*)comps[0];
+        CPosition* position = (CPosition*)comps[1];
+
+        dest_rect.x = TILE_SIZE * position->x;
+        dest_rect.y = TILE_SIZE * position->y;
+
+        icon_draw(state, &tile->icon, &dest_rect);
     }
-    
-    dstrect.x = 0 * TILE_SIZE;
-    dstrect.y = 0 * TILE_SIZE;
-    icon_draw(state, &state->icon_pyramid, &dstrect);
-    dstrect.x = TILE_RIGHT * TILE_SIZE;
-    dstrect.y = 0 * TILE_SIZE;
-    icon_draw(state, &state->icon_pyramid, &dstrect);
-    dstrect.x = 0 * TILE_SIZE;
-    dstrect.y = TILE_BOTTOM * TILE_SIZE;
-    icon_draw(state, &state->icon_pyramid, &dstrect);
-    dstrect.x = TILE_RIGHT * TILE_SIZE;
-    dstrect.y = TILE_BOTTOM * TILE_SIZE;
-    icon_draw(state, &state->icon_pyramid, &dstrect);
 }
 
 int terrain_init(State* state) {

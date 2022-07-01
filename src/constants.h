@@ -48,7 +48,8 @@ typedef struct {
 #define COMPTYPE_SLAYER 7
 #define COMPTYPE_SLAYME 8
 #define COMPTYPE_OBSTRUCTION 9
-#define COMPTYPE_COUNT 10
+#define COMPTYPE_TILE 10
+#define COMPTYPE_COUNT 11
 
 typedef struct {
     Entity entity;
@@ -59,7 +60,7 @@ typedef struct {
 typedef struct {
     Entity entity;
     Icon icon;
-} CAvatar;
+} CAvatar, CTile;
 
 typedef struct {
     Entity entity;

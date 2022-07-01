@@ -35,7 +35,7 @@ Icon icon_tile_init(TexID texture_id, int tile_size, int x, int y) {
     return icon_init(texture_id, source_rect);
 }
 
-void icon_draw(State* state, Icon* icon, SDL_Rect* dest_rect) {
+void icon_draw(State* state, const Icon* icon, const SDL_Rect* dest_rect) {
     if (icon->texture_id < 0 || icon->texture_id >= TEXTURE_COUNT) {
         WARN("icon has invalid texture id");
         return;

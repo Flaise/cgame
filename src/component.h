@@ -55,3 +55,8 @@ CSlayMe* slayme_init(Components* components, Entity entity);
  Returns: A pointer to the newly initialized component or NULL if out of memory.
  */
 CObstruction* obstruction_init(Components* components, Entity entity);
+
+/*
+ Returns: A pointer to the newly initialized component or NULL if out of memory.
+ */
+CTile* tile_init(Components* components, Entity entity, Icon icon);

@@ -9,7 +9,7 @@
 
 Components make_components() {
     Components result;
-    result.compgroups[COMPTYPE_POSITION] = compgroup_init(10, sizeof(CPosition));
+    result.compgroups[COMPTYPE_POSITION] = compgroup_init(60, sizeof(CPosition));
     result.compgroups[COMPTYPE_AVATAR] = compgroup_init(10, sizeof(CAvatar));
     result.compgroups[COMPTYPE_SELECTABLE] = compgroup_init(10, sizeof(CSelectable));
     result.compgroups[COMPTYPE_MOUNT] = compgroup_init(1, sizeof(CMount));
@@ -18,7 +18,8 @@ Components make_components() {
     result.compgroups[COMPTYPE_EDIBLE] = compgroup_init(10, sizeof(CEdible));
     result.compgroups[COMPTYPE_SLAYER] = compgroup_init(1, sizeof(CSlayer));
     result.compgroups[COMPTYPE_SLAYME] = compgroup_init(1, sizeof(CSlayMe));
-    result.compgroups[COMPTYPE_OBSTRUCTION] = compgroup_init(10, sizeof(CObstruction));
+    result.compgroups[COMPTYPE_OBSTRUCTION] = compgroup_init(60, sizeof(CObstruction));
+    result.compgroups[COMPTYPE_TILE] = compgroup_init(60, sizeof(CTile));
     return result;
 }
 
@@ -80,4 +81,13 @@ CSlayMe* slayme_init(Components* components, Entity entity) {
 
 CObstruction* obstruction_init(Components* components, Entity entity) {
     return (CObstruction*)empty_init(components, COMPTYPE_OBSTRUCTION, entity);
+}
+
+CTile* tile_init(Components* components, Entity entity, Icon icon) {
+    CompGroup* group = &components->compgroups[COMPTYPE_TILE];
+    CTile* result = (CTile*)component_init(group, entity);
+    if (result != NULL) {
+        result->icon = icon;
+    }
+    return result;
 }
