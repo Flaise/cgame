@@ -20,6 +20,8 @@ Components make_components() {
     result.compgroups[COMPTYPE_SLAYME] = compgroup_init(1, sizeof(CSlayMe));
     result.compgroups[COMPTYPE_OBSTRUCTION] = compgroup_init(60, sizeof(CObstruction));
     result.compgroups[COMPTYPE_TILE] = compgroup_init(60, sizeof(CTile));
+    result.compgroups[COMPTYPE_HERDER] = compgroup_init(1, sizeof(CHerder));
+    result.compgroups[COMPTYPE_FLOCK] = compgroup_init(10, sizeof(CFlock));
     return result;
 }
 
@@ -90,4 +92,12 @@ CTile* tile_init(Components* components, Entity entity, Icon icon) {
         result->icon = icon;
     }
     return result;
+}
+
+CHerder* herder_init(Components* components, Entity entity) {
+    return (CHerder*)empty_init(components, COMPTYPE_HERDER, entity);
+}
+
+CFlock* flock_init(Components* components, Entity entity) {
+    return (CFlock*)empty_init(components, COMPTYPE_FLOCK, entity);
 }

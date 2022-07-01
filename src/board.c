@@ -68,6 +68,7 @@ void level_1_init(State* state) {
     entity += 1;
     make_generic_piece(state, entity, 4, 1, state->icon_sheep);
     edible_init(&state->components, entity);
+    flock_init(&state->components, entity);
     
     entity += 1;
     make_generic_piece(state, entity, 4, 2, state->icon_horse);
@@ -77,6 +78,7 @@ void level_1_init(State* state) {
     entity += 1;
     make_generic_piece(state, entity, 7, 3, state->icon_dog);
     edible_init(&state->components, entity);
+    herder_init(&state->components, entity);
 
     /* Terrain. */
     

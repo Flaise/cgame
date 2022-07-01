@@ -49,7 +49,9 @@ typedef struct {
 #define COMPTYPE_SLAYME 8
 #define COMPTYPE_OBSTRUCTION 9
 #define COMPTYPE_TILE 10
-#define COMPTYPE_COUNT 11
+#define COMPTYPE_HERDER 11
+#define COMPTYPE_FLOCK 12
+#define COMPTYPE_COUNT 13
 
 typedef struct {
     Entity entity;
@@ -59,12 +61,12 @@ typedef struct {
 
 typedef struct {
     Entity entity;
-    Icon icon;
+    Icon icon; /* TODO: Use icon_id and lookup table instead of using copies/pointers. */
 } CAvatar, CTile;
 
 typedef struct {
     Entity entity;
-} CSelectable, CMount, CRider, CMunch, CEdible, CSlayer, CSlayMe, CObstruction;
+} CSelectable, CMount, CRider, CMunch, CEdible, CSlayer, CSlayMe, CObstruction, CHerder, CFlock;
 
 typedef struct {
     CompGroup compgroups[COMPTYPE_COUNT];
@@ -79,7 +81,8 @@ typedef struct {
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* textures[TEXTURE_COUNT];
-    
+
+    /* TODO: Icon icons[ICON_COUNT]; */
     Icon icon_wall;
     Icon icon_floor_a;
     Icon icon_floor_b;
