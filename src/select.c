@@ -131,18 +131,29 @@ static Entity type_at(State* state, uint8_t comptype, int32_t tile_x, int32_t ti
     return 0;
 }
 
+static int32_t distance4(int32_t ax, int32_t ay, int32_t bx, int32_t by) {
+    return abs(ax - bx) + abs(ay - by);
+}
+
 static void update_validity(State* state, int32_t x, int32_t y) {
     Selection* sel = &state->selection;
     
     bool selection_visible = sel->select_x >= 0 && sel->select_y >= 0;
-    
-    // TODO: check for obstruction/mount/etc instead of selectable
-    Entity subject = selectable_at_lpixel(state, x, y);
-    sel->hover_valid = ((subject == 0) == selection_visible);
-}
 
-int32_t distance4(int32_t ax, int32_t ay, int32_t bx, int32_t by) {
-    return abs(ax - bx) + abs(ay - by);
+    int32_t tdest_x = x / TILE_SIZE;
+    int32_t tdest_y = y / TILE_SIZE;
+    if (selection_visible) {
+        if (distance4(tdest_x, tdest_y, sel->select_x, sel->select_y) != 1) {
+            sel->hover_valid = false;
+        } else {
+            // TODO: check for edible/slayme/mount/etc instead of just obstruction
+            Entity target = type_at(state, COMPTYPE_OBSTRUCTION, tdest_x, tdest_y);
+            sel->hover_valid = (target == 0);
+        }
+    } else {
+        Entity subject = selectable_at_lpixel(state, x, y);
+        sel->hover_valid = (subject != 0);
+    }
 }
 
 typedef struct {
