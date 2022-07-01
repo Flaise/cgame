@@ -142,6 +142,9 @@ static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
         ERROR("entity can't be 0");
         return;
     }
+    if (!in_view(x, y)) {
+        return;
+    }
 
     int32_t tile_x = x / TILE_SIZE;
     int32_t tile_y = y / TILE_SIZE;
@@ -182,7 +185,6 @@ static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
         &state->components.compgroups[COMPTYPE_SLAYER],
         subject
     ) != NULL);
-    printf("%d %d\n", slayme, is_slayer);
     if (slayme != 0 && is_slayer) {
         components_entity_end(&state->components, slayme);
     }
