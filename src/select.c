@@ -15,13 +15,13 @@ typedef struct {
     uint8_t a;
 } RGBA;
 
-RGBA color_move_valid = {40, 110, 90, 120};
-RGBA color_move_invalid = {150, 70, 60, 120};
+RGBA color_move_valid = {40, 130, 100, 130};
+RGBA color_move_invalid = {150, 70, 60, 150};
 
 RGBA color_selection = {150, 170, 60, 100};
 
-RGBA color_select_valid = {40, 110, 90, 120};
-RGBA color_select_empty = {40, 110, 90, 50};
+RGBA color_select_valid = {40, 130, 100, 130};
+RGBA color_select_empty = {40, 130, 100, 70};
 
 static void set_color(State* state, RGBA color) {
     int8_t r = color.r;
@@ -66,9 +66,17 @@ void select_draw(State* state) {
     if (!overlap && hover_visible) {
         RGBA color;
         if (selection_visible) {
-            color = color_move_valid;
+            if (sel->hover_valid) {
+                color = color_move_valid;
+            } else {
+                color = color_move_invalid;
+            }
         } else {
-            color = color_select_valid;
+            if (sel->hover_valid) {
+                color = color_select_valid;
+            } else {
+                color = color_select_empty;
+            }
         }
         set_color(state, color);
         draw_tile_rect(state, sel->hover_x, sel->hover_y);
@@ -101,6 +109,16 @@ static Entity selectable_at_lpixel(State* state, int32_t x, int32_t y) {
     return 0;
 }
 
+static void update_validity(State* state, int32_t x, int32_t y) {
+    Selection* sel = &state->selection;
+    
+    bool selection_visible = sel->select_x >= 0 && sel->select_y >= 0;
+    
+    // TODO: check for obstruction/mount/etc instead of selectable
+    Entity subject = selectable_at_lpixel(state, x, y);
+    sel->hover_valid = ((subject == 0) == selection_visible);
+}
+
 void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
     if (!(button == SDL_BUTTON_LEFT || button == SDL_BUTTON_RIGHT)) {
         return;
@@ -128,6 +146,7 @@ void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
         sel->select_x = -1;
         sel->select_y = -1;
         sel->subject = 0;
+        update_validity(state, x, y);
     }
 }
 
@@ -137,6 +156,8 @@ void select_mouse_move(State* state, int32_t x, int32_t y) {
     if (in_view(x, y)) {
         sel->hover_x = x / TILE_SIZE;
         sel->hover_y = y / TILE_SIZE;
+
+        update_validity(state, x, y);
     } else {
         sel->hover_x = -1;
         sel->hover_y = -1;

@@ -35,8 +35,8 @@ int draw_now(State* state) {
     }
 
     terrain_draw(state);
-    avatar_draw(state);
     select_draw(state);
+    avatar_draw(state);
     
     SDL_RenderPresent(state->renderer);
 

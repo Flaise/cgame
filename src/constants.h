@@ -22,7 +22,7 @@
 
 /* Putting type definitions here to resolve issues with circular imports. */
 
-typedef int TexID;
+typedef int32_t TexID;
 
 typedef struct {
     TexID texture_id;
@@ -30,11 +30,12 @@ typedef struct {
 } Icon;
 
 typedef struct {
-    int hover_x;
-    int hover_y;
-    int select_x;
-    int select_y;
+    int32_t hover_x;
+    int32_t hover_y;
+    int32_t select_x;
+    int32_t select_y;
     Entity subject;
+    bool hover_valid;
 } Selection;
 
 #define COMPTYPE_POSITION 0
