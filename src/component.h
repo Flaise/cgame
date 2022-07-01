@@ -40,3 +40,13 @@ CMunch* munch_init(Components* components, Entity entity);
  Returns: A pointer to the newly initialized component or NULL if out of memory.
  */
 CEdible* edible_init(Components* components, Entity entity);
+
+/*
+ Returns: A pointer to the newly initialized component or NULL if out of memory.
+ */
+CSlayer* slayer_init(Components* components, Entity entity);
+
+/*
+ Returns: A pointer to the newly initialized component or NULL if out of memory.
+ */
+CSlayMe* slayme_init(Components* components, Entity entity);

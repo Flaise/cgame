@@ -16,6 +16,8 @@ Components make_components() {
     result.compgroups[COMPTYPE_RIDER] = compgroup_init(1, sizeof(CRider));
     result.compgroups[COMPTYPE_MUNCH] = compgroup_init(1, sizeof(CMunch));
     result.compgroups[COMPTYPE_EDIBLE] = compgroup_init(10, sizeof(CEdible));
+    result.compgroups[COMPTYPE_SLAYER] = compgroup_init(1, sizeof(CSlayer));
+    result.compgroups[COMPTYPE_SLAYME] = compgroup_init(1, sizeof(CSlayMe));
     return result;
 }
 
@@ -42,32 +44,35 @@ CAvatar* avatar_init(Components* components, Entity entity, Icon icon) {
     return result;
 }
 
+void* empty_init(Components* components, uint8_t comptype, Entity entity) {
+    CompGroup* group = &components->compgroups[comptype];
+    return component_init(group, entity);
+}
+
 CSelectable* selectable_init(Components* components, Entity entity) {
-    CompGroup* group = &components->compgroups[COMPTYPE_SELECTABLE];
-    CSelectable* result = (CSelectable*)component_init(group, entity);
-    return result;
+    return (CSelectable*)empty_init(components, COMPTYPE_SELECTABLE, entity);
 }
 
 CMount* mount_init(Components* components, Entity entity) {
-    CompGroup* group = &components->compgroups[COMPTYPE_MOUNT];
-    CMount* result = (CMount*)component_init(group, entity);
-    return result;
+    return (CMount*)empty_init(components, COMPTYPE_MOUNT, entity);
 }
 
 CRider* rider_init(Components* components, Entity entity) {
-    CompGroup* group = &components->compgroups[COMPTYPE_RIDER];
-    CRider* result = (CRider*)component_init(group, entity);
-    return result;
+    return (CRider*)empty_init(components, COMPTYPE_RIDER, entity);
 }
 
 CMunch* munch_init(Components* components, Entity entity) {
-    CompGroup* group = &components->compgroups[COMPTYPE_MUNCH];
-    CMunch* result = (CMunch*)component_init(group, entity);
-    return result;
+    return (CMunch*)empty_init(components, COMPTYPE_MUNCH, entity);
 }
 
 CEdible* edible_init(Components* components, Entity entity) {
-    CompGroup* group = &components->compgroups[COMPTYPE_EDIBLE];
-    CEdible* result = (CEdible*)component_init(group, entity);
-    return result;
+    return (CEdible*)empty_init(components, COMPTYPE_EDIBLE, entity);
+}
+
+CSlayer* slayer_init(Components* components, Entity entity) {
+    return (CSlayer*)empty_init(components, COMPTYPE_SLAYER, entity);
+}
+
+CSlayMe* slayme_init(Components* components, Entity entity) {
+    return (CSlayMe*)empty_init(components, COMPTYPE_SLAYME, entity);
 }

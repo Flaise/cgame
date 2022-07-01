@@ -110,26 +110,9 @@ static Entity selectable_at_lpixel(State* state, int32_t x, int32_t y) {
     return 0;
 }
 
-static Entity mount_at(State* state, int32_t tile_x, int32_t tile_y) {
+static Entity type_at(State* state, uint8_t comptype, int32_t tile_x, int32_t tile_y) {
     CompGroup* groups[] = {
-        &state->components.compgroups[COMPTYPE_MOUNT],
-        &state->components.compgroups[COMPTYPE_POSITION],
-    };
-    void* comps[] = {NULL, NULL};
-    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
-        CPosition* position = (CPosition*)comps[1];
-
-        if (tile_x == position->x && tile_y == position->y) {
-            return position->entity;
-        }
-    }
-
-    return 0;
-}
-
-static Entity edible_at(State* state, int32_t tile_x, int32_t tile_y) {
-    CompGroup* groups[] = {
-        &state->components.compgroups[COMPTYPE_EDIBLE],
+        &state->components.compgroups[comptype],
         &state->components.compgroups[COMPTYPE_POSITION],
     };
     void* comps[] = {NULL, NULL};
@@ -163,12 +146,12 @@ static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
     int32_t tile_x = x / TILE_SIZE;
     int32_t tile_y = y / TILE_SIZE;
 
-    Entity mount = mount_at(state, tile_x, tile_y);
+    /* knight + horse = mounted */
+    Entity mount = type_at(state, COMPTYPE_MOUNT, tile_x, tile_y);
     bool is_rider = (component_of(
         &state->components.compgroups[COMPTYPE_RIDER],
         subject
     ) != NULL);
-    
     if (mount != 0 && is_rider) {
         components_entity_end(&state->components, mount);
         component_end(&state->components.compgroups[COMPTYPE_RIDER], subject);
@@ -180,16 +163,28 @@ static void command_move(State* state, Entity subject, int32_t x, int32_t y) {
         if (avatar != NULL) {
             avatar->icon = state->icon_mknight;
         }
+        slayer_init(&state->components, subject);
     }
-    
-    Entity edible = edible_at(state, tile_x, tile_y);
+
+    /* draggy + livestock = munch */
+    Entity edible = type_at(state, COMPTYPE_EDIBLE, tile_x, tile_y);
     bool is_munch = (component_of(
         &state->components.compgroups[COMPTYPE_MUNCH],
         subject
     ) != NULL);
-    
     if (edible != 0 && is_munch) {
         components_entity_end(&state->components, edible);
+    }
+
+    /* knight + draggy = yay */
+    Entity slayme = type_at(state, COMPTYPE_SLAYME, tile_x, tile_y);
+    bool is_slayer = (component_of(
+        &state->components.compgroups[COMPTYPE_SLAYER],
+        subject
+    ) != NULL);
+    printf("%d %d\n", slayme, is_slayer);
+    if (slayme != 0 && is_slayer) {
+        components_entity_end(&state->components, slayme);
     }
     
     CPosition* position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);

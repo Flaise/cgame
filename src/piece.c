@@ -28,6 +28,7 @@ void level_1_init(State* state) {
     Entity entity = 1; /* TODO: function to get next entity */
     make_generic_piece(state, entity, 2, 1, state->icon_dragon);
     munch_init(&state->components, entity);
+    slayme_init(&state->components, entity);
     
     entity = 2;
     make_generic_piece(state, entity, 4, 3, state->icon_knight);
