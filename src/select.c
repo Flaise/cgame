@@ -141,6 +141,10 @@ static void update_validity(State* state, int32_t x, int32_t y) {
     sel->hover_valid = ((subject == 0) == selection_visible);
 }
 
+int32_t distance4(int32_t ax, int32_t ay, int32_t bx, int32_t by) {
+    return abs(ax - bx) + abs(ay - by);
+}
+
 typedef struct {
     bool herded;
     int32_t dx;
@@ -157,23 +161,31 @@ static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32
     if (!in_board(tile_x, tile_y)) {
         return result;
     }
+    
+    CPosition* position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
+    if (position == NULL) {
+        ERROR("subject position component deleted");
+        return result;
+    }
+
+    /* Only move to adjacent square. */
+    if (distance4(position->x, position->y, tile_x, tile_y) != 1) {
+        return result;
+    }
+    position = NULL; /* The pointer can invalidate if components are removed so don't reuse. */
 
     bool interacted = false;
 
     /* knight + horse = mounted */
     Entity mount = type_at(state, COMPTYPE_MOUNT, tile_x, tile_y);
-    bool is_rider = (component_of(
-        &state->components.compgroups[COMPTYPE_RIDER],
-        subject
-    ) != NULL);
+    bool is_rider = 
+        (component_of(&state->components.compgroups[COMPTYPE_RIDER], subject) != NULL);
     if (mount != 0 && is_rider) {
         components_entity_end(&state->components, mount);
         component_end(&state->components.compgroups[COMPTYPE_RIDER], subject);
 
-        CAvatar* avatar = (CAvatar*)component_of(
-            &state->components.compgroups[COMPTYPE_AVATAR],
-            subject
-        );
+        CAvatar* avatar =
+            (CAvatar*)component_of(&state->components.compgroups[COMPTYPE_AVATAR], subject);
         if (avatar != NULL) {
             avatar->icon = state->icon_mknight;
         }
@@ -184,10 +196,8 @@ static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32
 
     /* draggy + livestock = munch */
     Entity edible = type_at(state, COMPTYPE_EDIBLE, tile_x, tile_y);
-    bool is_munch = (component_of(
-        &state->components.compgroups[COMPTYPE_MUNCH],
-        subject
-    ) != NULL);
+    bool is_munch =
+        (component_of(&state->components.compgroups[COMPTYPE_MUNCH], subject) != NULL);
     if (edible != 0 && is_munch) {
         components_entity_end(&state->components, edible);
         
@@ -196,10 +206,8 @@ static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32
 
     /* knight + draggy = yay */
     Entity slayme = type_at(state, COMPTYPE_SLAYME, tile_x, tile_y);
-    bool is_slayer = (component_of(
-        &state->components.compgroups[COMPTYPE_SLAYER],
-        subject
-    ) != NULL);
+    bool is_slayer =
+        (component_of(&state->components.compgroups[COMPTYPE_SLAYER], subject) != NULL);
     if (slayme != 0 && is_slayer) {
         components_entity_end(&state->components, slayme);
         
@@ -209,9 +217,11 @@ static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32
     if (!interacted && type_at(state, COMPTYPE_OBSTRUCTION, tile_x, tile_y) != 0) {
         return result;
     }
-    
-    CPosition* position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
+
+    /* Need to get position component again because the ECS can have rearranged. */
+    position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
     if (position == NULL) {
+        ERROR("subject position component deleted");
         return result;
     }
 
