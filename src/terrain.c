@@ -43,9 +43,9 @@ int terrain_update(State* state) {
             dest_rect.x = x * TILE_SIZE;
             dest_rect.y = y * TILE_SIZE;
 
-            Icon* icon = &state->icon_floor_a;
+            IconID icon = ICON_FLOOR_A;
             if ((x + y) % 2 == 0) {
-                icon = &state->icon_floor_b;
+                icon = ICON_FLOOR_B;
             }
             
             icon_draw(state, icon, &dest_rect);
@@ -66,7 +66,7 @@ int terrain_update(State* state) {
         dest_rect.x = TILE_SIZE * position->x;
         dest_rect.y = TILE_SIZE * position->y;
 
-        icon_draw(state, &tile->icon, &dest_rect);
+        icon_draw(state, tile->icon_id, &dest_rect);
     }
 }
 
@@ -91,10 +91,10 @@ int terrain_init(State* state) {
 
     /* Initialize tiles. */
 
-    state->icon_floor_a = icon_tile_init(TEXTURE_TILES, 32, 3, 7);
-    state->icon_floor_b = icon_tile_init(TEXTURE_TILES, 32, 1, 7);
-    state->icon_wall = icon_tile_init(TEXTURE_TILES, 32, 1, 2);
-    state->icon_pyramid = icon_tile_init(TEXTURE_TILES, 32, 1, 0);
+    icon_tile_init(state, ICON_FLOOR_A, TEXTURE_TILES, 32, 3, 7);
+    icon_tile_init(state, ICON_FLOOR_B, TEXTURE_TILES, 32, 1, 7);
+    icon_tile_init(state, ICON_WALL, TEXTURE_TILES, 32, 1, 2);
+    icon_tile_init(state, ICON_PYRAMID, TEXTURE_TILES, 32, 1, 0);
     
     return 0;
 }

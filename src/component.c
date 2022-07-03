@@ -39,11 +39,11 @@ CPosition* position_init(Components* components, Entity entity, int x, int y) {
     return result;
 }
 
-CAvatar* avatar_init(Components* components, Entity entity, Icon icon) {
+CAvatar* avatar_init(Components* components, Entity entity, IconID icon_id) {
     CompGroup* group = &components->compgroups[COMPTYPE_AVATAR];
     CAvatar* result = (CAvatar*)component_init(group, entity);
     if (result != NULL) {
-        result->icon = icon;
+        result->icon_id = icon_id;
     }
     return result;
 }
@@ -85,11 +85,11 @@ CObstruction* obstruction_init(Components* components, Entity entity) {
     return (CObstruction*)empty_init(components, COMPTYPE_OBSTRUCTION, entity);
 }
 
-CTile* tile_init(Components* components, Entity entity, Icon icon) {
+CTile* tile_init(Components* components, Entity entity, IconID icon_id) {
     CompGroup* group = &components->compgroups[COMPTYPE_TILE];
     CTile* result = (CTile*)component_init(group, entity);
     if (result != NULL) {
-        result->icon = icon;
+        result->icon_id = icon_id;
     }
     return result;
 }

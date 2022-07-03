@@ -17,7 +17,7 @@ static void avatar_draw_one(State* state, CAvatar* avatar, CPosition* position) 
         .w = TILE_SIZE,
         .h = TILE_SIZE,
     };
-    icon_draw(state, &avatar->icon, &dest_rect);
+    icon_draw(state, avatar->icon_id, &dest_rect);
 }
 
 void avatar_draw(State* state) {

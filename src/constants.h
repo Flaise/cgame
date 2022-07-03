@@ -20,9 +20,22 @@
 #define TEXTURE_HORSE 7
 #define TEXTURE_COUNT 8
 
+#define ICON_WALL 0
+#define ICON_FLOOR_A 1
+#define ICON_FLOOR_B 2
+#define ICON_PYRAMID 3
+#define ICON_DRAGON 4
+#define ICON_KNIGHT 5
+#define ICON_MKNIGHT 6
+#define ICON_SHEEP 7
+#define ICON_DOG 8
+#define ICON_HORSE 9
+#define ICON_COUNT 10
+
 /* Putting type definitions here to resolve issues with circular imports. */
 
 typedef int32_t TexID;
+typedef uint8_t IconID;
 
 typedef struct {
     TexID texture_id;
@@ -61,7 +74,7 @@ typedef struct {
 
 typedef struct {
     Entity entity;
-    Icon icon; /* TODO: Use icon_id and lookup table instead of using copies/pointers. */
+    IconID icon_id;
 } CAvatar, CTile;
 
 typedef struct {
@@ -81,16 +94,5 @@ typedef struct {
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* textures[TEXTURE_COUNT];
-
-    /* TODO: Icon icons[ICON_COUNT]; */
-    Icon icon_wall;
-    Icon icon_floor_a;
-    Icon icon_floor_b;
-    Icon icon_pyramid;
-    Icon icon_dragon;
-    Icon icon_knight;
-    Icon icon_mknight;
-    Icon icon_sheep;
-    Icon icon_dog;
-    Icon icon_horse;
+    Icon icons[ICON_COUNT];
 } State;

@@ -11,11 +11,11 @@
 #include "icon.h"
 #include "terrain.h"
 
-static void make_generic_piece(State* state, Entity entity, int32_t x, int32_t y, Icon icon) {
+static void make_generic_piece(State* state, Entity entity, int32_t x, int32_t y, IconID icon_id) {
     if (position_init(&state->components, entity, x, y) == NULL) {
         WARN("position_init");
     }
-    if (avatar_init(&state->components, entity, icon) == NULL) {
+    if (avatar_init(&state->components, entity, icon_id) == NULL) {
         WARN("avatar_init");
     }
     if (selectable_init(&state->components, entity) == NULL) {
@@ -26,26 +26,14 @@ static void make_generic_piece(State* state, Entity entity, int32_t x, int32_t y
     }
 }
 
-#define WALL_NORMAL 1
-#define WALL_PYRAMID 2
-static void make_wall(State* state, Entity entity, int32_t x, int32_t y, uint8_t walltype) {
+static void make_wall(State* state, Entity entity, int32_t x, int32_t y, IconID icon_id) {
     if (position_init(&state->components, entity, x, y) == NULL) {
         WARN("position_init");
     }
     if (obstruction_init(&state->components, entity) == NULL) {
         WARN("obstruction_init");
     }
-
-    Icon icon;
-    if (walltype == WALL_NORMAL) {
-        icon = state->icon_wall;
-    } else if (walltype == WALL_PYRAMID) {
-        icon = state->icon_pyramid;
-    } else {
-        WARN("invalid wall type");
-    }
-    
-    if (tile_init(&state->components, entity, icon) == NULL) {
+    if (tile_init(&state->components, entity, icon_id) == NULL) {
         WARN("tile_init");
     }
 }
@@ -56,64 +44,64 @@ void level_1_init(State* state) {
     /* Pieces. */
     
     Entity entity = 1; /* TODO: function to get next entity */
-    make_generic_piece(state, entity, 2, 0, state->icon_dragon);
+    make_generic_piece(state, entity, 2, 0, ICON_DRAGON);
     munch_init(&state->components, entity);
     slayme_init(&state->components, entity);
     
     entity += 1;
-    make_generic_piece(state, entity, 4, 4, state->icon_knight);
+    make_generic_piece(state, entity, 4, 4, ICON_KNIGHT);
     rider_init(&state->components, entity);
     edible_init(&state->components, entity);
     
     entity += 1;
-    make_generic_piece(state, entity, 4, 1, state->icon_sheep);
+    make_generic_piece(state, entity, 4, 1, ICON_SHEEP);
     edible_init(&state->components, entity);
     flock_init(&state->components, entity);
     
     entity += 1;
-    make_generic_piece(state, entity, 2, 3, state->icon_sheep);
+    make_generic_piece(state, entity, 2, 3, ICON_SHEEP);
     edible_init(&state->components, entity);
     flock_init(&state->components, entity);
     
     entity += 1;
-    make_generic_piece(state, entity, 4, 2, state->icon_horse);
+    make_generic_piece(state, entity, 4, 2, ICON_HORSE);
     mount_init(&state->components, entity);
     edible_init(&state->components, entity);
     
     entity += 1;
-    make_generic_piece(state, entity, 7, 3, state->icon_dog);
+    make_generic_piece(state, entity, 7, 3, ICON_DOG);
     edible_init(&state->components, entity);
     herder_init(&state->components, entity);
 
     /* Terrain. */
     
     entity += 1;
-    make_wall(state, entity, 0, 0, WALL_PYRAMID);
+    make_wall(state, entity, 0, 0, ICON_PYRAMID);
     entity += 1;
-    make_wall(state, entity, 9, 0, WALL_PYRAMID);
+    make_wall(state, entity, 9, 0, ICON_PYRAMID);
     entity += 1;
-    make_wall(state, entity, 9, 5, WALL_PYRAMID);
+    make_wall(state, entity, 9, 5, ICON_PYRAMID);
     entity += 1;
-    make_wall(state, entity, 0, 5, WALL_PYRAMID);
+    make_wall(state, entity, 0, 5, ICON_PYRAMID);
 
     for (int32_t r = 1; r < 5; r += 1) {
         entity += 1;
-        make_wall(state, entity, 0, r, WALL_NORMAL);
+        make_wall(state, entity, 0, r, ICON_WALL);
         entity += 1;
-        make_wall(state, entity, 9, r, WALL_NORMAL);
+        make_wall(state, entity, 9, r, ICON_WALL);
     }
     
     for (int32_t r = 1; r < 9; r += 1) {
         entity += 1;
-        make_wall(state, entity, r, 5, WALL_NORMAL);
+        make_wall(state, entity, r, 5, ICON_WALL);
     }
     
     for (int32_t r = 7; r < 9; r += 1) {
         entity += 1;
-        make_wall(state, entity, r, 0, WALL_NORMAL);
+        make_wall(state, entity, r, 0, ICON_WALL);
     }
     entity += 1;
-    make_wall(state, entity, 6, 0, WALL_PYRAMID);
+    make_wall(state, entity, 6, 0, ICON_PYRAMID);
 
     terrain_update(state);
 }

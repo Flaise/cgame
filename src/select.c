@@ -198,7 +198,7 @@ static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32
         CAvatar* avatar =
             (CAvatar*)component_of(&state->components.compgroups[COMPTYPE_AVATAR], subject);
         if (avatar != NULL) {
-            avatar->icon = state->icon_mknight;
+            avatar->icon_id = ICON_MKNIGHT;
         }
         slayer_init(&state->components, subject);
         
