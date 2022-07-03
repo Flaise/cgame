@@ -68,6 +68,8 @@ int terrain_update(State* state) {
 
         icon_draw(state, tile->icon_id, &dest_rect);
     }
+
+    return 0;
 }
 
 int terrain_init(State* state) {

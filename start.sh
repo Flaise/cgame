@@ -27,7 +27,7 @@ mkdir -p ./bin/ || exit 1
 
 cd src || exit 1 # removes extraneous folder name from log messages
 /usr/bin/time -f "compilation: %es" \
-    c99 -o ../${BIN} *.c `pkg-config --cflags --libs sdl2 SDL2_image` ${DEFINE} || exit 1
+    c99 -Wall -o ../${BIN} *.c `pkg-config --cflags --libs sdl2 SDL2_image` ${DEFINE} || exit 1
 cd .. || exit 1
 
 

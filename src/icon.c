@@ -42,7 +42,7 @@ void icon_tile_init(
 }
 
 void icon_texture_init(State* state, IconID icon_id, TexID texture_id) {
-    uint32_t w, h;
+    int32_t w, h;
     if (SDL_QueryTexture(state->textures[texture_id], NULL, NULL, &w, &h) != 0) {
         ERROR("SDL_QueryTexture");
         /* Not really necessary to signal an error because it's not recoverable. */
