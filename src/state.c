@@ -10,7 +10,7 @@
 #include "component.h"
 #include "state.h"
 
-State* make_state() {
+State* state_new() {
     /* Using calloc to initialize to zero. */
     State* state = calloc(1, sizeof(State));
     if (state == NULL) {
@@ -26,7 +26,7 @@ State* make_state() {
     return state;
 }
 
-void destroy_state(State* state) {
+void state_end(State* state) {
     if (state == NULL) {
         return;
     }

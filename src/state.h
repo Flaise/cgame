@@ -3,9 +3,9 @@
     Allocates and returns a new blank State. Caller must free the state. Returns NULL if the
     allocation failed.
  */
-State* make_state();
+State* state_new();
 
 /*
-    Deallocates and zeroes out the state.
+    Deallocates the contents of the state and zeroes out the pointers.
  */
-void destroy_state(State* state);
+void state_end(State* state);

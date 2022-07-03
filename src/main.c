@@ -166,7 +166,7 @@ int run(State* state) {
 }
 
 int main(int argc, char* argv[]) {
-    State* state = make_state();
+    State* state = state_new();
     if (state == NULL) {
         ERROR("make_state");
         return 1;
@@ -175,7 +175,7 @@ int main(int argc, char* argv[]) {
     int status = run(state);
 
     /* clear state before SDL_Quit because it involves SDL calls */
-    destroy_state(state);
+    state_end(state);
     
     if (IMG_Init(0) != 0) {
         IMG_Quit();
