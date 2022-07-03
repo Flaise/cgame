@@ -2,7 +2,7 @@
 /*
  Creates a new Components object.
  */
-Components make_components();
+Components components_new();
 
 void components_entity_end(Components* comps, Entity entity);
 

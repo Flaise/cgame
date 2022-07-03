@@ -7,7 +7,7 @@
 #include "entity.h"
 #include "constants.h"
 
-Components make_components() {
+Components components_new() {
     Components result;
     result.compgroups[COMPTYPE_POSITION] = compgroup_init(60, sizeof(CPosition));
     result.compgroups[COMPTYPE_AVATAR] = compgroup_init(10, sizeof(CAvatar));

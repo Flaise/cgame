@@ -22,7 +22,7 @@ State* make_state() {
     state->selection.hover_y = -1;
     state->selection.select_x = -1;
     state->selection.select_y = -1;
-    state->components = make_components();
+    state->components = components_new();
     return state;
 }
 
