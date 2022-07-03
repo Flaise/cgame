@@ -34,7 +34,6 @@
 #include "res/horse.h"
 #define RES_HORSE __res_horse_png
 
-
 int window_icon_load_const_png(SDL_Window* window, const void* mem, int size) {
     SDL_Surface* surface = const_png_to_surface(mem, size);
     if (surface == NULL) {

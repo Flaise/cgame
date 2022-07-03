@@ -29,7 +29,7 @@ void components_entity_end(Components* comps, Entity entity) {
     compgroups_entity_end(comps->compgroups, COMPTYPE_COUNT, entity);
 }
 
-CPosition* position_init(Components* components, Entity entity, int x, int y) {
+CPosition* position_init(Components* components, Entity entity, Coord x, Coord y) {
     CompGroup* group = &components->compgroups[COMPTYPE_POSITION];
     CPosition* result = (CPosition*)component_init(group, entity);
     if (result != NULL) {

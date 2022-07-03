@@ -1,9 +1,10 @@
 
 Icon icon_new(TexID texture_id, SDL_Rect source_rect);
 
-Icon icon_tile_new(TexID texture_id, int tile_size, int x, int y);
+Icon icon_tile_new(TexID texture_id, int32_t tile_size, int32_t x, int32_t y);
 
-void icon_tile_init(State* state, IconID icon_id, TexID texture_id, int tile_size, int x, int y);
+void icon_tile_init(
+    State* state, IconID icon_id, TexID texture_id, int32_t tile_size, int32_t x, int32_t y);
 
 void icon_texture_init(State* state, IconID icon_id, TexID texture_id);
 

@@ -73,7 +73,7 @@ int terrain_update(State* state) {
 int terrain_init(State* state) {
     /* Off screen texture to avoid seams between tiles. */
     
-    Uint32 format = SDL_GetWindowPixelFormat(state->window);
+    uint32_t format = SDL_GetWindowPixelFormat(state->window);
     if (format == SDL_PIXELFORMAT_UNKNOWN) {
         WARN("SDL_GetWindowPixelFormat");
         

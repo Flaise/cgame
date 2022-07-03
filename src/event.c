@@ -18,12 +18,12 @@ typedef enum {
     Error,
 } Status;
 
-void size_changed(State* state, int width, int height) {
+void size_changed(State* state, uint32_t width, uint32_t height) {
     /* Letterboxing is done automatically with SDL_RenderSetLogicalSize. */
     redraw(state);
 }
 
-void mouse_motion(State* state, Sint32 x, Sint32 y) {
+void mouse_motion(State* state, int32_t x, int32_t y) {
     select_mouse_move(state, x, y);
     redraw(state);
 }
@@ -33,7 +33,7 @@ void mouse_leave(State* state) {
     redraw(state);
 }
 
-void mouse_button(State* state, Uint8 button, Sint32 x, Sint32 y) {
+void mouse_button(State* state, uint8_t button, int32_t x, int32_t y) {
     select_mouse_press(state, button, x, y);
     redraw(state);
 }
@@ -50,8 +50,8 @@ Status events_pending(State* state) {
                click on task bar to unminimize = Restored */
             case SDL_WINDOWEVENT:
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    int width = event.window.data1;
-                    int height = event.window.data2;
+                    int32_t width = event.window.data1;
+                    int32_t height = event.window.data2;
                     size_changed(state, width, height);
                 } else if (event.window.event == SDL_WINDOWEVENT_LEAVE) {
                     mouse_leave(state);

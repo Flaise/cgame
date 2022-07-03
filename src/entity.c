@@ -12,7 +12,7 @@
 #include "constants.h"
 #include "component.h"
 
-CompGroup compgroup_init(size_t total, size_t compsize) {
+CompGroup compgroup_init(uint32_t total, size_t compsize) {
     if (total == 0 || compsize == 0) {
         ERROR("Invalid total or component size.");
     }
@@ -24,7 +24,7 @@ CompGroup compgroup_init(size_t total, size_t compsize) {
     return result;
 }
 
-static AbstractComp* component_at(void* mem, size_t compsize, size_t index) {
+static AbstractComp* component_at(void* mem, size_t compsize, uint32_t index) {
     return (AbstractComp*)(mem + (index * compsize));
 }
 
@@ -40,9 +40,9 @@ void* component_init(CompGroup* group, Entity entity) {
         return NULL;
     }
 
-    size_t dest_index = group->alive;
+    uint32_t dest_index = group->alive;
     
-    for (size_t r = group->alive; r > 0;) {
+    for (uint32_t r = group->alive; r > 0;) {
         /* Loop counter has to decrement first because the size_t can't go negative. */
         r -= 1;
         
@@ -68,7 +68,7 @@ void* component_init(CompGroup* group, Entity entity) {
 
 void component_end(CompGroup* group, Entity entity) {
     bool found = false;
-    for (size_t index = 0; index < group->alive; index += 1) {
+    for (uint32_t index = 0; index < group->alive; index += 1) {
         AbstractComp* comp = component_at(group->mem, group->compsize, index);
         if (found) {
             /* memcpy is safe because found will never == true on first iteration. */
@@ -102,7 +102,7 @@ void* component_of(CompGroup* group, Entity entity) {
         return NULL;
     }
 
-    for (size_t r = 0; r < group->alive; r += 1) {
+    for (uint32_t r = 0; r < group->alive; r += 1) {
         AbstractComp* other = component_at(group->mem, group->compsize, r);
         if (other->entity == entity) {
             return other;
@@ -112,8 +112,8 @@ void* component_of(CompGroup* group, Entity entity) {
     return NULL;
 }
 
-void compgroups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity) {
-    for (size_t i = 0; i < ngroups ; i += 1) {
+void compgroups_entity_end(CompGroup* group_arr, int8_t ngroups, Entity entity) {
+    for (int8_t i = 0; i < ngroups ; i += 1) {
         CompGroup* group = &group_arr[i];
         component_end(group, entity);
     }

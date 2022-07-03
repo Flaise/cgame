@@ -10,8 +10,8 @@ typedef struct {
 
 typedef struct {
     void* mem;
-    size_t alive;
-    size_t total;
+    uint32_t alive;
+    uint32_t total;
     size_t compsize;
 } CompGroup;
 
@@ -20,7 +20,7 @@ typedef struct {
  total: the number of components that can be stored in the group
  compsize: the size in bytes of the component type stored in the group
  */
-CompGroup compgroup_init(size_t total, size_t compsize);
+CompGroup compgroup_init(uint32_t total, size_t compsize);
 
 /*
  Allocates a new component in the component group.
@@ -38,7 +38,7 @@ void* component_of(CompGroup* group, Entity entity);
 /*
  Removes all components attached to the specified entity, if any exist.
  */
-void compgroups_entity_end(CompGroup* group_arr, size_t ngroups, Entity entity);
+void compgroups_entity_end(CompGroup* group_arr, int8_t ngroups, Entity entity);
 
 /*
  Successive calls yield components that share an entity. Skips over entities that don't have all of

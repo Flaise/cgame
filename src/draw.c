@@ -54,7 +54,7 @@ SDL_Surface* const_png_to_surface(const void* mem, int size) {
     /* IMG will close the RW even if there's an error while loading */
 }
 
-SDL_Texture* const_png_to_texture(SDL_Renderer* renderer, const void* mem, int size) {
+SDL_Texture* const_png_to_texture(SDL_Renderer* renderer, const void* mem, size_t size) {
     SDL_RWops* rw = SDL_RWFromConstMem(mem, size);
     if (rw == NULL) {
         return NULL;
@@ -64,7 +64,7 @@ SDL_Texture* const_png_to_texture(SDL_Renderer* renderer, const void* mem, int s
     /* IMG will close the RW even if there's an error while loading */
 }
 
-int texture_load_const_png(State* state, TexID texture_id, const void* mem, int size) {
+int texture_load_const_png(State* state, TexID texture_id, const void* mem, size_t size) {
     if (state->renderer == NULL) {
         ERROR("renderer not initialized");
         return 1;

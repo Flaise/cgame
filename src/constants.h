@@ -36,6 +36,7 @@
 
 typedef int32_t TexID;
 typedef uint8_t IconID;
+typedef int16_t Coord;
 
 typedef struct {
     TexID texture_id;
@@ -43,10 +44,10 @@ typedef struct {
 } Icon;
 
 typedef struct {
-    int32_t hover_x;
-    int32_t hover_y;
-    int32_t select_x;
-    int32_t select_y;
+    Coord hover_x;
+    Coord hover_y;
+    Coord select_x;
+    Coord select_y;
     Entity subject;
     bool hover_valid;
 } Selection;
@@ -68,8 +69,8 @@ typedef struct {
 
 typedef struct {
     Entity entity;
-    int x;
-    int y;
+    Coord x;
+    Coord y;
 } CPosition;
 
 typedef struct {

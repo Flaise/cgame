@@ -25,7 +25,7 @@ Icon icon_new(TexID texture_id, SDL_Rect source_rect) {
     return result;
 }
 
-Icon icon_tile_new(TexID texture_id, int tile_size, int x, int y) {
+Icon icon_tile_new(TexID texture_id, int32_t tile_size, int32_t x, int32_t y) {
     SDL_Rect source_rect = {
         .x = tile_size * x,
         .y = tile_size * y,
@@ -35,7 +35,9 @@ Icon icon_tile_new(TexID texture_id, int tile_size, int x, int y) {
     return icon_new(texture_id, source_rect);
 }
 
-void icon_tile_init(State* state, IconID icon_id, TexID texture_id, int tile_size, int x, int y) {
+void icon_tile_init(
+        State* state, IconID icon_id, TexID texture_id, int32_t tile_size, int32_t x, int32_t y) {
+
     state->icons[icon_id] = icon_tile_new(texture_id, tile_size, x, y);
 }
 

@@ -9,7 +9,7 @@ void components_entity_end(Components* comps, Entity entity);
 /*
  Returns: A pointer to the newly initialized component or NULL if out of memory.
  */
-CPosition* position_init(Components* components, Entity entity, int x, int y);
+CPosition* position_init(Components* components, Entity entity, Coord x, Coord y);
 
 /*
  Returns: A pointer to the newly initialized component or NULL if out of memory.
