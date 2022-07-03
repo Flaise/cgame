@@ -34,6 +34,19 @@
 #include "res/horse.h"
 #define RES_HORSE __res_horse_png
 
+
+int window_icon_load_const_png(SDL_Window* window, const void* mem, int size) {
+    SDL_Surface* surface = const_png_to_surface(mem, size);
+    if (surface == NULL) {
+        WARN("const_png_to_surface");
+        return 1;
+    }
+
+    SDL_SetWindowIcon(window, surface);
+    SDL_FreeSurface(surface);
+    return 0;
+}
+
 int window_init(State* state) {
     SDL_Rect bounds;
     if (SDL_GetDisplayUsableBounds(0, &bounds) != 0) {
@@ -60,6 +73,10 @@ int window_init(State* state) {
     	return 1;
     }
     state->window = win;
+
+    if (window_icon_load_const_png(win, RES_KNIGHT, sizeof(RES_KNIGHT)) != 0) {
+        WARN("window_icon_load_const_png");
+    }
 
     return 0;
 }
