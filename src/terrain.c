@@ -43,12 +43,12 @@ int terrain_update(State* state) {
             dest_rect.x = x * TILE_SIZE;
             dest_rect.y = y * TILE_SIZE;
 
-            IconID icon = ICON_FLOOR_A;
+            IconID icon_id = ICON_FLOOR_A;
             if ((x + y) % 2 == 0) {
-                icon = ICON_FLOOR_B;
+                icon_id = ICON_FLOOR_B;
             }
             
-            icon_draw(state, icon, &dest_rect);
+            icon_draw(state, icon_id, &dest_rect);
         }
     }
 

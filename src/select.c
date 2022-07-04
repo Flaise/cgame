@@ -135,6 +135,31 @@ static int32_t distance4(int32_t ax, int32_t ay, int32_t bx, int32_t by) {
     return abs(ax - bx) + abs(ay - by);
 }
 
+static bool will_interact(State* state, Entity subject, int32_t tile_x, int32_t tile_y) {
+    Entity mount = type_at(state, COMPTYPE_MOUNT, tile_x, tile_y);
+    bool is_rider = 
+        (component_of(&state->components.compgroups[COMPTYPE_RIDER], subject) != NULL);
+    if (mount != 0 && is_rider) {
+        return true;
+    }
+    
+    Entity edible = type_at(state, COMPTYPE_EDIBLE, tile_x, tile_y);
+    bool is_munch =
+        (component_of(&state->components.compgroups[COMPTYPE_MUNCH], subject) != NULL);
+    if (edible != 0 && is_munch) {
+        return true;
+    }
+    
+    Entity slayme = type_at(state, COMPTYPE_SLAYME, tile_x, tile_y);
+    bool is_slayer =
+        (component_of(&state->components.compgroups[COMPTYPE_SLAYER], subject) != NULL);
+    if (slayme != 0 && is_slayer) {
+        return true;
+    }
+
+    return false;
+}
+
 static void update_validity(State* state, int32_t x, int32_t y) {
     Selection* sel = &state->selection;
     
@@ -146,9 +171,16 @@ static void update_validity(State* state, int32_t x, int32_t y) {
         if (distance4(tdest_x, tdest_y, sel->select_x, sel->select_y) != 1) {
             sel->hover_valid = false;
         } else {
-            // TODO: check for edible/slayme/mount/etc instead of just obstruction
-            Entity target = type_at(state, COMPTYPE_OBSTRUCTION, tdest_x, tdest_y);
-            sel->hover_valid = (target == 0);
+            /* TODO: Just store the subject in the selection struct. */
+            Entity subject = selectable_at_lpixel(
+                state, sel->select_x * TILE_SIZE, sel->select_y * TILE_SIZE);
+            
+            if (will_interact(state, subject, tdest_x, tdest_y)) {
+                sel->hover_valid = true;
+            } else {
+                Entity target = type_at(state, COMPTYPE_OBSTRUCTION, tdest_x, tdest_y);
+                sel->hover_valid = (target == 0);
+            }
         }
     } else {
         Entity subject = selectable_at_lpixel(state, x, y);
@@ -156,35 +188,7 @@ static void update_validity(State* state, int32_t x, int32_t y) {
     }
 }
 
-typedef struct {
-    bool herded;
-    int32_t dx;
-    int32_t dy;
-} Herdment;
-
-static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32_t tile_y) {
-    Herdment result = {false, 0, 0};
-    
-    if (subject == 0) {
-        ERROR("entity can't be 0");
-        return result;
-    }
-    if (!in_board(tile_x, tile_y)) {
-        return result;
-    }
-    
-    CPosition* position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
-    if (position == NULL) {
-        ERROR("subject position component deleted");
-        return result;
-    }
-
-    /* Only move to adjacent square. */
-    if (distance4(position->x, position->y, tile_x, tile_y) != 1) {
-        return result;
-    }
-    position = NULL; /* The pointer can invalidate if components are removed so don't reuse. */
-
+static bool interact(State* state, Entity subject, int32_t tile_x, int32_t tile_y) {
     bool interacted = false;
 
     /* knight + horse = mounted */
@@ -224,7 +228,40 @@ static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32
         
         interacted = true;
     }
+    
+    return interacted;
+}
 
+typedef struct {
+    bool herded;
+    int32_t dx;
+    int32_t dy;
+} Herdment;
+
+static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32_t tile_y) {
+    Herdment result = {false, 0, 0};
+    
+    if (subject == 0) {
+        ERROR("Entity can't be 0.");
+        return result;
+    }
+    if (!in_board(tile_x, tile_y)) {
+        return result;
+    }
+    
+    CPosition* position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
+    if (position == NULL) {
+        ERROR("Subject position component is missing.");
+        return result;
+    }
+
+    /* Only move to adjacent square. */
+    if (distance4(position->x, position->y, tile_x, tile_y) != 1) {
+        return result;
+    }
+    position = NULL; /* The pointer can invalidate if components are removed so don't reuse. */
+
+    bool interacted = interact(state, subject, tile_x, tile_y);
     if (!interacted && type_at(state, COMPTYPE_OBSTRUCTION, tile_x, tile_y) != 0) {
         return result;
     }
