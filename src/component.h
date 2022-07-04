@@ -6,6 +6,8 @@ Components components_new();
 
 void components_entity_end(Components* comps, Entity entity);
 
+void components_clear(Components* comps);
+
 /*
  Returns: A pointer to the newly initialized component or NULL if out of memory.
  */

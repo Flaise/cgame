@@ -30,6 +30,12 @@ void components_entity_end(Components* comps, Entity entity) {
     compgroups_entity_end(comps->compgroups, COMPTYPE_COUNT, entity);
 }
 
+void components_clear(Components* comps) {
+    for (size_t r = 0; r < COMPTYPE_COUNT; r += 1) {
+        compgroup_clear(&comps->compgroups[r]);
+    }
+}
+
 CPosition* position_init(Components* components, Entity entity, Coord x, Coord y) {
     CompGroup* group = &components->compgroups[COMPTYPE_POSITION];
     CPosition* result = (CPosition*)component_init(group, entity);

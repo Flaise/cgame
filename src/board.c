@@ -57,7 +57,7 @@ static void make_wall(State* state, Entity entity, int32_t x, int32_t y, IconID 
 }
 
 void level_1_init(State* state) {
-    /* TODO: clear entities from previous level */
+    components_clear(&state->components);
 
     /* Pieces. */
     
