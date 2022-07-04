@@ -1,5 +1,7 @@
 # Don't Eat My Sheep!
 
+![screenshotte](screenshots/screenshot_a.png)
+
 ## Motivation
 
 Someone wanted to c me write a program in C. So here's a puzzle game written in C99.
