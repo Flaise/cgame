@@ -23,6 +23,7 @@ RGBA color_selection = {150, 170, 60, 130};
 
 RGBA color_select_valid = {40, 130, 100, 130};
 RGBA color_select_empty = {40, 130, 100, 70};
+RGBA color_select_invalid = {150, 70, 60, 150};
 
 static void set_color(State* state, RGBA color) {
     int8_t r = color.r;
@@ -67,17 +68,22 @@ void select_draw(State* state) {
     if (!overlap && hover_visible) {
         RGBA color;
         if (selection_visible) {
-            if (sel->hover_valid) {
-                color = color_move_valid;
-            } else {
+            if (sel->hover_status == HoverInvalid) {
                 color = color_move_invalid;
-            }
-        } else {
-            if (sel->hover_valid) {
-                color = color_select_valid;
             } else {
-                color = color_select_empty;
+                color = color_move_valid;
             }
+        } else if (sel->hover_status == HoverEmpty) {
+            color = color_select_empty;
+        } else if (sel->hover_status == HoverValid) {
+            color = color_select_valid;
+        } else if (sel->hover_status == HoverInvalid) {
+            color = color_select_invalid;
+        } else {
+#ifdef DEBUG
+            ERROR("Unreachable.");
+#endif
+            color = color_select_invalid;
         }
         set_color(state, color);
         draw_tile_rect(state, sel->hover_x, sel->hover_y);
@@ -91,34 +97,6 @@ static bool in_view(int32_t x, int32_t y) {
 
 static bool in_board(int32_t tile_x, int32_t tile_y) {
     return tile_x >= 0 && tile_y >= 0 && tile_x < TILES_ACROSS && tile_y < TILES_DOWN;
-}
-
-static Entity selectable_at_lpixel(State* state, int32_t x, int32_t y) {
-    if (!in_view(x, y)) {
-        return 0;
-    }
-    
-    CompGroup* groups[] = {
-        &state->components.compgroups[COMPTYPE_SELECTABLE],
-        &state->components.compgroups[COMPTYPE_POSITION],
-    };
-    void* comps[] = {NULL, NULL};
-    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
-        CPosition* position = (CPosition*)comps[1];
-        Entity subject = position->entity;
-
-        if (x / TILE_SIZE == position->x && y / TILE_SIZE == position->y) {
-            bool is_cd =
-                (component_of(&state->components.compgroups[COMPTYPE_COOLDOWN], subject) != NULL);
-            if (is_cd) {
-                continue;
-            }
-        
-            return subject;
-        }
-    }
-
-    return 0;
 }
 
 static Entity type_at(State* state, uint8_t comptype, int32_t tile_x, int32_t tile_y) {
@@ -168,30 +146,50 @@ static bool will_interact(State* state, Entity subject, int32_t tile_x, int32_t 
 }
 
 static void update_validity(State* state, int32_t x, int32_t y) {
-    Selection* sel = &state->selection;
-    
-    bool selection_visible = sel->select_x >= 0 && sel->select_y >= 0;
-
+    if (!in_view(x, y)) {
+        return;
+    }
     int32_t tdest_x = x / TILE_SIZE;
     int32_t tdest_y = y / TILE_SIZE;
-    if (selection_visible) {
-        if (distance4(tdest_x, tdest_y, sel->select_x, sel->select_y) != 1) {
-            sel->hover_valid = false;
-        } else {
-            /* TODO: Just store the subject in the selection struct. */
-            Entity subject = selectable_at_lpixel(
-                state, sel->select_x * TILE_SIZE, sel->select_y * TILE_SIZE);
-            
-            if (will_interact(state, subject, tdest_x, tdest_y)) {
-                sel->hover_valid = true;
+    Selection* sel = &state->selection;
+    
+    if (sel->subject == 0) {
+        /* No piece selected. */
+        Entity target = type_at(state, COMPTYPE_SELECTABLE, tdest_x, tdest_y);
+        if (target == 0) {
+            /* No selectable piece. */
+            Entity av = type_at(state, COMPTYPE_AVATAR, tdest_x, tdest_y);
+            if (av == 0) {
+                /* No mobile/avatar piece; only terrain. */
+                sel->hover_status = HoverEmpty;
             } else {
-                Entity target = type_at(state, COMPTYPE_OBSTRUCTION, tdest_x, tdest_y);
-                sel->hover_valid = (target == 0);
+                /* Unselectable piece. */
+                sel->hover_status = HoverInvalid;
+            }
+        } else {
+            bool is_cd =
+                (component_of(&state->components.compgroups[COMPTYPE_COOLDOWN], target) != NULL);
+            if (is_cd) {
+                sel->hover_status = HoverInvalid;
+            } else {
+                sel->hover_status = HoverValid;
             }
         }
     } else {
-        Entity subject = selectable_at_lpixel(state, x, y);
-        sel->hover_valid = (subject != 0);
+        /* Piece selected. */
+        if (distance4(tdest_x, tdest_y, sel->select_x, sel->select_y) != 1) {
+            /* Too far away. */
+            sel->hover_status = HoverInvalid;
+        } else if (will_interact(state, sel->subject, tdest_x, tdest_y)) {
+            sel->hover_status = HoverValid;
+        } else {
+            Entity target = type_at(state, COMPTYPE_OBSTRUCTION, tdest_x, tdest_y);
+            if (target == 0) {
+                sel->hover_status = HoverValid;
+            } else {
+                sel->hover_status = HoverInvalid;
+            }
+        }
     }
 }
 
@@ -352,20 +350,26 @@ void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
     if (!(button == SDL_BUTTON_LEFT || button == SDL_BUTTON_RIGHT)) {
         return;
     }
-    
+    if (!in_view(x, y)) {
+        return;
+    }
+    int32_t tile_x = x / TILE_SIZE;
+    int32_t tile_y = y / TILE_SIZE;
     Selection* sel = &state->selection;
 
     if (sel->select_x < 0 || sel->select_y < 0) {
-        Entity subject = selectable_at_lpixel(state, x, y);
+        Entity subject = type_at(state, COMPTYPE_SELECTABLE, tile_x, tile_y);
         if (subject != 0) {
-            sel->select_x = x / TILE_SIZE;
-            sel->select_y = y / TILE_SIZE;
-            sel->subject = subject;
+            bool is_cd =
+                (component_of(&state->components.compgroups[COMPTYPE_COOLDOWN], subject) != NULL);
+            if (!is_cd) {
+                sel->select_x = tile_x;
+                sel->select_y = tile_y;
+                sel->subject = subject;
+            }
         }
     } else {
         if (sel->subject != 0) {
-            int32_t tile_x = x / TILE_SIZE;
-            int32_t tile_y = y / TILE_SIZE;
             Herdment herdment = command_move(state, sel->subject, tile_x, tile_y);
             if (herdment.herded) {
                 herd(state, herdment.dx, herdment.dy);

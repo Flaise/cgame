@@ -45,13 +45,19 @@ typedef struct {
     SDL_Rect source_rect;
 } Icon;
 
+typedef enum {
+    HoverEmpty,
+    HoverValid,
+    HoverInvalid,
+} HoverStatus;
+
 typedef struct {
     Coord hover_x;
     Coord hover_y;
     Coord select_x;
     Coord select_y;
     Entity subject;
-    bool hover_valid;
+    HoverStatus hover_status;
 } Selection;
 
 #define COMPTYPE_POSITION 0
