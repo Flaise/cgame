@@ -77,6 +77,8 @@ int window_init(State* state) {
         WARN("window_icon_load_const_png");
     }
 
+    SDL_EnableScreenSaver();
+
     return 0;
 }
 
