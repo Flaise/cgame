@@ -105,9 +105,16 @@ static Entity selectable_at_lpixel(State* state, int32_t x, int32_t y) {
     void* comps[] = {NULL, NULL};
     while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
         CPosition* position = (CPosition*)comps[1];
+        Entity subject = position->entity;
 
         if (x / TILE_SIZE == position->x && y / TILE_SIZE == position->y) {
-            return position->entity;
+            bool is_cd =
+                (component_of(&state->components.compgroups[COMPTYPE_COOLDOWN], subject) != NULL);
+            if (is_cd) {
+                continue;
+            }
+        
+            return subject;
         }
     }
 
@@ -279,13 +286,8 @@ static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32
     position->x = tile_x;
     position->y = tile_y;
 
-    bool is_cd =
-        (component_of(&state->components.compgroups[COMPTYPE_COOLDOWN], subject) != NULL);
-    if (!is_cd) {
-        /* TODO: Prevent the move from happening. */
-        if (cooldown_init(&state->components, subject) == NULL) {
-            ERROR("cooldown_init");
-        }
+    if (cooldown_init(&state->components, subject) == NULL) {
+        ERROR("cooldown_init");
     }
 
     bool is_herder =
