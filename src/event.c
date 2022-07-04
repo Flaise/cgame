@@ -11,6 +11,7 @@
 #include "state.h"
 #include "draw.h"
 #include "select.h"
+#include "board.h"
 
 typedef enum {
     Proceed,
@@ -36,6 +37,17 @@ void mouse_leave(State* state) {
 void mouse_button(State* state, uint8_t button, int32_t x, int32_t y) {
     select_mouse_press(state, button, x, y);
     redraw(state);
+}
+
+Status key_down(State* state, SDL_Keycode code) {
+    if (code == SDLK_r) {
+        /* R = restart */
+        level_1_init(state);
+    } else if (code == SDLK_ESCAPE) {
+        /* Esc = quit */
+        return Exit;
+    }
+    return Proceed;
 }
 
 Status events_pending(State* state) {
@@ -66,6 +78,12 @@ Status events_pending(State* state) {
             case SDL_MOUSEBUTTONDOWN:
                 mouse_button(state, event.button.button, event.button.x, event.button.y);
                 continue;
+
+            case SDL_KEYDOWN:
+                if (key_down(state, event.key.keysym.sym) == Exit) {
+                    return Exit;
+                }
+                continue;
         }
     }
     return Proceed;
@@ -91,9 +109,9 @@ int events_all(State* state) {
                 return 1;
             }
 
-            /* TODO: framerate cap when vsync isn't available */
+            /* TODO: Framerate cap when vsync isn't available. */
         } else {
-            /* avoid hogging CPU when there's nothing to draw */
+            /* Delay to avoid hogging CPU when there's nothing to draw. */
             SDL_Delay(10);
         }
     }

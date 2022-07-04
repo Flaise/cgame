@@ -10,6 +10,7 @@
 #include "component.h"
 #include "icon.h"
 #include "terrain.h"
+#include "draw.h"
 
 static void make_generic_piece(State* state, Entity entity, int32_t x, int32_t y, IconID icon_id) {
     if (position_init(&state->components, entity, x, y) == NULL) {
@@ -126,4 +127,5 @@ void level_1_init(State* state) {
     make_wall(state, entity, 1, 4, ICON_WALL);
 
     terrain_update(state);
+    redraw(state);
 }
