@@ -26,6 +26,24 @@ static void make_generic_piece(State* state, Entity entity, int32_t x, int32_t y
     }
 }
 
+static void make_sheep(State* state, Entity entity, int32_t x, int32_t y) {
+    if (position_init(&state->components, entity, x, y) == NULL) {
+        WARN("position_init");
+    }
+    if (avatar_init(&state->components, entity, ICON_SHEEP) == NULL) {
+        WARN("avatar_init");
+    }
+    if (obstruction_init(&state->components, entity) == NULL) {
+        WARN("obstruction_init");
+    }
+    if (edible_init(&state->components, entity) == NULL) {
+        WARN("edible_init");
+    }
+    if (flock_init(&state->components, entity) == NULL) {
+        WARN("flock_init");
+    }
+}
+
 static void make_wall(State* state, Entity entity, int32_t x, int32_t y, IconID icon_id) {
     if (position_init(&state->components, entity, x, y) == NULL) {
         WARN("position_init");
@@ -54,14 +72,10 @@ void level_1_init(State* state) {
     edible_init(&state->components, entity);
     
     entity += 1;
-    make_generic_piece(state, entity, 4, 1, ICON_SHEEP);
-    edible_init(&state->components, entity);
-    flock_init(&state->components, entity);
+    make_sheep(state, entity, 4, 1);
     
     entity += 1;
-    make_generic_piece(state, entity, 2, 3, ICON_SHEEP);
-    edible_init(&state->components, entity);
-    flock_init(&state->components, entity);
+    make_sheep(state, entity, 2, 3);
     
     entity += 1;
     make_generic_piece(state, entity, 4, 2, ICON_HORSE);
@@ -102,6 +116,11 @@ void level_1_init(State* state) {
     }
     entity += 1;
     make_wall(state, entity, 6, 0, ICON_PYRAMID);
+    
+    entity += 1;
+    make_wall(state, entity, 1, 3, ICON_PYRAMID);
+    entity += 1;
+    make_wall(state, entity, 1, 4, ICON_WALL);
 
     terrain_update(state);
 }
