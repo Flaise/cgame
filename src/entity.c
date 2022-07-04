@@ -32,7 +32,7 @@ void* component_init(CompGroup* group, Entity entity) {
     if (group == NULL) {
         return NULL;
     }
-    if (group->alive == group->total) {
+    if (group->alive >= group->total) {
         return NULL;
     }
     if (entity == 0) {
@@ -47,23 +47,27 @@ void* component_init(CompGroup* group, Entity entity) {
         r -= 1;
         
         AbstractComp* other = component_at(group->mem, group->compsize, r);
+        if (other == NULL) {
+            return NULL; /* Shouldn't be possible. */
+        }
+        
         if (other->entity == entity) {
             return NULL;
         } else if (other->entity > entity) {
-            void* source = group->mem + r * group->compsize;
-            void* dest = group->mem + (r + 1) * group->compsize;
-            memcpy(dest, source, group->compsize);
-        
             dest_index -= 1;
         } else {
             break;
         }
     }
+    void* source = group->mem + dest_index * group->compsize;
+    void* dest = group->mem + (dest_index + 1) * group->compsize;
+    memmove(dest, source, group->compsize * (group->alive - dest_index));
     
-    AbstractComp* result = component_at(group->mem, group->compsize, dest_index);
+    AbstractComp* result = (AbstractComp*)source;
     result->entity = entity;
+    
     group->alive += 1;
-    return (void*)result;
+    return source;
 }
 
 void component_end(CompGroup* group, Entity entity) {

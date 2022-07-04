@@ -80,6 +80,8 @@ static char* test_new_component() {
     mu_assert(groupint.alive == 3, "");
     mu_assert(comp_a->val == 5, "");
     mu_assert(comp_a->entity == 1, "");
+
+    return 0;
 }
 
 static char* test_compbgone32() {
@@ -204,11 +206,35 @@ static char* test_no_duplicate_component() {
 
     CompInt* comp = comp_int_init(&groupint, 1, 4);
     mu_assert(comp != NULL, "");
+    mu_assert(groupint.alive == 1, "");
+    
     comp = comp_int_init(&groupint, 1, 8);
     mu_assert(comp == NULL, "");
-
     mu_assert(comps[0].entity == 1, "");
     mu_assert(comps[0].val == 4, "");
+    mu_assert(groupint.alive == 1, "");
+    
+    return 0;
+}
+
+static char* test_no_duplicate_early_component() {
+    CompGroup groupint = compgroup_init(4, sizeof(CompInt));
+    CompInt* comps = (CompInt*)groupint.mem;
+
+    comp_int_init(&groupint, 1, 4);
+    comp_int_init(&groupint, 3, 6);
+    comp_int_init(&groupint, 2, 5);
+
+    CompInt* comp = comp_int_init(&groupint, 1, 8);
+    mu_assert(comp == NULL, "");
+    
+    mu_assert(groupint.alive == 3, "");
+    mu_assert(comps[0].entity == 1, "");
+    mu_assert(comps[0].val == 4, "");
+    mu_assert(comps[1].entity == 2, "");
+    mu_assert(comps[1].val == 5, "");
+    mu_assert(comps[2].entity == 3, "");
+    mu_assert(comps[2].val == 6, "");
     
     return 0;
 }
@@ -412,11 +438,13 @@ static char* test_component_for_entity() {
 }
 
 int main(int argc, char **argv) {
+    mu_run_test(test_new_component);
     mu_run_test(test_compbgone32);
     mu_run_test(test_compbgone64);
     mu_run_test(test_entbgone1);
     mu_run_test(test_entbgone2);
     mu_run_test(test_no_duplicate_component);
+    mu_run_test(test_no_duplicate_early_component);
     mu_run_test(test_insertion_sort);
     mu_run_test(test_insertion_sort_filled);
     mu_run_test(test_too_many_components);
