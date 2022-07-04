@@ -24,6 +24,14 @@ CompGroup compgroup_init(uint32_t total, size_t compsize) {
     return result;
 }
 
+void compgroup_clear(CompGroup* group) {
+    if (group == NULL) {
+        ERROR("Component group can't be null.");
+        return;
+    }
+    group->alive = 0;
+}
+
 static AbstractComp* component_at(void* mem, size_t compsize, uint32_t index) {
     return (AbstractComp*)(mem + (index * compsize));
 }

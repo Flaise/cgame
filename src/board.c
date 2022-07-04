@@ -78,6 +78,9 @@ void level_1_init(State* state) {
     make_sheep(state, entity, 2, 3);
     
     entity += 1;
+    make_sheep(state, entity, 5, 0);
+    
+    entity += 1;
     make_generic_piece(state, entity, 4, 2, ICON_HORSE);
     mount_init(&state->components, entity);
     edible_init(&state->components, entity);

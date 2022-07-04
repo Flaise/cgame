@@ -23,6 +23,11 @@ typedef struct {
 CompGroup compgroup_init(uint32_t total, size_t compsize);
 
 /*
+ Removes every component in the group.
+ */
+void compgroup_clear(CompGroup* group);
+
+/*
  Allocates a new component in the component group.
  Returns: A borrowed reference to the new component or NULL if the group is out of memory.
  */

@@ -286,8 +286,19 @@ static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32
     position->x = tile_x;
     position->y = tile_y;
 
-    if (cooldown_init(&state->components, subject) == NULL) {
-        ERROR("cooldown_init");
+    bool is_selectable =
+        (component_of(&state->components.compgroups[COMPTYPE_SELECTABLE], subject) != NULL);
+    if (is_selectable) {
+        /* Go on cooldown. */
+        if (cooldown_init(&state->components, subject) == NULL) {
+            ERROR("cooldown_init");
+        }
+
+        /* Clear cooldowns when last piece moves. */
+        if (state->components.compgroups[COMPTYPE_COOLDOWN].alive
+        >= state->components.compgroups[COMPTYPE_SELECTABLE].alive) {
+            compgroup_clear(&state->components.compgroups[COMPTYPE_COOLDOWN]);
+        }
     }
 
     bool is_herder =
