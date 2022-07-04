@@ -22,6 +22,7 @@ Components components_new() {
     result.compgroups[COMPTYPE_TILE] = compgroup_init(60, sizeof(CTile));
     result.compgroups[COMPTYPE_HERDER] = compgroup_init(1, sizeof(CHerder));
     result.compgroups[COMPTYPE_FLOCK] = compgroup_init(10, sizeof(CFlock));
+    result.compgroups[COMPTYPE_COOLDOWN] = compgroup_init(10, sizeof(CCooldown));
     return result;
 }
 
@@ -100,4 +101,8 @@ CHerder* herder_init(Components* components, Entity entity) {
 
 CFlock* flock_init(Components* components, Entity entity) {
     return (CFlock*)empty_init(components, COMPTYPE_FLOCK, entity);
+}
+
+CCooldown* cooldown_init(Components* components, Entity entity) {
+    return (CCooldown*)empty_init(components, COMPTYPE_COOLDOWN, entity);
 }

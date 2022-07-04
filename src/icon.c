@@ -42,8 +42,14 @@ void icon_tile_init(
 }
 
 void icon_texture_init(State* state, IconID icon_id, TexID texture_id) {
+    SDL_Texture* texture = state->textures[texture_id];
+    if (texture == NULL) {
+        WARN("Icon texture not loaded.");
+        return;
+    }
+    
     int32_t w, h;
-    if (SDL_QueryTexture(state->textures[texture_id], NULL, NULL, &w, &h) != 0) {
+    if (SDL_QueryTexture(texture, NULL, NULL, &w, &h) != 0) {
         ERROR("SDL_QueryTexture");
         /* Not really necessary to signal an error because it's not recoverable. */
         return;
@@ -65,13 +71,13 @@ void icon_draw(State* state, IconID icon_id, const SDL_Rect* dest_rect) {
     
     const Icon* icon = &state->icons[icon_id];
     if (icon->texture_id < 0 || icon->texture_id >= TEXTURE_COUNT) {
-        WARN("icon has invalid texture ID");
+        WARN("Icon has invalid texture ID.");
         return;
     }
     
     SDL_Texture* texture = state->textures[icon->texture_id];
     if (texture == NULL) {
-        WARN("icon texture not found");
+        WARN("Icon texture not loaded.");
         return;
     }
     if (SDL_RenderCopy(state->renderer, texture, &icon->source_rect, dest_rect) != 0) {

@@ -34,4 +34,7 @@ Terrain:
 * Screaming Brain Studios: https://screamingbrainstudios.com/
 
 Characters:
-* max.icons and Triberion from Flaticon: https://www.flaticon.com/
+* Triberion and max.icons from Flaticon: https://www.flaticon.com/
+
+Cooldown Icon:
+* Roundicons from Flaticon: https://www.flaticon.com/

@@ -18,7 +18,8 @@
 #define TEXTURE_MKNIGHT 5
 #define TEXTURE_DOG 6
 #define TEXTURE_HORSE 7
-#define TEXTURE_COUNT 8
+#define TEXTURE_COOLDOWN 8
+#define TEXTURE_COUNT 9
 
 #define ICON_WALL 0
 #define ICON_FLOOR_A 1
@@ -30,7 +31,8 @@
 #define ICON_SHEEP 7
 #define ICON_DOG 8
 #define ICON_HORSE 9
-#define ICON_COUNT 10
+#define ICON_COOLDOWN 10
+#define ICON_COUNT 11
 
 /* Putting type definitions here to resolve issues with circular imports. */
 
@@ -65,7 +67,8 @@ typedef struct {
 #define COMPTYPE_TILE 10
 #define COMPTYPE_HERDER 11
 #define COMPTYPE_FLOCK 12
-#define COMPTYPE_COUNT 13
+#define COMPTYPE_COOLDOWN 13
+#define COMPTYPE_COUNT 14
 
 typedef struct {
     Entity entity;
@@ -80,7 +83,8 @@ typedef struct {
 
 typedef struct {
     Entity entity;
-} CSelectable, CMount, CRider, CMunch, CEdible, CSlayer, CSlayMe, CObstruction, CHerder, CFlock;
+} CSelectable, CMount, CRider, CMunch, CEdible, CSlayer, CSlayMe, CObstruction, CHerder, CFlock,
+    CCooldown;
 
 typedef struct {
     CompGroup compgroups[COMPTYPE_COUNT];

@@ -266,10 +266,10 @@ static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32
         return result;
     }
 
-    /* Need to get position component again because the ECS can have rearranged. */
+    /* Need to get position component again because the ECS can have been rearranged. */
     position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
     if (position == NULL) {
-        ERROR("subject position component deleted");
+        ERROR("Subject position component is missing.");
         return result;
     }
 
@@ -278,6 +278,15 @@ static Herdment command_move(State* state, Entity subject, int32_t tile_x, int32
     
     position->x = tile_x;
     position->y = tile_y;
+
+    bool is_cd =
+        (component_of(&state->components.compgroups[COMPTYPE_COOLDOWN], subject) != NULL);
+    if (!is_cd) {
+        /* TODO: Prevent the move from happening. */
+        if (cooldown_init(&state->components, subject) == NULL) {
+            ERROR("cooldown_init");
+        }
+    }
 
     bool is_herder =
         (component_of(&state->components.compgroups[COMPTYPE_HERDER], subject) != NULL);

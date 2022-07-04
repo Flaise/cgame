@@ -18,6 +18,7 @@
 #include "terrain.h"
 #include "select.h"
 #include "board.h"
+#include "cooldown.h"
 
 #include "res/terrain.h"
 #define RES_TILES __res_Tiny_Top_Down_32x32_png
@@ -33,6 +34,8 @@
 #define RES_DOG __res_dog_png
 #include "res/horse.h"
 #define RES_HORSE __res_horse_png
+#include "res/cooldown.h"
+#define RES_COOLDOWN __res_hourglass2_png
 
 int window_icon_load_const_png(SDL_Window* window, const void* mem, int size) {
     SDL_Surface* surface = const_png_to_surface(mem, size);
@@ -137,6 +140,10 @@ int textures_init(State* state) {
         ERROR("texture_load_const_png (horse)");
         return 1;
     }
+    if (texture_load_const_png(state, TEXTURE_COOLDOWN, RES_COOLDOWN, sizeof(RES_COOLDOWN)) != 0) {
+        ERROR("texture_load_const_png (cooldown)");
+        return 1;
+    }
 
     icon_texture_init(state, ICON_DRAGON, TEXTURE_DRAGON);
     icon_texture_init(state, ICON_KNIGHT, TEXTURE_KNIGHT);
@@ -144,6 +151,7 @@ int textures_init(State* state) {
     icon_texture_init(state, ICON_SHEEP, TEXTURE_SHEEP);
     icon_texture_init(state, ICON_DOG, TEXTURE_DOG);
     icon_texture_init(state, ICON_HORSE, TEXTURE_HORSE);
+    icon_texture_init(state, ICON_COOLDOWN, TEXTURE_COOLDOWN);
 
     /* Unconditionally unload IMG because no more textures will be loaded. */
     IMG_Quit();

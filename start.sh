@@ -10,6 +10,7 @@ if [[ $1 != 'test' ]]; then
     xxd --include "./res/sheep.png" ./src/res/sheep.h
     xxd --include "./res/dog.png" ./src/res/dog.h
     xxd --include "./res/horse.png" ./src/res/horse.h
+    xxd --include "./res/hourglass2.png" ./src/res/cooldown.h
 fi
 
 
