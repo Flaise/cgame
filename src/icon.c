@@ -1,11 +1,5 @@
-#include <stdbool.h>
-
-#ifdef _WIN32a
 #include "SDL.h"
-#else
-#include "SDL2/SDL.h"
-#endif
-
+#include <stdbool.h>
 #include "logging.h"
 #include "entity.h"
 #include "constants.h"

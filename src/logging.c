@@ -1,10 +1,5 @@
 #include <stdio.h>
-
-#ifdef _WIN32a
 #include "SDL.h"
-#else
-#include "SDL2/SDL.h"
-#endif
 
 void log_message(char* level, char* file, int line, char* message) {
     printf("%s [%s:%d] %s", level, file, line, message);

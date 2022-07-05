@@ -1,9 +1,4 @@
-#ifdef _WIN32a
 #include "SDL.h"
-#else
-#include "SDL2/SDL.h"
-#endif
-
 #include "entity.h"
 #include "constants.h"
 #include "component.h"
