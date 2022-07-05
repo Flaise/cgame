@@ -13,32 +13,7 @@ bool can_reach(Coord ax, Coord ay, Coord bx, Coord by) {
     return distance4(ax, ay, bx, by) == 1;
 }
 
-bool will_interact(State* state, Entity subject, Coord tile_x, Coord tile_y) {
-    Entity mount = type_at(state, COMPTYPE_MOUNT, tile_x, tile_y);
-    bool is_rider = 
-        (component_of(&state->components.compgroups[COMPTYPE_RIDER], subject) != NULL);
-    if (mount != 0 && is_rider) {
-        return true;
-    }
-    
-    Entity edible = type_at(state, COMPTYPE_EDIBLE, tile_x, tile_y);
-    bool is_munch =
-        (component_of(&state->components.compgroups[COMPTYPE_MUNCH], subject) != NULL);
-    if (edible != 0 && is_munch) {
-        return true;
-    }
-    
-    Entity slayme = type_at(state, COMPTYPE_SLAYME, tile_x, tile_y);
-    bool is_slayer =
-        (component_of(&state->components.compgroups[COMPTYPE_SLAYER], subject) != NULL);
-    if (slayme != 0 && is_slayer) {
-        return true;
-    }
-
-    return false;
-}
-
-static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y) {
+static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y, bool check_only) {
     bool interacted = false;
 
     /* knight + horse = mounted */
@@ -46,15 +21,18 @@ static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y) {
     bool is_rider = 
         (component_of(&state->components.compgroups[COMPTYPE_RIDER], subject) != NULL);
     if (mount != 0 && is_rider) {
-        components_entity_end(&state->components, mount);
-        component_end(&state->components.compgroups[COMPTYPE_RIDER], subject);
+        if (!check_only) {
+            components_entity_end(&state->components, mount);
+            component_end(&state->components.compgroups[COMPTYPE_RIDER], subject);
 
-        CAvatar* avatar =
-            (CAvatar*)component_of(&state->components.compgroups[COMPTYPE_AVATAR], subject);
-        if (avatar != NULL) {
-            avatar->icon_id = ICON_MKNIGHT;
+            CAvatar* avatar =
+                (CAvatar*)component_of(&state->components.compgroups[COMPTYPE_AVATAR], subject);
+
+            if (avatar != NULL) {
+                avatar->icon_id = ICON_MKNIGHT;
+            }
+            slayer_init(&state->components, subject);
         }
-        slayer_init(&state->components, subject);
         
         interacted = true;
     }
@@ -64,7 +42,9 @@ static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y) {
     bool is_munch =
         (component_of(&state->components.compgroups[COMPTYPE_MUNCH], subject) != NULL);
     if (edible != 0 && is_munch) {
-        components_entity_end(&state->components, edible);
+        if (!check_only) {
+            components_entity_end(&state->components, edible);
+        }
         
         interacted = true;
     }
@@ -74,7 +54,9 @@ static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y) {
     bool is_slayer =
         (component_of(&state->components.compgroups[COMPTYPE_SLAYER], subject) != NULL);
     if (slayme != 0 && is_slayer) {
-        components_entity_end(&state->components, slayme);
+        if (!check_only) {
+            components_entity_end(&state->components, slayme);
+        }
         
         interacted = true;
     }
@@ -83,13 +65,14 @@ static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y) {
 }
 
 typedef struct {
+    bool interacted;
     bool herded;
-    int32_t dx;
-    int32_t dy;
-} Herdment;
+    Coord dx;
+    Coord dy;
+} Activity;
 
-static Herdment do_move(State* state, Entity subject, Coord tile_x, Coord tile_y) {
-    Herdment result = {false, 0, 0};
+static Activity do_move(State* state, Entity subject, Coord tile_x, Coord tile_y, bool check_only) {
+    Activity result = {false, false, 0, 0};
     
     if (subject == 0) {
         ERROR("Entity can't be 0.");
@@ -111,10 +94,11 @@ static Herdment do_move(State* state, Entity subject, Coord tile_x, Coord tile_y
     }
     position = NULL; /* The pointer can invalidate if components are removed so don't reuse. */
 
-    bool interacted = interact(state, subject, tile_x, tile_y);
+    bool interacted = interact(state, subject, tile_x, tile_y, check_only);
     if (!interacted && type_at(state, COMPTYPE_OBSTRUCTION, tile_x, tile_y) != 0) {
         return result;
     }
+    result.interacted = true;
 
     /* Need to get position component again because the ECS can have been rearranged. */
     position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
@@ -125,13 +109,15 @@ static Herdment do_move(State* state, Entity subject, Coord tile_x, Coord tile_y
 
     Coord dx = tile_x - position->x;
     Coord dy = tile_y - position->y;
-    
-    position->x = tile_x;
-    position->y = tile_y;
+
+    if (!check_only) {
+        position->x = tile_x;
+        position->y = tile_y;
+    }
 
     bool is_selectable =
         (component_of(&state->components.compgroups[COMPTYPE_SELECTABLE], subject) != NULL);
-    if (is_selectable) {
+    if (is_selectable && !check_only) {
         /* Go on cooldown. */
         if (cooldown_init(&state->components, subject) == NULL) {
             ERROR("cooldown_init");
@@ -160,7 +146,7 @@ typedef struct {
     int32_t dest_y;
 } HerdMe;
 
-void herd(State* state, int32_t dx, int32_t dy) {
+void herd(State* state, Coord dx, Coord dy) {
     size_t max_herdmes = 10;
     HerdMe herdus[max_herdmes];
     memset(herdus, 0, max_herdmes * sizeof(HerdMe));
@@ -177,7 +163,7 @@ void herd(State* state, int32_t dx, int32_t dy) {
         herdus[next_herdme] = (HerdMe){position->entity, position->x + dx, position->y + dy};
         next_herdme += 1;
         if (next_herdme >= max_herdmes) {
-            WARN("too many entities to herd");
+            WARN("Too many entities to herd.");
             break;
         }        
     }
@@ -187,18 +173,18 @@ void herd(State* state, int32_t dx, int32_t dy) {
             break;
         }
         
-        do_move(state, herdus[r].entity, herdus[r].dest_x, herdus[r].dest_y);
+        do_move(state, herdus[r].entity, herdus[r].dest_x, herdus[r].dest_y, false);
     }
 }
 
 void command_move(State* state, Entity subject, Coord tile_x, Coord tile_y) {
-    if (subject == 0) {
-        WARN("subject can't be 0.");
-        return;
+    Activity activity = do_move(state, subject, tile_x, tile_y, false);
+    if (activity.herded) {
+        herd(state, activity.dx, activity.dy);
     }
-    
-    Herdment herdment = do_move(state, subject, tile_x, tile_y);
-    if (herdment.herded) {
-        herd(state, herdment.dx, herdment.dy);
-    }
+}
+
+bool will_interact(State* state, Entity subject, Coord tile_x, Coord tile_y) {
+    Activity activity = do_move(state, subject, tile_x, tile_y, true);
+    return activity.interacted;
 }
