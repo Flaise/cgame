@@ -449,7 +449,11 @@ int main(int argc, char **argv) {
     mu_run_test(test_iterate_partial_skip);
     mu_run_test(test_component_for_entity);
 
-    printf("Passed: %d Failed: %d\n", tests_run - tests_failed, tests_failed);
+    if (tests_failed > 0) {
+        printf("Passed: %d Failed: %d\n", tests_run - tests_failed, tests_failed);
+    } else {
+        printf("All tests passed.\n");
+    }
 
     return tests_failed;
 }
