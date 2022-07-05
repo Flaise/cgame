@@ -20,3 +20,6 @@ SDL_Texture* const_png_to_texture(SDL_Renderer* renderer, const void* mem, size_
     Returns: 0 if successful
  */
 int texture_load_const_png(State* state, TexID texture_id, const void* mem, size_t size);
+
+void draw_texture(
+        State* state, TexID texture_id, const SDL_Rect* source_rect, const SDL_Rect* dest_rect);

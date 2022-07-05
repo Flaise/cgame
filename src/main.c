@@ -36,6 +36,8 @@
 #define RES_HORSE __res_horse_png
 #include "res/cooldown.h"
 #define RES_COOLDOWN __res_hourglass2_png
+#include "res/instructions.h"
+#define RES_INSTRUCTIONS __res_instructions_png
 
 int window_icon_load_const_png(SDL_Window* window, const void* mem, int size) {
     SDL_Surface* surface = const_png_to_surface(mem, size);
@@ -144,7 +146,12 @@ int textures_init(State* state) {
         ERROR("texture_load_const_png (cooldown)");
         return 1;
     }
-
+    if (texture_load_const_png(
+            state, TEXTURE_INSTRUCTIONS, RES_INSTRUCTIONS, sizeof(RES_INSTRUCTIONS)) != 0) {
+        ERROR("texture_load_const_png (instructions)");
+        return 1;
+    }
+    
     icon_texture_init(state, ICON_DRAGON, TEXTURE_DRAGON);
     icon_texture_init(state, ICON_KNIGHT, TEXTURE_KNIGHT);
     icon_texture_init(state, ICON_MKNIGHT, TEXTURE_MKNIGHT);

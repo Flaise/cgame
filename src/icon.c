@@ -11,6 +11,7 @@
 #include "constants.h"
 #include "component.h"
 #include "icon.h"
+#include "draw.h"
 
 Icon icon_new(TexID texture_id, SDL_Rect source_rect) {
     if (texture_id < 0 || texture_id >= TEXTURE_COUNT) {
@@ -65,7 +66,7 @@ void icon_texture_init(State* state, IconID icon_id, TexID texture_id) {
 
 void icon_draw(State* state, IconID icon_id, const SDL_Rect* dest_rect) {
     if (icon_id >= ICON_COUNT) {
-        WARN("invalid icon ID");
+        WARN("Invalid icon ID.");
         return;
     }
     
@@ -74,14 +75,6 @@ void icon_draw(State* state, IconID icon_id, const SDL_Rect* dest_rect) {
         WARN("Icon has invalid texture ID.");
         return;
     }
-    
-    SDL_Texture* texture = state->textures[icon->texture_id];
-    if (texture == NULL) {
-        WARN("Icon texture not loaded.");
-        return;
-    }
-    if (SDL_RenderCopy(state->renderer, texture, &icon->source_rect, dest_rect) != 0) {
-        WARN("SDL_RenderCopy (icon)");
-        return;
-    }
+
+    draw_texture(state, icon->texture_id, &icon->source_rect, dest_rect);
 }
