@@ -7,6 +7,10 @@
 #include "terrain.h"
 #include "draw.h"
 
+bool in_board(Coord tile_x, Coord tile_y) {
+    return tile_x >= 0 && tile_y >= 0 && tile_x < TILES_ACROSS && tile_y < TILES_DOWN;
+}
+
 static void make_generic_piece(State* state, Entity entity, int32_t x, int32_t y, IconID icon_id) {
     if (position_init(&state->components, entity, x, y) == NULL) {
         WARN("position_init");

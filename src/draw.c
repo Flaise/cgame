@@ -134,3 +134,13 @@ void draw_texture(
         return;
     }
 }
+
+void draw_set_color(State* state, RGBA color) {
+    int8_t r = color.r;
+    int8_t g = color.g;
+    int8_t b = color.b;
+    int8_t a = color.a;
+    if (SDL_SetRenderDrawColor(state->renderer, r, g, b, a) != 0) {
+        WARN("SDL_SetRenderDrawColor");
+    }
+}

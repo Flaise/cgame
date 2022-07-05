@@ -1,4 +1,11 @@
 
+typedef struct {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
+} RGBA;
+
 void redraw(State* state);
 
 int draw_now(State* state);
@@ -25,3 +32,5 @@ void draw_texture(
         State* state, TexID texture_id, const SDL_Rect* source_rect, const SDL_Rect* dest_rect);
 
 void draw_loading_done();
+
+void draw_set_color(State* state, RGBA color);

@@ -13,6 +13,7 @@
 #include "select.h"
 #include "board.h"
 #include "cooldown.h"
+#include "interact.h"
 
 #include "res/terrain.h"
 #define RES_TILES __res_Tiny_Top_Down_32x32_png

@@ -21,6 +21,23 @@ Components components_new() {
     return result;
 }
 
+Entity type_at(State* state, uint8_t comptype, Coord tile_x, Coord tile_y) {
+    CompGroup* groups[] = {
+        &state->components.compgroups[comptype],
+        &state->components.compgroups[COMPTYPE_POSITION],
+    };
+    void* comps[] = {NULL, NULL};
+    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
+        CPosition* position = (CPosition*)comps[1];
+
+        if (tile_x == position->x && tile_y == position->y) {
+            return position->entity;
+        }
+    }
+
+    return 0;
+}
+
 void components_entity_end(Components* comps, Entity entity) {
     compgroups_entity_end(comps->compgroups, COMPTYPE_COUNT, entity);
 }

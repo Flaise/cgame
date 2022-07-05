@@ -4,6 +4,12 @@
  */
 Components components_new();
 
+/*
+ Returns: The entity that has a position component that matches the given tile_x and tile_y, or
+          0 if there is no such entity.
+ */
+Entity type_at(State* state, uint8_t comptype, Coord tile_x, Coord tile_y);
+
 void components_entity_end(Components* comps, Entity entity);
 
 void components_clear(Components* comps);
