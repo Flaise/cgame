@@ -23,3 +23,5 @@ int texture_load_const_png(State* state, TexID texture_id, const void* mem, size
 
 void draw_texture(
         State* state, TexID texture_id, const SDL_Rect* source_rect, const SDL_Rect* dest_rect);
+
+void draw_loading_done();

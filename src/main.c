@@ -1,12 +1,6 @@
 #ifndef TEST
 
-#ifdef _WIN32a
 #include "SDL.h"
-#else
-#include "SDL2/SDL.h"
-#endif
-#include "SDL_image.h"
-
 #include "logging.h"
 #include "entity.h"
 #include "constants.h"
@@ -109,11 +103,6 @@ int renderer_init(State* state) {
 }
 
 int textures_init(State* state) {
-    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) == 0) {
-        ERROR("IMG_Init: png");
-        return 1;
-    }
-    
     if (texture_load_const_png(state, TEXTURE_TILES, RES_TILES, sizeof(RES_TILES)) != 0) {
         ERROR("texture_load_const_png (tiles)");
         return 1;
@@ -160,8 +149,9 @@ int textures_init(State* state) {
     icon_texture_init(state, ICON_HORSE, TEXTURE_HORSE);
     icon_texture_init(state, ICON_COOLDOWN, TEXTURE_COOLDOWN);
 
-    /* Unconditionally unload IMG because no more textures will be loaded. */
-    IMG_Quit();
+    /* TODO: Should unload IMG in response to an event or something. */
+    draw_loading_done();
+
     return 0;
 }
 
@@ -210,9 +200,7 @@ int main(int argc, char* argv[]) {
     /* clear state before SDL_Quit because it involves SDL calls */
     state_end(state);
     
-    if (IMG_Init(0) != 0) {
-        IMG_Quit();
-    }
+    draw_loading_done();
     if (SDL_WasInit(0) != 0) {
         SDL_Quit();
     }

@@ -43,6 +43,12 @@ void instructions_draw(State* state) {
     draw_texture(state, TEXTURE_INSTRUCTIONS, NULL, &dest_rect);
 }
 
+void draw_loading_done() {
+    if (IMG_Init(0) != 0) {
+        IMG_Quit();
+    }
+}
+
 int draw_now(State* state) {
     if (SDL_SetRenderTarget(state->renderer, NULL) != 0) {
         ERROR("SDL_SetRenderTarget");
@@ -80,6 +86,13 @@ SDL_Surface* const_png_to_surface(const void* mem, int size) {
 }
 
 SDL_Texture* const_png_to_texture(SDL_Renderer* renderer, const void* mem, size_t size) {
+    if (IMG_Init(0) == 0) {
+        if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) == 0) {
+            ERROR("IMG_Init");
+            return NULL;
+        }
+    }
+    
     SDL_RWops* rw = SDL_RWFromConstMem(mem, size);
     if (rw == NULL) {
         return NULL;
