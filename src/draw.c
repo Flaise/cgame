@@ -24,7 +24,7 @@ void redraw(State* state) {
 #define INSTRUCTIONS_WIDTH 351
 #define INSTRUCTIONS_HEIGHT 94
 void instructions_draw(State* state) {
-    int32_t x = VIEW_WIDTH - INSTRUCTIONS_WIDTH / 2 + 2;
+    int32_t x = VIEW_WIDTH - INSTRUCTIONS_WIDTH / 2 - 5;
     int32_t y = 0;
     
     SDL_Rect dest_rect = {
@@ -34,12 +34,17 @@ void instructions_draw(State* state) {
         .h = INSTRUCTIONS_HEIGHT / 2,
     };
 
-    SDL_SetTextureColorMod(state->textures[TEXTURE_INSTRUCTIONS], 0, 0, 0);
+    if (SDL_SetTextureColorMod(state->textures[TEXTURE_INSTRUCTIONS], 0, 0, 0) != 0) {
+        WARN("SDL_SetTextureColorMod");
+    }
     draw_texture(state, TEXTURE_INSTRUCTIONS, NULL, &dest_rect);
 
     dest_rect.x = x;
     dest_rect.y = y;
-    SDL_SetTextureColorMod(state->textures[TEXTURE_INSTRUCTIONS], 255, 255, 255);
+    
+    if (SDL_SetTextureColorMod(state->textures[TEXTURE_INSTRUCTIONS], 255, 255, 255) != 0) {
+        WARN("SDL_SetTextureColorMod");
+    }
     draw_texture(state, TEXTURE_INSTRUCTIONS, NULL, &dest_rect);
 }
 
