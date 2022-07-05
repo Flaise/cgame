@@ -22,6 +22,11 @@ This app requires some packages installed:
 
     apt-get install libsdl2-dev libsdl2-image-dev
 
+May be used for static linking and it's possible this package will be different depending on your
+computer's drivers or graphics card:
+    
+    apt-get install libgbm-dev
+
 ## Usage
 
 Compile and run:

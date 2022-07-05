@@ -32,6 +32,8 @@ cd src || exit 1 # removes extraneous folder name from log messages
     c99 -Wall -o ../${BIN} *.c `pkg-config --cflags --libs sdl2 SDL2_image` ${DEFINE} || exit 1
 cd .. || exit 1
 
+# TODO: need --static flag when statically linking
+# c99 -Wall -o ../${BIN} *.c `pkg-config --cflags --libs --static sdl2 SDL2_image` ${DEFINE} \
 
 # EXECUTE
 
