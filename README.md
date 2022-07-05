@@ -42,3 +42,6 @@ Characters:
 
 Cooldown Icon:
 * Roundicons from Flaticon: https://www.flaticon.com/
+
+Font:
+* GemFonts: http://moorstation.org/typoasis/designers/gemnew/home.htm
