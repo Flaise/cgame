@@ -17,19 +17,24 @@ fi
 
 # COMPILE C
 
+BIN_BASE="./bin/dont_eat_my_sheep"
+
 if [[ $1 == 'test' ]]; then
-    DEFINE="-D DEBUG -D TEST"
-    BIN="bin/cgame_test"
+    OPTS="-D DEBUG -D TEST -Og"
+    BIN="${BIN_BASE}_test"
+elif [[ $1 == 'release' ]]; then
+    OPTS="-O3"
+    BIN="${BIN_BASE}"
 else
-    DEFINE="-D DEBUG"
-    BIN="bin/cgame"
+    OPTS="-D DEBUG -Og"
+    BIN="${BIN_BASE}_debug"
 fi
 
 mkdir -p ./bin/ || exit 1
 
 cd src || exit 1 # removes extraneous folder name from log messages
 /usr/bin/time -f "compilation: %es" \
-    c99 -Wall -o ../${BIN} *.c `pkg-config --cflags --libs sdl2 SDL2_image` ${DEFINE} || exit 1
+    c99 -Wall -o ../${BIN} *.c `pkg-config --cflags --libs sdl2 SDL2_image` ${OPTS} || exit 1
 cd .. || exit 1
 
 # TODO: need --static flag when statically linking
@@ -37,4 +42,4 @@ cd .. || exit 1
 
 # EXECUTE
 
-./${BIN}
+${BIN}
