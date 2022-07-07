@@ -122,4 +122,5 @@ typedef struct {
     LevelID level_id;
 
     bool exiting;
+    bool game_over;
 } State;

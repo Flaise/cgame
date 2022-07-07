@@ -40,6 +40,7 @@ static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y, b
     if (edible != 0 && is_munch) {
         if (!check_only) {
             components_entity_end(&state->components, edible);
+            state->game_over = true;
         }
         
         interacted = true;
@@ -52,6 +53,7 @@ static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y, b
     if (slayme != 0 && is_slayer) {
         if (!check_only) {
             components_entity_end(&state->components, slayme);
+            state->game_over = true;
         }
         
         interacted = true;
@@ -232,6 +234,10 @@ static void herd(State* state, Coord dx, Coord dy) {
 }
 
 void command_move(State* state, Entity subject, Coord tile_x, Coord tile_y) {
+    if (state->game_over) {
+        return;
+    }
+    
     Activity activity = do_move(state, subject, tile_x, tile_y, false);
     if (activity.herded) {
         herd(state, activity.dx, activity.dy);
@@ -239,6 +245,10 @@ void command_move(State* state, Entity subject, Coord tile_x, Coord tile_y) {
 }
 
 bool will_move(State* state, Entity subject, Coord tile_x, Coord tile_y) {
+    if (state->game_over) {
+        return false;
+    }
+    
     Activity activity = do_move(state, subject, tile_x, tile_y, true);
     return activity.interacted;
 }

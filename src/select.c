@@ -29,6 +29,10 @@ static void tile_rect_draw(State* state, Coord tile_x, Coord tile_y) {
 }
 
 void select_draw(State* state) {
+    if (state->game_over) {
+        return;
+    }
+    
     Selection* sel = &state->selection;
 
     bool selection_visible = sel->select_x >= 0 && sel->select_y >= 0;
@@ -116,6 +120,10 @@ static void update_validity(State* state, int32_t x, int32_t y) {
 }
 
 void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
+    if (state->game_over) {
+        return;
+    }
+    
     if (!(button == SDL_BUTTON_LEFT || button == SDL_BUTTON_RIGHT)) {
         return;
     }
@@ -150,6 +158,10 @@ void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
 }
 
 void select_mouse_move(State* state, int32_t x, int32_t y) {
+    if (state->game_over) {
+        return;
+    }
+    
     Selection* sel = &state->selection;
     
     if (in_view(x, y)) {
@@ -164,6 +176,10 @@ void select_mouse_move(State* state, int32_t x, int32_t y) {
 }
 
 void select_mouse_leave(State* state) {
+    if (state->game_over) {
+        return;
+    }
+    
     Selection* sel = &state->selection;
     sel->hover_x = -1;
     sel->hover_y = -1;
