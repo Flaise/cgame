@@ -22,7 +22,7 @@ CPosition* position_init(Components* components, Entity entity, Coord x, Coord y
 /*
  Returns: A pointer to the newly initialized component or NULL if out of memory.
  */
-CAvatar* avatar_init(Components* components, Entity entity, IconID icon_id);
+CAvatar* avatar_init(Components* components, Entity entity, IconID icon_id, float_t x, float_t y);
 
 /*
  Returns: A pointer to the newly initialized component or NULL if out of memory.

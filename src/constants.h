@@ -1,4 +1,6 @@
 #include <stdbool.h>
+#include <stdint.h>
+#include <math.h>
 
 #define TILE_SIZE 64
 #define TILES_ACROSS 10
@@ -86,7 +88,14 @@ typedef struct {
 typedef struct {
     Entity entity;
     IconID icon_id;
-} CAvatar, CTile;
+    float_t x;
+    float_t y;
+} CAvatar;
+
+typedef struct {
+    Entity entity;
+    IconID icon_id;
+} CTile;
 
 typedef struct {
     Entity entity;

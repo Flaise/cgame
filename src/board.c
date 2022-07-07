@@ -15,7 +15,7 @@ static void make_generic_piece(State* state, Entity entity, int32_t x, int32_t y
     if (position_init(&state->components, entity, x, y) == NULL) {
         WARN("position_init");
     }
-    if (avatar_init(&state->components, entity, icon_id) == NULL) {
+    if (avatar_init(&state->components, entity, icon_id, (float_t)x, (float_t)y) == NULL) {
         WARN("avatar_init");
     }
     if (selectable_init(&state->components, entity) == NULL) {
@@ -30,7 +30,7 @@ static void make_sheep(State* state, Entity entity, int32_t x, int32_t y) {
     if (position_init(&state->components, entity, x, y) == NULL) {
         WARN("position_init");
     }
-    if (avatar_init(&state->components, entity, ICON_SHEEP) == NULL) {
+    if (avatar_init(&state->components, entity, ICON_SHEEP, (float_t)x, (float_t)y) == NULL) {
         WARN("avatar_init");
     }
     if (obstruction_init(&state->components, entity) == NULL) {

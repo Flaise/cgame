@@ -58,11 +58,13 @@ CPosition* position_init(Components* components, Entity entity, Coord x, Coord y
     return result;
 }
 
-CAvatar* avatar_init(Components* components, Entity entity, IconID icon_id) {
+CAvatar* avatar_init(Components* components, Entity entity, IconID icon_id, float_t x, float_t y) {
     CompGroup* group = &components->compgroups[COMPTYPE_AVATAR];
     CAvatar* result = (CAvatar*)component_init(group, entity);
     if (result != NULL) {
         result->icon_id = icon_id;
+        result->x = x;
+        result->y = y;
     }
     return result;
 }
