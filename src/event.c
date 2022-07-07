@@ -8,12 +8,6 @@
 #include "select.h"
 #include "board.h"
 
-typedef enum {
-    Proceed,
-    Exit,
-    Error,
-} Status;
-
 void size_changed(State* state, uint32_t width, uint32_t height) {
     /* Letterboxing is done automatically with SDL_RenderSetLogicalSize. */
     redraw(state);
@@ -34,13 +28,13 @@ void mouse_button(State* state, uint8_t button, int32_t x, int32_t y) {
     redraw(state);
 }
 
-Status key_down(State* state, SDL_Keycode code) {
+void key_down(State* state, SDL_Keycode code) {
     if (code == SDLK_r) {
         /* R = restart */
         level_restart(state);
     } else if (code == SDLK_ESCAPE) {
         /* Esc = quit */
-        return Exit;
+        state->exiting = true;
     } else if (code == SDLK_LEFTBRACKET) {
         /* [ = previous level */
         level_prev(state);
@@ -48,15 +42,15 @@ Status key_down(State* state, SDL_Keycode code) {
         /* ] = next level */
         level_next(state);
     }
-    return Proceed;
 }
 
-Status events_pending(State* state) {
+int events_pending(State* state) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_QUIT:
-                return Exit;
+                state->exiting = true;
+                return 0;
 
             /* on Ubuntu, drag-resize = SizeChanged
                double click to unmaximize or click unmaximize button = SizeChanged->Restored
@@ -72,7 +66,7 @@ Status events_pending(State* state) {
                 continue;
 
             case SDL_MOUSEMOTION:
-                /* SDL_GetMouseState doesn't report transformed positions so pass event data */
+                /* SDL_GetMouseState doesn't report transformed positions so pass event data. */
                 mouse_motion(state, event.motion.x, event.motion.y);
                 continue;
 
@@ -81,13 +75,11 @@ Status events_pending(State* state) {
                 continue;
 
             case SDL_KEYDOWN:
-                if (key_down(state, event.key.keysym.sym) == Exit) {
-                    return Exit;
-                }
+                key_down(state, event.key.keysym.sym);
                 continue;
         }
     }
-    return Proceed;
+    return 0;
 }
 
 int events_all(State* state) {
@@ -98,12 +90,13 @@ int events_all(State* state) {
     }
     
     while (true) {
-        /* Process event. */
-        Status stat = events_pending(state);
-        if (stat == Exit) {
-            return 0;
-        } else if (stat == Error) {
+        /* Process all available events. */
+        if (events_pending(state) != 0) {
             return 1;
+        }
+
+        if (state->exiting) {
+            return 0;
         }
 
         /* Redraw. */

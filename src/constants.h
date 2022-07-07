@@ -120,4 +120,6 @@ typedef struct {
     Icon icons[ICON_COUNT];
 
     LevelID level_id;
+
+    bool exiting;
 } State;
