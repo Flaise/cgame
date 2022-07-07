@@ -185,8 +185,6 @@ int run(State* state) {
         WARN("terrain_update");
     }
 
-    level_1_init(state);
-
     return events_all(state);
 }
 

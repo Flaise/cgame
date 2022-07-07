@@ -42,6 +42,7 @@
 typedef int32_t TexID;
 typedef uint8_t IconID;
 typedef int16_t Coord;
+typedef uint8_t LevelID;
 
 typedef struct {
     TexID texture_id;
@@ -108,13 +109,15 @@ typedef struct {
 } Components;
 
 typedef struct {
-    bool needs_redraw;
-    
     Selection selection;
     Components components;
     
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* textures[TEXTURE_COUNT];
+    bool needs_redraw;
+    
     Icon icons[ICON_COUNT];
+
+    LevelID level_id;
 } State;

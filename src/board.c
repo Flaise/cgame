@@ -7,6 +7,8 @@
 #include "terrain.h"
 #include "draw.h"
 
+#define LEVEL_MAX 2
+
 bool in_board(Coord tile_x, Coord tile_y) {
     return tile_x >= 0 && tile_y >= 0 && tile_x < TILES_ACROSS && tile_y < TILES_DOWN;
 }
@@ -62,9 +64,7 @@ static void make_wall(State* state, Entity entity, int32_t x, int32_t y, IconID 
     }
 }
 
-void level_1_init(State* state) {
-    components_clear(&state->components);
-
+static void level_1_init(State* state) {
     /* Pieces. */
     
     Entity entity = 1; /* TODO: function to get next entity */
@@ -130,7 +130,51 @@ void level_1_init(State* state) {
     make_wall(state, entity, 1, 3, ICON_PYRAMID);
     entity += 1;
     make_wall(state, entity, 1, 4, ICON_WALL);
+}
+
+static void level_2_init(State* state) {
+    /* Pieces. */
+}
+
+static void level_id_init(State* state, LevelID level_id) {
+    components_clear(&state->components);
+    state->level_id = level_id;
+    
+    if (level_id == 1) {
+        level_1_init(state);
+    } else if (level_id == 2) {
+        level_2_init(state);
+    } else {
+        WARN("Invalid level_id %d.", level_id);
+        return;
+    }
 
     terrain_update(state);
     redraw(state);
+}
+
+void level_init(State* state) {
+    level_id_init(state, 1);
+}
+
+void level_restart(State* state) {
+    level_id_init(state, state->level_id);
+}
+
+static LevelID wrap_level(LevelID level_id) {
+    if (level_id <= 0) {
+        return LEVEL_MAX;
+    }
+    if (level_id > LEVEL_MAX) {
+        return 1;
+    }
+    return level_id;
+}
+
+void level_next(State* state) {
+    level_id_init(state, wrap_level(state->level_id + 1));
+}
+
+void level_prev(State* state) {
+    level_id_init(state, wrap_level(state->level_id - 1));
 }

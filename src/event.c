@@ -37,10 +37,16 @@ void mouse_button(State* state, uint8_t button, int32_t x, int32_t y) {
 Status key_down(State* state, SDL_Keycode code) {
     if (code == SDLK_r) {
         /* R = restart */
-        level_1_init(state);
+        level_restart(state);
     } else if (code == SDLK_ESCAPE) {
         /* Esc = quit */
         return Exit;
+    } else if (code == SDLK_LEFTBRACKET) {
+        /* [ = previous level */
+        level_prev(state);
+    } else if (code == SDLK_RIGHTBRACKET) {
+        /* ] = next level */
+        level_next(state);
     }
     return Proceed;
 }
@@ -85,6 +91,8 @@ Status events_pending(State* state) {
 }
 
 int events_all(State* state) {
+    level_init(state);
+    
     if (draw_now(state) != 0) {
         return 1;
     }
@@ -99,6 +107,7 @@ int events_all(State* state) {
         }
 
         /* Redraw. */
+        /* TODO: Remove finished tweens to avoid unnecessary redrawing and other computations. */
         if (state->needs_redraw || state->components.compgroups[COMPTYPE_TWEEN].alive > 0) {
             if (draw_now(state) != 0) {
                 return 1;
