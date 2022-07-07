@@ -64,7 +64,7 @@ static void make_wall(State* state, Entity entity, int32_t x, int32_t y, IconID 
     }
 }
 
-static void level_1_init(State* state) {
+static void level_2_init(State* state) {
     /* Pieces. */
     
     Entity entity = 1; /* TODO: function to get next entity */
@@ -132,8 +132,63 @@ static void level_1_init(State* state) {
     make_wall(state, entity, 1, 4, ICON_WALL);
 }
 
-static void level_2_init(State* state) {
+static void level_1_init(State* state) {
     /* Pieces. */
+    
+    Entity entity = 1; /* TODO: function to get next entity */
+    make_generic_piece(state, entity, 3, 2, ICON_DRAGON);
+    munch_init(&state->components, entity);
+    slayme_init(&state->components, entity);
+    
+    entity += 1;
+    make_generic_piece(state, entity, 6, 3, ICON_KNIGHT);
+    rider_init(&state->components, entity);
+    edible_init(&state->components, entity);
+    
+    entity += 1;
+    make_generic_piece(state, entity, 5, 3, ICON_HORSE);
+    mount_init(&state->components, entity);
+    edible_init(&state->components, entity);
+    
+    entity += 1;
+    make_sheep(state, entity, 7, 2);
+    
+    /* Terrain. */
+    
+    entity += 1;
+    make_wall(state, entity, 0, 0, ICON_PYRAMID);
+    entity += 1;
+    make_wall(state, entity, 9, 0, ICON_PYRAMID);
+    entity += 1;
+    make_wall(state, entity, 9, 5, ICON_PYRAMID);
+    entity += 1;
+    make_wall(state, entity, 0, 5, ICON_PYRAMID);
+
+    for (int32_t r = 1; r < 5; r += 1) {
+        entity += 1;
+        make_wall(state, entity, 0, r, ICON_WALL);
+        entity += 1;
+        make_wall(state, entity, 9, r, ICON_WALL);
+        
+        entity += 1;
+        make_wall(state, entity, 1, r, ICON_WALL);
+        entity += 1;
+        make_wall(state, entity, 8, r, ICON_WALL);
+    }
+    
+    for (int32_t r = 1; r < 9; r += 1) {
+        entity += 1;
+        make_wall(state, entity, r, 5, ICON_WALL);
+        entity += 1;
+        make_wall(state, entity, r, 0, ICON_WALL);
+    }
+    
+    for (int32_t r = 2; r < 8; r += 1) {
+        entity += 1;
+        make_wall(state, entity, r, 4, ICON_WALL);
+        entity += 1;
+        make_wall(state, entity, r, 1, ICON_WALL);
+    }
 }
 
 static void level_id_init(State* state, LevelID level_id) {
