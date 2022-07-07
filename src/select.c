@@ -12,7 +12,7 @@ RGBA color_move_invalid = {150, 70, 60, 150};
 RGBA color_selection = {150, 170, 60, 130};
 
 RGBA color_select_valid = {40, 130, 100, 130};
-RGBA color_select_empty = {40, 130, 100, 70};
+RGBA color_select_empty = {40, 45, 40, 90};
 RGBA color_select_invalid = {150, 70, 60, 150};
 
 static void tile_rect_draw(State* state, Coord tile_x, Coord tile_y) {
