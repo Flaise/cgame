@@ -7,7 +7,7 @@
 #include "terrain.h"
 #include "draw.h"
 
-#define LEVEL_MAX 2
+#define LEVEL_MAX 3
 
 bool in_board(Coord tile_x, Coord tile_y) {
     return tile_x >= 0 && tile_y >= 0 && tile_x < TILES_ACROSS && tile_y < TILES_DOWN;
@@ -191,6 +191,70 @@ static void level_1_init(State* state) {
     }
 }
 
+static void level_3_init(State* state) {
+    /* Pieces. */
+    
+    Entity entity = 1; /* TODO: function to get next entity */
+    make_generic_piece(state, entity, 4, 3, ICON_DRAGON);
+    munch_init(&state->components, entity);
+    slayme_init(&state->components, entity);
+    
+    entity += 1;
+    make_generic_piece(state, entity, 3, 4, ICON_KNIGHT);
+    rider_init(&state->components, entity);
+    edible_init(&state->components, entity);
+    
+    entity += 1;
+    make_generic_piece(state, entity, 5, 4, ICON_HORSE);
+    mount_init(&state->components, entity);
+    edible_init(&state->components, entity);
+    
+    entity += 1;
+    make_sheep(state, entity, 3, 1);
+    entity += 1;
+    make_sheep(state, entity, 5, 3);
+    entity += 1;
+    make_sheep(state, entity, 6, 1);
+    entity += 1;
+    make_sheep(state, entity, 1, 2);
+    
+    entity += 1;
+    make_generic_piece(state, entity, 5, 1, ICON_DOG);
+    edible_init(&state->components, entity);
+    herder_init(&state->components, entity);
+    
+    /* Terrain. */
+    
+    entity += 1;
+    make_wall(state, entity, 0, 0, ICON_PYRAMID);
+    entity += 1;
+    make_wall(state, entity, 9, 0, ICON_PYRAMID);
+    entity += 1;
+    make_wall(state, entity, 9, 5, ICON_PYRAMID);
+    entity += 1;
+    make_wall(state, entity, 0, 5, ICON_PYRAMID);
+
+    
+    entity += 1;
+    make_wall(state, entity, 6, 3, ICON_PYRAMID);
+    entity += 1;
+    make_wall(state, entity, 6, 4, ICON_WALL);
+
+    for (int32_t r = 1; r < 5; r += 1) {
+        entity += 1;
+        make_wall(state, entity, 0, r, ICON_WALL);
+        entity += 1;
+        make_wall(state, entity, 9, r, ICON_WALL);
+    }
+    
+    for (int32_t r = 1; r < 9; r += 1) {
+        entity += 1;
+        make_wall(state, entity, r, 5, ICON_WALL);
+        entity += 1;
+        make_wall(state, entity, r, 0, ICON_WALL);
+    }
+}
+
 static void level_id_init(State* state, LevelID level_id) {
     components_clear(&state->components);
     state->level_id = level_id;
@@ -199,6 +263,8 @@ static void level_id_init(State* state, LevelID level_id) {
         level_1_init(state);
     } else if (level_id == 2) {
         level_2_init(state);
+    } else if (level_id == 3) {
+        level_3_init(state);
     } else {
         WARN("Invalid level_id %d.", level_id);
         return;
