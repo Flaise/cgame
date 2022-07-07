@@ -107,18 +107,10 @@ static void update_validity(State* state, int32_t x, int32_t y) {
         }
     } else {
         /* Piece selected. */
-        if (can_reach(tdest_x, tdest_y, sel->select_x, sel->select_y)) {
-            /* Too far away. */
-            sel->hover_status = HoverInvalid;
-        } else if (will_interact(state, sel->subject, tdest_x, tdest_y)) {
+        if (will_move(state, sel->subject, tdest_x, tdest_y)) {
             sel->hover_status = HoverValid;
         } else {
-            Entity target = type_at(state, COMPTYPE_OBSTRUCTION, tdest_x, tdest_y);
-            if (target == 0) {
-                sel->hover_status = HoverValid;
-            } else {
-                sel->hover_status = HoverInvalid;
-            }
+            sel->hover_status = HoverInvalid;
         }
     }
 }

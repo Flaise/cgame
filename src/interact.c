@@ -9,10 +9,6 @@ static int32_t distance4(int32_t ax, int32_t ay, int32_t bx, int32_t by) {
     return abs(ax - bx) + abs(ay - by);
 }
 
-bool can_reach(Coord ax, Coord ay, Coord bx, Coord by) {
-    return distance4(ax, ay, bx, by) == 1;
-}
-
 static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y, bool check_only) {
     bool interacted = false;
 
@@ -64,7 +60,49 @@ static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y, b
     return interacted;
 }
 
+static bool munch_allowed(State* state, Coord start_x, Coord start_y, Coord dx, Coord dy) {
+    if (!(dx == 0 || dy == 0)) {
+        ERROR("Can't trace non-orthogonal path [x=%d y=%d]", dx, dy);
+        return false;
+    }
+
+    bool edible_visible = false;
+
+    CompGroup* groups[] = {
+        &state->components.compgroups[COMPTYPE_EDIBLE],
+        &state->components.compgroups[COMPTYPE_POSITION],
+    };
+    void* comps[] = {NULL, NULL};
+    while (component_iterate((CompGroup**)&groups, (void**)&comps, 2)) {
+        CPosition* position = (CPosition*)comps[1];
+
+        if (position->y == start_y) {
+            if (dx > 0 && (position->x > start_x)) {
+                return true;
+            } else if (dx < 0 && (position->x < start_x)) {
+                return true;
+            }
+
+            /* TODO: What about if a wall is in the way? */
+            edible_visible = true;
+        } else if (position->x == start_x) {
+            if (dy > 0 && (position->y > start_y)) {
+                return true;
+            } else if (dy < 0 && (position->y < start_y)) {
+                return true;
+            }
+
+            /* TODO: What about if a wall is in the way? */
+            edible_visible = true;
+        }
+
+    }
+
+    return !edible_visible;
+}
+
 typedef struct {
+    bool moved;
     bool interacted;
     bool herded;
     Coord dx;
@@ -81,44 +119,58 @@ static Activity do_move(State* state, Entity subject, Coord tile_x, Coord tile_y
     if (!in_board(tile_x, tile_y)) {
         return result;
     }
-    
+
+    /* Starting position. */
     CPosition* position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
     if (position == NULL) {
         ERROR("Subject position component is missing.");
         return result;
     }
+    Coord dx = tile_x - position->x;
+    Coord dy = tile_y - position->y;
+    Coord start_x = position->x;
+    Coord start_y = position->y;
 
-    /* Only move to adjacent square. */
+    /* Range limit. */
     if (distance4(position->x, position->y, tile_x, tile_y) != 1) {
         return result;
     }
     position = NULL; /* The pointer can invalidate if components are removed so don't reuse. */
 
+    /* Draggy only toward food. */
+    bool is_munch =
+        (component_of(&state->components.compgroups[COMPTYPE_MUNCH], subject) != NULL);
+    if (is_munch) {
+        if (!munch_allowed(state, start_x, start_y, dx, dy)) {
+            return result;
+        }
+    }
+    
+    /* Interact. */
     bool interacted = interact(state, subject, tile_x, tile_y, check_only);
     if (!interacted && type_at(state, COMPTYPE_OBSTRUCTION, tile_x, tile_y) != 0) {
         return result;
     }
     result.interacted = true;
 
-    /* Need to get position component again because the ECS can have been rearranged. */
-    position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
-    if (position == NULL) {
-        ERROR("Subject position component is missing.");
-        return result;
-    }
-
-    Coord dx = tile_x - position->x;
-    Coord dy = tile_y - position->y;
-
+    /* Update position. */
+    result.moved = true;
     if (!check_only) {
+        /* Need to get position component again because the ECS can have been rearranged. */
+        position = component_of(&state->components.compgroups[COMPTYPE_POSITION], subject);
+        if (position == NULL) {
+            ERROR("Subject position component is missing.");
+            return result;
+        }
+        
         position->x = tile_x;
         position->y = tile_y;
     }
 
+    /* Go on cooldown. */
     bool is_selectable =
         (component_of(&state->components.compgroups[COMPTYPE_SELECTABLE], subject) != NULL);
     if (is_selectable && !check_only) {
-        /* Go on cooldown. */
         if (cooldown_init(&state->components, subject) == NULL) {
             ERROR("cooldown_init");
         }
@@ -130,6 +182,7 @@ static Activity do_move(State* state, Entity subject, Coord tile_x, Coord tile_y
         }
     }
 
+    /* Signal herding behavior. */
     bool is_herder =
         (component_of(&state->components.compgroups[COMPTYPE_HERDER], subject) != NULL);
     if (is_herder) {
@@ -137,6 +190,7 @@ static Activity do_move(State* state, Entity subject, Coord tile_x, Coord tile_y
         result.dx = dx;
         result.dy = dy;
     }
+    
     return result;
 }
 
@@ -146,7 +200,7 @@ typedef struct {
     int32_t dest_y;
 } HerdMe;
 
-void herd(State* state, Coord dx, Coord dy) {
+static void herd(State* state, Coord dx, Coord dy) {
     size_t max_herdmes = 10;
     HerdMe herdus[max_herdmes];
     memset(herdus, 0, max_herdmes * sizeof(HerdMe));
@@ -184,7 +238,7 @@ void command_move(State* state, Entity subject, Coord tile_x, Coord tile_y) {
     }
 }
 
-bool will_interact(State* state, Entity subject, Coord tile_x, Coord tile_y) {
+bool will_move(State* state, Entity subject, Coord tile_x, Coord tile_y) {
     Activity activity = do_move(state, subject, tile_x, tile_y, true);
     return activity.interacted;
 }

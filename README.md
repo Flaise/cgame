@@ -8,11 +8,13 @@ Someone wanted to c me write a program in C. So here's a puzzle game written in 
 
 ## How2play
 
-The dragon wants to eat up all the livestock so the knight wants to slay the dragon before that can
+The dragon wants to eat up the livestock so the knight wants to slay the dragon before that can
 happen. Click on a piece, then click a square next to the piece to make a move. Pieces only move 1
-square at a time and not diagonally. In order for the knight to slay the dragon, he must first be
-moved onto the same square as his horse in order to mount the horse. Then he can slay the dragon by
-moving onto the same square as the dragon.
+square at a time and not diagonally. After a piece moves, all other pieces must move once before it
+can move again.
+
+In order to win, the knight must first be moved onto the same square as his horse in order to mount
+up. Then he can slay the dragon by moving onto the same square as the dragon.
 
 Press R to restart if you fail the puzzle. Press Escape to quit the app.
 
