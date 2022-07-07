@@ -18,7 +18,7 @@ void redraw(State* state) {
 }
 
 #define INSTRUCTIONS_WIDTH 351
-#define INSTRUCTIONS_HEIGHT 94
+#define INSTRUCTIONS_HEIGHT 169
 void instructions_draw(State* state) {
     int32_t x = VIEW_WIDTH - INSTRUCTIONS_WIDTH / 2 - 5;
     int32_t y = 0;
