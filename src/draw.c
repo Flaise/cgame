@@ -30,17 +30,13 @@ void instructions_draw(State* state) {
         .h = INSTRUCTIONS_HEIGHT / 2,
     };
 
-    if (SDL_SetTextureColorMod(state->textures[TEXTURE_INSTRUCTIONS], 0, 0, 0) != 0) {
-        WARN("SDL_SetTextureColorMod");
-    }
+    draw_texture_color_mod(state, TEXTURE_INSTRUCTIONS, 0, 0, 0);
     draw_texture(state, TEXTURE_INSTRUCTIONS, NULL, &dest_rect);
 
     dest_rect.x = x;
     dest_rect.y = y;
     
-    if (SDL_SetTextureColorMod(state->textures[TEXTURE_INSTRUCTIONS], 255, 255, 255) != 0) {
-        WARN("SDL_SetTextureColorMod");
-    }
+    draw_texture_color_mod(state, TEXTURE_INSTRUCTIONS, 255, 255, 255);
     draw_texture(state, TEXTURE_INSTRUCTIONS, NULL, &dest_rect);
 }
 
@@ -117,7 +113,7 @@ int texture_load_const_png(State* state, TexID texture_id, const void* mem, size
     
     SDL_Texture* texture = const_png_to_texture(state->renderer, mem, size);
     if (texture == NULL) {
-        ERROR("load texture");
+        ERROR("Could not load texture %d.", texture_id);
         return 1;
     }
     state->textures[texture_id] = texture;
@@ -126,14 +122,27 @@ int texture_load_const_png(State* state, TexID texture_id, const void* mem, size
 
 void draw_texture(
         State* state, TexID texture_id, const SDL_Rect* source_rect, const SDL_Rect* dest_rect) {
-        
+
     SDL_Texture* texture = state->textures[texture_id];
     if (texture == NULL) {
-        WARN("Icon texture not loaded.");
+        WARN("Texture %d not loaded.", texture_id);
         return;
     }
     if (SDL_RenderCopy(state->renderer, texture, source_rect, dest_rect) != 0) {
         WARN("SDL_RenderCopy");
+        return;
+    }
+}
+
+void draw_texture_color_mod(State* state, TexID texture_id, uint8_t r, uint8_t g, uint8_t b) {
+    SDL_Texture* texture = state->textures[texture_id];
+    if (texture == NULL) {
+        WARN("Texture %d not loaded.", texture_id);
+        return;
+    }
+    
+    if (SDL_SetTextureColorMod(texture, r, g, b) != 0) {
+        WARN("SDL_SetTextureColorMod");
         return;
     }
 }

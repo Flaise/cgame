@@ -31,6 +31,8 @@ int texture_load_const_png(State* state, TexID texture_id, const void* mem, size
 void draw_texture(
         State* state, TexID texture_id, const SDL_Rect* source_rect, const SDL_Rect* dest_rect);
 
+void draw_texture_color_mod(State* state, TexID texture_id, uint8_t r, uint8_t g, uint8_t b);
+
 void draw_loading_done();
 
 void draw_set_color(State* state, RGBA color);
