@@ -99,7 +99,7 @@ int events_all(State* state) {
         }
 
         /* Redraw. */
-        if (state->needs_redraw) {
+        if (state->needs_redraw || state->components.compgroups[COMPTYPE_TWEEN].alive > 0) {
             if (draw_now(state) != 0) {
                 return 1;
             }

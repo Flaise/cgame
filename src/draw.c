@@ -11,6 +11,7 @@
 #include "select.h"
 #include "avatar.h"
 #include "cooldown.h"
+#include "tween.h"
 
 void redraw(State* state) {
     state->needs_redraw = true;
@@ -50,6 +51,8 @@ void draw_loading_done() {
 }
 
 int draw_now(State* state) {
+    tween_update(state);
+    
     if (SDL_SetRenderTarget(state->renderer, NULL) != 0) {
         ERROR("SDL_SetRenderTarget");
         return 1;

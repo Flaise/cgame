@@ -24,6 +24,9 @@ static void make_generic_piece(State* state, Entity entity, int32_t x, int32_t y
     if (obstruction_init(&state->components, entity) == NULL) {
         WARN("obstruction_init");
     }
+    if (tween_init(&state->components, entity) == NULL) {
+        WARN("tween_init");
+    }
 }
 
 static void make_sheep(State* state, Entity entity, int32_t x, int32_t y) {
@@ -41,6 +44,9 @@ static void make_sheep(State* state, Entity entity, int32_t x, int32_t y) {
     }
     if (flock_init(&state->components, entity) == NULL) {
         WARN("flock_init");
+    }
+    if (tween_init(&state->components, entity) == NULL) {
+        WARN("tween_init");
     }
 }
 

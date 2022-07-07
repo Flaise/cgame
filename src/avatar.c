@@ -19,7 +19,7 @@ void avatar_draw(State* state) {
     CompGroup* groups[] = {
         &state->components.compgroups[COMPTYPE_AVATAR],
     };
-    void* comps[] = {NULL, NULL};
+    void* comps[] = {NULL};
     while (component_iterate((CompGroup**)&groups, (void**)&comps, 1)) {
         CAvatar* avatar = (CAvatar*)comps[0];
 

@@ -77,7 +77,8 @@ typedef struct {
 #define COMPTYPE_HERDER 11
 #define COMPTYPE_FLOCK 12
 #define COMPTYPE_COOLDOWN 13
-#define COMPTYPE_COUNT 14
+#define COMPTYPE_TWEEN 14
+#define COMPTYPE_COUNT 15
 
 typedef struct {
     Entity entity;
@@ -100,7 +101,7 @@ typedef struct {
 typedef struct {
     Entity entity;
 } CSelectable, CMount, CRider, CMunch, CEdible, CSlayer, CSlayMe, CObstruction, CHerder, CFlock,
-    CCooldown;
+    CCooldown, CTween;
 
 typedef struct {
     CompGroup compgroups[COMPTYPE_COUNT];

@@ -83,3 +83,8 @@ CFlock* flock_init(Components* components, Entity entity);
  Returns: A pointer to the newly initialized component or NULL if out of memory.
  */
 CCooldown* cooldown_init(Components* components, Entity entity);
+
+/*
+ Returns: A pointer to the newly initialized component or NULL if out of memory.
+ */
+CTween* tween_init(Components* components, Entity entity);

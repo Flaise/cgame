@@ -165,13 +165,6 @@ static Activity do_move(State* state, Entity subject, Coord tile_x, Coord tile_y
         
         position->x = tile_x;
         position->y = tile_y;
-
-        /* TODO: Replace this with tweening. */
-        CAvatar* avatar = component_of(&state->components.compgroups[COMPTYPE_AVATAR], subject);
-        if (avatar != NULL) {
-            avatar->x = (float_t)tile_x;
-            avatar->y = (float_t)tile_y;
-        }
     }
 
     /* Go on cooldown. */
