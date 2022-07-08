@@ -38,3 +38,5 @@ void draw_loading_done();
 void draw_set_color(State* state, RGBA color);
 
 SDL_Texture* draw_get_texture(State* state, TexID texture_id);
+
+void draw_text_shadow(State* state, IconID icon_id, SDL_Rect dest_rect);

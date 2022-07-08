@@ -17,27 +17,32 @@ void redraw(State* state) {
     state->needs_redraw = true;
 }
 
-#define INSTRUCTIONS_WIDTH 351
-#define INSTRUCTIONS_HEIGHT 169
-void instructions_draw(State* state) {
-    int32_t x = VIEW_WIDTH - INSTRUCTIONS_WIDTH / 2 - 5;
-    int32_t y = 0;
+void draw_text_shadow(State* state, IconID icon_id, SDL_Rect dest_rect) {
+    int32_t x = dest_rect.x;
+    int32_t y = dest_rect.y;
+    dest_rect.x += 2;
+    dest_rect.y += 2;
     
-    SDL_Rect dest_rect = {
-        .x = x + 2,
-        .y = y + 2,
-        .w = INSTRUCTIONS_WIDTH / 2,
-        .h = INSTRUCTIONS_HEIGHT / 2,
-    };
-
-    icon_color_mod(state, ICON_INSTRUCTIONS, 0, 0, 0);
-    icon_draw(state, ICON_INSTRUCTIONS, &dest_rect);
+    icon_color_mod(state, icon_id, 0, 0, 0);
+    icon_draw(state, icon_id, &dest_rect);
 
     dest_rect.x = x;
     dest_rect.y = y;
     
-    icon_color_mod(state, ICON_INSTRUCTIONS, 255, 255, 255);
-    icon_draw(state, ICON_INSTRUCTIONS, &dest_rect);
+    icon_color_mod(state, icon_id, 255, 255, 255);
+    icon_draw(state, icon_id, &dest_rect);
+}
+
+#define INSTRUCTIONS_WIDTH 351
+#define INSTRUCTIONS_HEIGHT 169
+void instructions_draw(State* state) {
+    SDL_Rect dest_rect = {
+        .x = VIEW_WIDTH - INSTRUCTIONS_WIDTH / 2 - 5,
+        .y = 0,
+        .w = INSTRUCTIONS_WIDTH / 2,
+        .h = INSTRUCTIONS_HEIGHT / 2,
+    };
+    draw_text_shadow(state, ICON_INSTRUCTIONS, dest_rect);
 }
 
 void draw_loading_done() {
