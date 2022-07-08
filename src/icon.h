@@ -9,3 +9,5 @@ void icon_tile_init(
 void icon_texture_init(State* state, IconID icon_id, TexID texture_id);
 
 void icon_draw(State* state, IconID icon_id, const SDL_Rect* dest_rect);
+
+void icon_color_mod(State* state, IconID icon_id, uint8_t r, uint8_t g, uint8_t b);

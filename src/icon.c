@@ -37,9 +37,8 @@ void icon_tile_init(
 }
 
 void icon_texture_init(State* state, IconID icon_id, TexID texture_id) {
-    SDL_Texture* texture = state->textures[texture_id];
+    SDL_Texture* texture = draw_get_texture(state, texture_id);
     if (texture == NULL) {
-        WARN("Icon texture not loaded.");
         return;
     }
     
@@ -65,10 +64,15 @@ void icon_draw(State* state, IconID icon_id, const SDL_Rect* dest_rect) {
     }
     
     const Icon* icon = &state->icons[icon_id];
-    if (icon->texture_id < 0 || icon->texture_id >= TEXTURE_COUNT) {
-        WARN("Icon has invalid texture ID.");
+    draw_texture(state, icon->texture_id, &icon->source_rect, dest_rect);
+}
+
+void icon_color_mod(State* state, IconID icon_id, uint8_t r, uint8_t g, uint8_t b) {
+    if (icon_id >= ICON_COUNT) {
+        WARN("Invalid icon ID.");
         return;
     }
-
-    draw_texture(state, icon->texture_id, &icon->source_rect, dest_rect);
+    
+    const Icon* icon = &state->icons[icon_id];
+    draw_texture_color_mod(state, icon->texture_id, r, g, b);
 }

@@ -30,14 +30,14 @@ void instructions_draw(State* state) {
         .h = INSTRUCTIONS_HEIGHT / 2,
     };
 
-    draw_texture_color_mod(state, TEXTURE_INSTRUCTIONS, 0, 0, 0);
-    draw_texture(state, TEXTURE_INSTRUCTIONS, NULL, &dest_rect);
+    icon_color_mod(state, ICON_INSTRUCTIONS, 0, 0, 0);
+    icon_draw(state, ICON_INSTRUCTIONS, &dest_rect);
 
     dest_rect.x = x;
     dest_rect.y = y;
     
-    draw_texture_color_mod(state, TEXTURE_INSTRUCTIONS, 255, 255, 255);
-    draw_texture(state, TEXTURE_INSTRUCTIONS, NULL, &dest_rect);
+    icon_color_mod(state, ICON_INSTRUCTIONS, 255, 255, 255);
+    icon_draw(state, ICON_INSTRUCTIONS, &dest_rect);
 }
 
 void draw_loading_done() {
@@ -54,7 +54,7 @@ int draw_now(State* state) {
         return 1;
     }
 
-    /* clear screen (including the space outside of the logical size/viewport) */
+    /* Clear screen, including the space outside of the logical size/viewport. */
     if (SDL_SetRenderDrawColor(state->renderer, 30, 0, 0, 255) != 0) {
         WARN("SDL_SetRenderDrawColor");
     }
@@ -120,14 +120,33 @@ int texture_load_const_png(State* state, TexID texture_id, const void* mem, size
     return 0;
 }
 
-void draw_texture(
-        State* state, TexID texture_id, const SDL_Rect* source_rect, const SDL_Rect* dest_rect) {
-
+SDL_Texture* draw_get_texture(State* state, TexID texture_id) {
+    if (state == NULL) {
+        ERROR("State can't be null.");
+        return NULL;
+    }
+    
+    if (texture_id < 0 || texture_id >= TEXTURE_COUNT) {
+        WARN("Invalid texture ID %d.", texture_id);
+        return NULL;
+    }
+    
     SDL_Texture* texture = state->textures[texture_id];
     if (texture == NULL) {
         WARN("Texture %d not loaded.", texture_id);
+        return NULL;
+    }
+    
+    return texture;
+}
+
+void draw_texture(
+        State* state, TexID texture_id, const SDL_Rect* source_rect, const SDL_Rect* dest_rect) {
+    SDL_Texture* texture = draw_get_texture(state, texture_id);
+    if (texture == NULL) {
         return;
     }
+    
     if (SDL_RenderCopy(state->renderer, texture, source_rect, dest_rect) != 0) {
         WARN("SDL_RenderCopy");
         return;
@@ -135,9 +154,8 @@ void draw_texture(
 }
 
 void draw_texture_color_mod(State* state, TexID texture_id, uint8_t r, uint8_t g, uint8_t b) {
-    SDL_Texture* texture = state->textures[texture_id];
+    SDL_Texture* texture = draw_get_texture(state, texture_id);
     if (texture == NULL) {
-        WARN("Texture %d not loaded.", texture_id);
         return;
     }
     
@@ -148,6 +166,11 @@ void draw_texture_color_mod(State* state, TexID texture_id, uint8_t r, uint8_t g
 }
 
 void draw_set_color(State* state, RGBA color) {
+    if (state->renderer == NULL) {
+        WARN("Renderer not initialized.");
+        return;
+    }
+    
     int8_t r = color.r;
     int8_t g = color.g;
     int8_t b = color.b;

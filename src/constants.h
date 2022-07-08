@@ -35,11 +35,12 @@
 #define ICON_DOG 8
 #define ICON_HORSE 9
 #define ICON_COOLDOWN 10
-#define ICON_COUNT 11
+#define ICON_INSTRUCTIONS 11
+#define ICON_COUNT 12
 
 /* Putting type definitions here to resolve issues with circular imports. */
 
-typedef int32_t TexID;
+typedef int16_t TexID;
 typedef uint8_t IconID;
 typedef int16_t Coord;
 typedef uint8_t LevelID;

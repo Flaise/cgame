@@ -150,6 +150,7 @@ int textures_init(State* state) {
     icon_texture_init(state, ICON_DOG, TEXTURE_DOG);
     icon_texture_init(state, ICON_HORSE, TEXTURE_HORSE);
     icon_texture_init(state, ICON_COOLDOWN, TEXTURE_COOLDOWN);
+    icon_texture_init(state, ICON_INSTRUCTIONS, TEXTURE_INSTRUCTIONS);
 
     /* TODO: Should unload IMG in response to an event or something. */
     draw_loading_done();

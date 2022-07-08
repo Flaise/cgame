@@ -36,3 +36,5 @@ void draw_texture_color_mod(State* state, TexID texture_id, uint8_t r, uint8_t g
 void draw_loading_done();
 
 void draw_set_color(State* state, RGBA color);
+
+SDL_Texture* draw_get_texture(State* state, TexID texture_id);
