@@ -12,6 +12,7 @@
 #include "avatar.h"
 #include "cooldown.h"
 #include "tween.h"
+#include "text.h"
 
 void redraw(State* state) {
     state->needs_redraw = true;
@@ -31,18 +32,6 @@ void draw_text_shadow(State* state, IconID icon_id, SDL_Rect dest_rect) {
     
     icon_color_mod(state, icon_id, 255, 255, 255);
     icon_draw(state, icon_id, &dest_rect);
-}
-
-#define INSTRUCTIONS_WIDTH 351
-#define INSTRUCTIONS_HEIGHT 169
-void instructions_draw(State* state) {
-    SDL_Rect dest_rect = {
-        .x = VIEW_WIDTH - INSTRUCTIONS_WIDTH / 2 - 5,
-        .y = 0,
-        .w = INSTRUCTIONS_WIDTH / 2,
-        .h = INSTRUCTIONS_HEIGHT / 2,
-    };
-    draw_text_shadow(state, ICON_INSTRUCTIONS, dest_rect);
 }
 
 void draw_loading_done() {
@@ -71,7 +60,7 @@ int draw_now(State* state) {
     select_draw(state);
     avatar_draw(state);
     cooldown_draw(state);
-    instructions_draw(state);
+    text_draw(state);
     
     SDL_RenderPresent(state->renderer);
 

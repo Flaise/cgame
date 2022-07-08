@@ -259,6 +259,7 @@ static void level_id_init(State* state, LevelID level_id) {
     components_clear(&state->components);
     state->level_id = level_id;
     state->game_over = false;
+    state->won = false;
     
     if (level_id == 1) {
         level_1_init(state);

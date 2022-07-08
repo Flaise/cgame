@@ -22,7 +22,9 @@
 #define TEXTURE_HORSE 7
 #define TEXTURE_COOLDOWN 8
 #define TEXTURE_INSTRUCTIONS 9
-#define TEXTURE_COUNT 10
+#define TEXTURE_SUCCESS 10
+#define TEXTURE_FAILURE 11
+#define TEXTURE_COUNT 12
 
 #define ICON_WALL 0
 #define ICON_FLOOR_A 1
@@ -36,7 +38,9 @@
 #define ICON_HORSE 9
 #define ICON_COOLDOWN 10
 #define ICON_INSTRUCTIONS 11
-#define ICON_COUNT 12
+#define ICON_SUCCESS 12
+#define ICON_FAILURE 13
+#define ICON_COUNT 14
 
 /* Putting type definitions here to resolve issues with circular imports. */
 
@@ -124,4 +128,5 @@ typedef struct {
 
     bool exiting;
     bool game_over;
+    bool won;
 } State;

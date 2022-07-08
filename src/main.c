@@ -34,6 +34,10 @@
 #define RES_COOLDOWN __res_hourglass2_png
 #include "res/instructions.h"
 #define RES_INSTRUCTIONS __res_instructions_png
+#include "res/success.h"
+#define RES_SUCCESS __res_success_png
+#include "res/failure.h"
+#define RES_FAILURE __res_failure_png
 
 int window_icon_load_const_png(SDL_Window* window, const void* mem, int size) {
     SDL_Surface* surface = const_png_to_surface(mem, size);
@@ -142,6 +146,14 @@ int textures_init(State* state) {
         ERROR("texture_load_const_png (instructions)");
         return 1;
     }
+    if (texture_load_const_png(state, TEXTURE_SUCCESS, RES_SUCCESS, sizeof(RES_SUCCESS)) != 0) {
+        ERROR("texture_load_const_png (cooldown)");
+        return 1;
+    }
+    if (texture_load_const_png(state, TEXTURE_FAILURE, RES_FAILURE, sizeof(RES_FAILURE)) != 0) {
+        ERROR("texture_load_const_png (cooldown)");
+        return 1;
+    }
     
     icon_texture_init(state, ICON_DRAGON, TEXTURE_DRAGON);
     icon_texture_init(state, ICON_KNIGHT, TEXTURE_KNIGHT);
@@ -151,6 +163,8 @@ int textures_init(State* state) {
     icon_texture_init(state, ICON_HORSE, TEXTURE_HORSE);
     icon_texture_init(state, ICON_COOLDOWN, TEXTURE_COOLDOWN);
     icon_texture_init(state, ICON_INSTRUCTIONS, TEXTURE_INSTRUCTIONS);
+    icon_texture_init(state, ICON_SUCCESS, TEXTURE_SUCCESS);
+    icon_texture_init(state, ICON_FAILURE, TEXTURE_FAILURE);
 
     /* TODO: Should unload IMG in response to an event or something. */
     draw_loading_done();

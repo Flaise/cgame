@@ -54,6 +54,7 @@ static bool interact(State* state, Entity subject, Coord tile_x, Coord tile_y, b
         if (!check_only) {
             components_entity_end(&state->components, slayme);
             state->game_over = true;
+            state->won = true;
         }
         
         interacted = true;
