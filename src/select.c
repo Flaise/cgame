@@ -5,6 +5,7 @@
 #include "component.h"
 #include "draw.h"
 #include "interact.h"
+#include "board.h"
 
 RGBA color_move_valid = {40, 130, 100, 130};
 RGBA color_move_invalid = {150, 70, 60, 150};
@@ -121,6 +122,11 @@ static void update_validity(State* state, int32_t x, int32_t y) {
 
 void select_mouse_press(State* state, uint8_t button, int32_t x, int32_t y) {
     if (state->game_over) {
+        if (state->won) {
+            level_next(state);
+        } else {
+            level_restart(state);
+        }
         return;
     }
     
