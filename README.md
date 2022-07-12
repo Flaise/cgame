@@ -22,7 +22,7 @@ Press R to restart if you fail the puzzle. Press Escape to quit the app.
 
 This app requires some packages installed:
 
-    apt-get install libsdl2-dev libsdl2-image-dev
+    apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev
 
 May be used for static linking and it's possible this package will be different depending on your
 computer's drivers or graphics card:
@@ -52,3 +52,6 @@ Cooldown Icon:
 
 Font:
 * GemFonts: http://moorstation.org/typoasis/designers/gemnew/home.htm
+
+Music:
+* Zane Little Music: https://zanelittle.com/

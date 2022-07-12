@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <math.h>
 
+#include "SDL_mixer.h"
+
 #define TILE_SIZE 64
 #define TILES_ACROSS 10
 #define TILES_DOWN 6
@@ -129,4 +131,6 @@ typedef struct {
     bool exiting;
     bool game_over;
     bool won;
+
+    Mix_Music* music;
 } State;

@@ -4,6 +4,8 @@
 #include "constants.h"
 #include "component.h"
 #include "state.h"
+#include "audio.h"
+#include "draw.h"
 
 State* state_new() {
     /* Using calloc to initialize to zero. */
@@ -39,6 +41,10 @@ void state_end(State* state) {
     if (state->window != NULL) {
         SDL_DestroyWindow(state->window);
     }
+
+    draw_loading_done();
+    
+    audio_done_blocking(state);
 
     free(state);
 }

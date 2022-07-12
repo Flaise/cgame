@@ -15,6 +15,7 @@
 #include "cooldown.h"
 #include "interact.h"
 #include "tween.h"
+#include "audio.h"
 
 #include "res/terrain.h"
 #define RES_TILES __res_Tiny_Top_Down_32x32_png
@@ -179,7 +180,7 @@ int textures_init(State* state) {
  */
 
 int run(State* state) {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         ERROR("SDL_Init");
         return 1;
     }
@@ -196,6 +197,9 @@ int run(State* state) {
     if (terrain_init(state) != 0) {
         return 1;
     }
+    if (audio_init(state) != 0) {
+        return 1;
+    }
     if (terrain_update(state) != 0) {
         WARN("terrain_update");
     }
@@ -206,7 +210,7 @@ int run(State* state) {
 int main(int argc, char* argv[]) {
     State* state = state_new();
     if (state == NULL) {
-        ERROR("make_state");
+        ERROR("state_new");
         return 1;
     }
 
@@ -215,7 +219,6 @@ int main(int argc, char* argv[]) {
     /* clear state before SDL_Quit because it involves SDL calls */
     state_end(state);
     
-    draw_loading_done();
     if (SDL_WasInit(0) != 0) {
         SDL_Quit();
     }

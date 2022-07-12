@@ -14,6 +14,7 @@ if [[ $1 != 'test' ]]; then
     xxd --include "./res/instructions.png" ./src/res/instructions.h
     xxd --include "./res/success.png" ./src/res/success.h
     xxd --include "./res/failure.png" ./src/res/failure.h
+    xxd --include "./res/sinister_abode.ogg" ./src/res/music.h
 fi
 
 
@@ -36,7 +37,8 @@ mkdir -p ./bin/ || exit 1
 
 cd src || exit 1 # removes extraneous folder name from log messages
 /usr/bin/time -f "compilation: %es" \
-    c99 -Wall -o ../${BIN} *.c `pkg-config --cflags --libs sdl2 SDL2_image` ${OPTS} || exit 1
+    c99 -Wall -o ../${BIN} *.c `pkg-config --cflags --libs sdl2 SDL2_image SDL2_mixer` ${OPTS} \
+    || exit 1
 cd .. || exit 1
 
 # TODO: need --static flag when statically linking
